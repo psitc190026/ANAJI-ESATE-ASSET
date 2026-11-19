@@ -3,329 +3,271 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#2B1B45">
+<meta name="theme-color" content="#0C4A9A">
 <title>Church Asset Manager</title>
+<link rel="icon" type="image/png" href="logo.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4/dist/umd/supabase.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="config.js"></script>
 <style>
+/* ---------- Brand: The Church of Pentecost blue, gold and red ---------- */
 :root {
-  color-scheme: light;
-  --bg: #F1F0F5;
-  --surface: #FFFFFF;
-  --ink: #211C2E;
-  --muted: #645E72;
-  --line: #DEDAE7;
-  --accent: #4E2F7F;
-  --accent-ink: #FFFFFF;
-  --accent-soft: #ECE6F5;
-  --side: #2B1B45;
-  --side-ink: #E9E2F5;
-  --gold: #8A5F0C;
-  --gold-soft: #FBF0D9;
-  --green: #2A6E4E;
-  --green-soft: #E2F1E9;
-  --red: #A3362E;
-  --red-soft: #F8E3E0;
-  --radius: 10px;
-  --font: "Atkinson Hyperlegible", "Segoe UI", system-ui, -apple-system, sans-serif;
-}
-@media (prefers-color-scheme: dark) {
-  :root {
-    color-scheme: dark;
-    --bg: #15121C;
-    --surface: #201C2A;
-    --ink: #ECE8F3;
-    --muted: #A59FB3;
-    --line: #362F47;
-    --accent: #B99DE8;
-    --accent-ink: #1A1425;
-    --accent-soft: #2E2641;
-    --side: #1B1427;
-    --side-ink: #DCD3EC;
-    --gold: #E2B65C;
-    --gold-soft: #3A2E16;
-    --green: #74C89F;
-    --green-soft: #1A3328;
-    --red: #EF8B81;
-    --red-soft: #3E1F1C;
-  }
-}
-* { box-sizing: border-box; }
-html, body { height: 100%; }
-body {
-  margin: 0; background: var(--bg); color: var(--ink);
-  font: 16px/1.5 var(--font);
-  padding-top: env(safe-area-inset-top, 0px);
-}
-button, input, select, textarea { font: inherit; color: inherit; }
-:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
-[hidden] { display: none !important; }
-h1, h2, h3 { line-height: 1.2; margin: 0; }
-h1 { font-size: 1.75rem; }
-h2 { font-size: 1.25rem; }
-h3 { font-size: 1.05rem; }
-.muted { color: var(--muted); }
-.small { font-size: .875rem; }
+  --brand: #0C4A9A;
+  --brand-dark: #08346D;
+  --brand-hover: #093C7E;
+  --brand-tint: #E8EFF9;
+  --brand-line: #C9D8EE;
+  --gold: #F8E80A;
+  --flame: #E52421;
 
-/* ---------- Buttons ---------- */
-.btn {
-  display: inline-flex; align-items: center; gap: .4rem; justify-content: center;
-  border: 1px solid var(--line); background: var(--surface);
-  padding: .55rem 1rem; border-radius: 8px; cursor: pointer; font-weight: 700;
-  white-space: nowrap;
+  --bs-primary: #0C4A9A;
+  --bs-primary-rgb: 12, 74, 154;
+  --bs-primary-bg-subtle: #E8EFF9;
+  --bs-primary-border-subtle: #B9CCE8;
+  --bs-primary-text-emphasis: #08346D;
+  --bs-link-color: #0C4A9A;
+  --bs-link-color-rgb: 12, 74, 154;
+  --bs-link-hover-color: #08346D;
+  --bs-link-hover-color-rgb: 8, 52, 109;
+  --bs-danger: #C8201D;
+  --bs-danger-rgb: 200, 32, 29;
+  --bs-body-font-family: "Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --page-bg: #F5F8FC;
+  --bs-body-color: #1B2433;
+  --bs-border-color: #DCE4EF;
+  --bs-border-radius: .5rem;
+  --bs-border-radius-lg: .75rem;
 }
-.btn:hover { border-color: var(--accent); }
-.btn.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
-.btn.primary:hover { filter: brightness(1.08); }
-.btn.danger { color: var(--red); }
-.btn.danger:hover { border-color: var(--red); }
-.btn.sm { padding: .3rem .65rem; font-size: .875rem; }
-.btn:disabled { opacity: .6; cursor: wait; }
-.link { background: none; border: 0; padding: 0; cursor: pointer; font-weight: 700; color: var(--ink); text-align: left; }
-.link:hover { color: var(--accent); text-decoration: underline; }
+[hidden] { display: none !important; }
+body { background: var(--page-bg); }
+.min-w-0 { min-width: 0; }
+
+.btn-primary {
+  --bs-btn-bg: var(--brand); --bs-btn-border-color: var(--brand);
+  --bs-btn-hover-bg: var(--brand-hover); --bs-btn-hover-border-color: var(--brand-hover);
+  --bs-btn-active-bg: var(--brand-dark); --bs-btn-active-border-color: var(--brand-dark);
+  --bs-btn-disabled-bg: var(--brand); --bs-btn-disabled-border-color: var(--brand);
+  --bs-btn-focus-shadow-rgb: 12, 74, 154;
+}
+.btn-outline-primary {
+  --bs-btn-color: var(--brand); --bs-btn-border-color: var(--brand);
+  --bs-btn-hover-bg: var(--brand); --bs-btn-hover-border-color: var(--brand);
+  --bs-btn-active-bg: var(--brand-dark); --bs-btn-active-border-color: var(--brand-dark);
+  --bs-btn-focus-shadow-rgb: 12, 74, 154;
+}
+.nav-pills { --bs-nav-pills-link-active-bg: var(--brand); --bs-nav-link-color: var(--brand); --bs-nav-link-hover-color: var(--brand-dark); }
+.form-control:focus, .form-select:focus, .form-check-input:focus {
+  border-color: #6E95CC; box-shadow: 0 0 0 .25rem rgba(12, 74, 154, .2);
+}
+.form-check-input:checked { background-color: var(--brand); border-color: var(--brand); }
+.btn:focus-visible, .nav-link:focus-visible, .list-group-item-action:focus-visible { outline: 3px solid var(--brand); outline-offset: 2px; }
 
 /* ---------- Login ---------- */
 #login {
-  min-height: 100%; display: grid; place-items: center; padding: 1.5rem;
-  background:
-    radial-gradient(circle at 20% 15%, rgba(185,157,232,.25), transparent 45%),
-    var(--side);
+  min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 1.5rem;
+  background: linear-gradient(180deg, var(--brand) 0 42%, var(--bs-body-bg) 42% 100%);
 }
-.login-card {
-  width: 100%; max-width: 380px; background: var(--surface); border-radius: 14px;
-  padding: 2rem; box-shadow: 0 20px 50px rgba(0,0,0,.35);
+.login-card { width: 100%; max-width: 400px; }
+.login-logo { width: 120px; height: 120px; margin: -76px auto 1rem; display: block;
+  background: #fff; border-radius: 50%; box-shadow: 0 6px 20px rgba(8, 52, 109, .25); }
+
+/* ---------- Layout ---------- */
+.brandbar { background: var(--brand); }
+.brandbar .navbar-brand { color: #fff; font-weight: 700; display: flex; align-items: center; gap: .6rem; font-size: 1rem; line-height: 1.2; }
+.brandbar img { width: 38px; height: 38px; background: #fff; border-radius: 50%; }
+
+.sidebar.offcanvas-lg { --bs-offcanvas-width: 280px; background: var(--brand); color: #fff; }
+.sidebar .btn-close { filter: invert(1) grayscale(1) brightness(2); }
+.side-brand { text-align: center; padding: .5rem .5rem 1.5rem; border-bottom: 1px solid rgba(255,255,255,.15); margin-bottom: 1rem; }
+.side-brand img { width: 96px; height: 96px; background: #fff; border-radius: 50%; padding: 2px; margin-bottom: .75rem; }
+.side-brand strong { display: block; font-size: 1.05rem; line-height: 1.25; }
+.side-brand span { display: block; font-size: .85rem; color: var(--gold); font-weight: 700; margin-top: .15rem; }
+.side-nav .nav-link {
+  color: rgba(255,255,255,.85); display: flex; align-items: center; gap: .75rem;
+  padding: .65rem .9rem; border-radius: .5rem; border-left: 4px solid transparent; width: 100%; text-align: left;
 }
-.login-card .mark { width: 44px; height: 44px; margin-bottom: 1rem; color: var(--accent); }
-.login-card h1 { margin-bottom: .25rem; }
-.login-card form { margin-top: 1.5rem; display: grid; gap: 1rem; }
+.side-nav .nav-link i { font-size: 1.15rem; }
+.side-nav .nav-link:hover { color: #fff; background: rgba(255,255,255,.08); }
+.side-nav .nav-link.active { color: #fff; background: rgba(255,255,255,.16); border-left-color: var(--gold); font-weight: 700; }
+.side-nav .badge { margin-left: auto; background: var(--gold); color: #1B2433; }
+.side-foot { margin-top: auto; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,.15); font-size: .85rem; color: rgba(255,255,255,.8); }
+.side-foot .btn { --bs-btn-color: #fff; --bs-btn-border-color: rgba(255,255,255,.35); --bs-btn-hover-bg: rgba(255,255,255,.12); --bs-btn-hover-border-color: #fff; --bs-btn-hover-color: #fff; }
 
-/* ---------- App layout ---------- */
-#app { display: grid; grid-template-columns: 236px 1fr; min-height: 100%; }
-.sidebar {
-  background: var(--side); color: var(--side-ink);
-  display: flex; flex-direction: column; padding: 1.25rem .85rem;
-  position: sticky; top: 0; height: 100vh;
+@media (min-width: 992px) {
+  .sidebar-wrap { width: 270px; flex: none; background: var(--brand); position: sticky; top: 0; height: 100vh; overflow-y: auto; }
+  .sidebar.offcanvas-lg { height: 100%; }
+  .sidebar .offcanvas-body { flex-direction: column; height: 100%; padding: 1.5rem 1rem !important; }
 }
-.brand { display: flex; gap: .65rem; align-items: center; padding: 0 .5rem 1.5rem; }
-.brand svg { width: 30px; height: 30px; flex: none; color: #CDB8F0; }
-.brand strong { display: block; line-height: 1.2; }
-.brand span { font-size: .8rem; opacity: .7; }
-.nav { display: grid; gap: .2rem; }
-.nav button {
-  display: flex; align-items: center; gap: .7rem; width: 100%;
-  background: none; border: 0; color: var(--side-ink); padding: .6rem .75rem;
-  border-radius: 8px; cursor: pointer; text-align: left; opacity: .8;
-}
-.nav button svg { width: 20px; height: 20px; flex: none; }
-.nav button:hover { opacity: 1; background: rgba(255,255,255,.06); }
-.nav button.active { opacity: 1; background: rgba(205,184,240,.18); font-weight: 700; }
-.nav .badge {
-  margin-left: auto; background: #E2B65C; color: #2B1B45; font-size: .75rem;
-  font-weight: 700; border-radius: 99px; padding: 0 .45rem; min-width: 1.4rem; text-align: center;
-}
-.side-foot { margin-top: auto; padding: 1rem .5rem 0; font-size: .82rem; opacity: .85; display: grid; gap: .5rem; }
-.side-foot button { background: none; border: 1px solid rgba(255,255,255,.25); color: var(--side-ink); border-radius: 8px; padding: .4rem; cursor: pointer; }
+main { min-width: 0; flex: 1; }
+.page { max-width: 1240px; padding: 1.75rem clamp(1rem, 3vw, 2.25rem) 3rem; }
+.page-title { font-size: 1.6rem; font-weight: 700; margin: 0; }
 
-main { padding: 2rem clamp(1rem, 3vw, 2.5rem) 3rem; min-width: 0; max-width: 1200px; }
-.page-head { display: flex; flex-wrap: wrap; gap: 1rem; align-items: flex-end; justify-content: space-between; margin-bottom: 1.5rem; }
-.page-head p { margin: .3rem 0 0; }
-.actions { display: flex; gap: .5rem; flex-wrap: wrap; }
-
-/* ---------- Panels & stats ---------- */
-.panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 1.25rem; }
-.panel + .panel { margin-top: 1.25rem; }
-.panel-head { display: flex; justify-content: space-between; align-items: center; gap: 1rem; margin-bottom: 1rem; }
-.stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; margin-bottom: 1.25rem; }
-.stat { background: var(--surface); padding: 1rem 1.25rem; }
-.stat b { display: block; font-size: 1.6rem; line-height: 1.2; }
-.stat span { color: var(--muted); font-size: .9rem; }
-.dash-grid { display: grid; grid-template-columns: 3fr 2fr; gap: 1.25rem; align-items: start; }
-
-.alerts { list-style: none; margin: 0; padding: 0; display: grid; gap: .5rem; }
-.alerts li button {
-  width: 100%; display: flex; gap: .75rem; align-items: flex-start; text-align: left;
-  border: 0; border-left: 4px solid; border-radius: 6px; padding: .7rem .9rem; cursor: pointer;
-}
-.alerts .red { background: var(--red-soft); border-color: var(--red); }
-.alerts .gold { background: var(--gold-soft); border-color: var(--gold); }
-.alerts small { display: block; color: var(--muted); }
-.all-clear { padding: 1.25rem; text-align: center; color: var(--green); background: var(--green-soft); border-radius: 8px; }
-
-/* ---------- Pills ---------- */
-.pill { display: inline-block; padding: .1rem .55rem; border-radius: 99px; font-size: .8rem; font-weight: 700; white-space: nowrap; background: var(--accent-soft); color: var(--accent); }
-.pill.green { background: var(--green-soft); color: var(--green); }
-.pill.gold { background: var(--gold-soft); color: var(--gold); }
-.pill.red { background: var(--red-soft); color: var(--red); }
-.pill.grey { background: var(--bg); color: var(--muted); }
-
-/* ---------- Toolbar & tables ---------- */
-.toolbar { display: flex; flex-wrap: wrap; gap: .5rem; margin-bottom: 1rem; }
-.toolbar input[type=search] { flex: 1 1 220px; }
-input, select, textarea {
-  background: var(--surface); border: 1px solid var(--line); border-radius: 8px;
-  padding: .55rem .7rem; width: 100%; min-width: 0;
-}
-.toolbar select { width: auto; flex: 0 1 auto; }
-textarea { min-height: 80px; resize: vertical; }
-.table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
-table { width: 100%; border-collapse: collapse; font-size: .95rem; }
-th, td { padding: .7rem .9rem; text-align: left; border-bottom: 1px solid var(--line); vertical-align: middle; }
-th { font-size: .82rem; color: var(--muted); font-weight: 700; background: var(--bg); white-space: nowrap; }
-tr:last-child td { border-bottom: 0; }
-tbody tr[data-action] { cursor: pointer; }
-tbody tr[data-action]:hover td { background: var(--accent-soft); }
-td.num, th.num { text-align: right; white-space: nowrap; }
-.thumb { width: 40px; height: 40px; border-radius: 6px; object-fit: cover; background: var(--bg); display: block; }
-.thumb.empty { display: grid; place-items: center; color: var(--muted); }
-.thumb.empty svg { width: 20px; height: 20px; }
-.empty-state { text-align: center; padding: 2.5rem 1rem; color: var(--muted); }
-.empty-state .btn { margin-top: 1rem; }
-
-.tabs { display: inline-flex; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 3px; margin-bottom: 1rem; flex-wrap: wrap; }
-.tabs button { border: 0; background: none; padding: .45rem .9rem; border-radius: 6px; cursor: pointer; }
-.tabs button.active { background: var(--accent); color: var(--accent-ink); font-weight: 700; }
-
-/* ---------- Lists (settings) ---------- */
-.list-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; align-items: start; }
-.list-grid .panel + .panel { margin-top: 0; }
-.plain-list { list-style: none; margin: 1rem 0 0; padding: 0; }
-.plain-list li { display: flex; justify-content: space-between; align-items: center; gap: .5rem; padding: .45rem 0; border-top: 1px solid var(--line); }
-.inline-form { display: flex; gap: .5rem; }
-
-/* ---------- Modal ---------- */
-dialog {
-  border: 0; border-radius: 14px; padding: 0; width: min(640px, calc(100vw - 2rem));
-  max-height: calc(100vh - 2rem); background: var(--surface); color: var(--ink);
-  box-shadow: 0 24px 60px rgba(0,0,0,.35);
-}
-dialog::backdrop { background: rgba(20,12,35,.55); }
-.modal-head { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: 1.1rem 1.4rem; border-bottom: 1px solid var(--line); position: sticky; top: 0; background: var(--surface); z-index: 1; }
-.modal-head button { background: none; border: 0; font-size: 1.5rem; line-height: 1; cursor: pointer; color: var(--muted); padding: .25rem; }
-.modal-body { padding: 1.25rem 1.4rem 1.5rem; }
-.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-.form-grid .full { grid-column: 1 / -1; }
-label { display: grid; gap: .3rem; font-weight: 700; font-size: .9rem; }
-label .hint { font-weight: 400; color: var(--muted); font-size: .82rem; }
-.form-foot { display: flex; justify-content: flex-end; gap: .5rem; margin-top: 1.5rem; }
-.form-error { color: var(--red); background: var(--red-soft); padding: .6rem .8rem; border-radius: 8px; margin-top: 1rem; }
-
-.detail-top { display: grid; grid-template-columns: 160px 1fr; gap: 1.25rem; margin-bottom: 1.25rem; }
-.detail-photo { width: 160px; height: 160px; border-radius: 10px; object-fit: cover; background: var(--bg); display: grid; place-items: center; color: var(--muted); }
-.detail-photo svg { width: 40px; height: 40px; }
-dl.facts { display: grid; grid-template-columns: auto 1fr; gap: .35rem 1rem; margin: 0; font-size: .95rem; }
-dl.facts dt { color: var(--muted); }
-dl.facts dd { margin: 0; }
-.callout { padding: .8rem 1rem; border-radius: 8px; margin-bottom: 1rem; }
-.callout.gold { background: var(--gold-soft); }
-.section-title { margin: 1.5rem 0 .6rem; }
-
-/* ---------- Toast ---------- */
-#toast {
-  position: fixed; left: 50%; bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px));
-  transform: translateX(-50%); background: var(--ink); color: var(--bg);
-  padding: .7rem 1.2rem; border-radius: 8px; font-weight: 700; z-index: 100;
-}
-
+/* ---------- Components ---------- */
+.card { --bs-card-border-color: var(--bs-border-color); --bs-card-cap-bg: #fff; box-shadow: 0 1px 2px rgba(16, 38, 74, .05); }
+.card-header { font-weight: 700; padding: .9rem 1.25rem; }
+.stat-card .icon { width: 46px; height: 46px; border-radius: .6rem; display: grid; place-items: center; font-size: 1.35rem; background: var(--brand-tint); color: var(--brand); flex: none; }
+.stat-card .icon.gold { background: #FFF8C4; color: #7A6A00; }
+.stat-card .icon.red { background: #FCE6E5; color: var(--bs-danger); }
+.stat-card .value { font-size: 1.5rem; font-weight: 700; line-height: 1.2; }
+@media (max-width: 575.98px) { .stat-card .icon { display: none; } .stat-card .value { font-size: 1.2rem; } .stat-card .card-body { padding: .85rem; } }
+.table > :not(caption) > * > * { padding: .75rem .9rem; }
+.table thead th { font-size: .82rem; color: var(--bs-secondary-color); font-weight: 700; background: #F3F6FA; white-space: nowrap; }
+.table-hover tbody tr[data-action] { cursor: pointer; }
+.thumb { width: 42px; height: 42px; border-radius: .4rem; object-fit: cover; background: var(--brand-tint); display: grid; place-items: center; color: #7F9AC2; flex: none; }
+.detail-photo { width: 100%; aspect-ratio: 1; border-radius: .75rem; object-fit: cover; background: var(--brand-tint); display: grid; place-items: center; color: #7F9AC2; font-size: 2.5rem; }
+.list-group-item-action { cursor: pointer; }
+.alert-item { border-left: 4px solid var(--bs-warning) !important; }
+.alert-item.urgent { border-left-color: var(--bs-danger) !important; }
+.empty { text-align: center; padding: 3rem 1rem; color: var(--bs-secondary-color); }
+.empty i { font-size: 2.5rem; color: #9DB3D3; display: block; margin-bottom: .5rem; }
+.nav-pills .nav-link { font-weight: 700; }
+dl.facts dt { font-weight: 400; color: var(--bs-secondary-color); }
+dl.facts dd { margin-bottom: .45rem; }
+.modal-header { background: var(--brand); color: #fff; }
+.modal-header .btn-close { filter: invert(1) grayscale(1) brightness(2); }
+#confirmModal { background: rgba(10, 25, 50, .45); z-index: 1070; }
+#confirmModal .modal-header { background: #fff; color: inherit; }
+#confirmModal .modal-header .btn-close { filter: none; }
 .print-head { display: none; }
 
-/* ---------- Mobile ---------- */
-@media (max-width: 860px) {
-  .stats { grid-template-columns: 1fr 1fr; }
-  .dash-grid, .list-grid { grid-template-columns: 1fr; }
-}
-@media (max-width: 760px) {
-  #app { grid-template-columns: 1fr; }
-  main { padding-bottom: calc(6rem + env(safe-area-inset-bottom, 0px)); }
-  .sidebar {
-    position: fixed; top: auto; bottom: 0; left: 0; right: 0; height: auto; z-index: 20;
-    padding: .35rem .25rem calc(.35rem + env(safe-area-inset-bottom, 0px));
-  }
-  .brand, .side-foot { display: none; }
-  .nav { grid-template-columns: repeat(6, 1fr); gap: 0; }
-  .nav button { flex-direction: column; gap: .15rem; padding: .4rem .1rem; font-size: .68rem; text-align: center; justify-content: center; position: relative; }
-  .nav .label { display: none; }
-  .nav .short { display: block; }
-  .nav .badge { position: absolute; top: 2px; right: 18%; margin: 0; font-size: .65rem; min-width: 1.1rem; }
-  .mobile-only { display: inline-flex !important; }
-  .hide-sm { display: none; }
-  .form-grid { grid-template-columns: 1fr; }
-  .detail-top { grid-template-columns: 1fr; }
-  .detail-photo { width: 100%; height: 200px; }
-  h1 { font-size: 1.5rem; }
-}
-@media (min-width: 761px) { .nav .short { display: none; } .mobile-only { display: none !important; } }
-
-/* ---------- Printing reports ---------- */
 @media print {
-  :root { color-scheme: light; --bg: #fff; --surface: #fff; --ink: #000; --muted: #444; --line: #bbb; }
-  body { background: #fff; padding: 0; }
-  #app { display: block; }
-  .sidebar, .no-print, #toast, dialog { display: none !important; }
-  main { padding: 0; max-width: none; }
-  .print-head { display: block; margin-bottom: 1rem; }
-  .table-wrap { border: 0; overflow: visible; }
-  th { background: #eee; }
-  table { font-size: 11px; }
-  th, td { padding: 4px 6px; }
+  body { background: #fff; }
+  .sidebar-wrap, .brandbar, .no-print, .toast-container, .modal { display: none !important; }
+  .page { padding: 0; max-width: none; }
+  .print-head { display: flex !important; align-items: center; gap: 1rem; margin-bottom: 1rem; }
+  .print-head img { width: 64px; height: 64px; }
+  .card { border: 0; box-shadow: none; }
+  .table { font-size: 11px; }
+  .table > :not(caption) > * > * { padding: 4px 6px; }
 }
-@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+@media (prefers-reduced-motion: reduce) { .modal.fade .modal-dialog, .offcanvas, .toast { transition: none !important; } }
 </style>
 </head>
 <body>
 
 <!-- ============ Login ============ -->
 <section id="login" hidden>
-  <div class="login-card">
-    <svg class="mark" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M24 4v10M19 9h10M10 44V24l14-10 14 10v20M10 44h28M20 44v-9a4 4 0 0 1 8 0v9"/></svg>
-    <h1 id="login-church">Asset Manager</h1>
-    <p class="muted" style="margin:.25rem 0 0">Sign in to manage church property.</p>
-    <div id="setup-notice" class="form-error" hidden>
-      The app is not connected yet. Open <b>config.js</b> and paste your Supabase project URL and key.
+  <div class="card login-card border-0 shadow">
+    <div class="card-body p-4 pt-0">
+      <img class="login-logo" src="logo.png" alt="Church logo">
+      <h1 class="h4 text-center fw-bold mb-0 js-church">The Church of Pentecost</h1>
+      <p class="text-center text-body-secondary mb-4"><span class="js-branch">Anaji Estate Central</span> · Asset Manager</p>
+      <div id="setup-notice" class="alert alert-danger" hidden>
+        The app is not connected yet. Open <b>config.js</b> and paste your Supabase project URL and key.
+      </div>
+      <form id="login-form" novalidate>
+        <div class="form-floating mb-3">
+          <input type="email" class="form-control" id="login-email" name="email" placeholder="name@example.com" required autocomplete="username">
+          <label for="login-email">Email address</label>
+        </div>
+        <div class="form-floating mb-3">
+          <input type="password" class="form-control" id="login-password" name="password" placeholder="Password" required autocomplete="current-password">
+          <label for="login-password">Password</label>
+        </div>
+        <div id="login-error" class="alert alert-danger py-2" hidden></div>
+        <button class="btn btn-primary btn-lg w-100" type="submit">Sign in</button>
+      </form>
     </div>
-    <form id="login-form">
-      <label>Email <input type="email" name="email" required autocomplete="username"></label>
-      <label>Password <input type="password" name="password" required autocomplete="current-password"></label>
-      <button class="btn primary" type="submit">Sign in</button>
-      <div id="login-error" class="form-error" hidden></div>
-    </form>
   </div>
 </section>
 
 <!-- ============ App ============ -->
 <div id="app" hidden>
-  <aside class="sidebar">
-    <div class="brand">
-      <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M24 4v10M19 9h10M10 44V24l14-10 14 10v20M10 44h28M20 44v-9a4 4 0 0 1 8 0v9"/></svg>
-      <div><strong id="brand-name">Our Church</strong><span>Asset Manager</span></div>
+  <nav class="navbar brandbar d-lg-none sticky-top no-print">
+    <div class="container-fluid">
+      <span class="navbar-brand"><img src="logo.png" alt=""><span class="js-branch">Anaji Estate Central</span></span>
+      <button class="btn text-white fs-3 p-1 position-relative" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidenav" aria-controls="sidenav" aria-label="Open menu">
+        <i class="bi bi-list"></i><span id="menu-badge" class="position-absolute top-0 end-0 badge rounded-pill bg-danger" style="font-size:.65rem" hidden></span>
+      </button>
     </div>
-    <nav class="nav" id="nav"></nav>
-    <div class="side-foot">
-      <span id="user-email"></span>
-      <button data-action="logout">Sign out</button>
+  </nav>
+
+  <div class="d-lg-flex">
+    <div class="sidebar-wrap no-print">
+      <aside class="offcanvas-lg offcanvas-start sidebar" tabindex="-1" id="sidenav" aria-label="Main menu">
+        <div class="offcanvas-header d-lg-none">
+          <span></span>
+          <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#sidenav" aria-label="Close menu"></button>
+        </div>
+        <div class="offcanvas-body d-flex flex-column p-3 pt-0">
+          <div class="side-brand">
+            <img src="logo.png" alt="Church logo">
+            <strong class="js-church">The Church of Pentecost</strong>
+            <span class="js-branch">Anaji Estate Central</span>
+          </div>
+          <nav class="nav flex-column gap-1 side-nav" id="nav"></nav>
+          <div class="side-foot">
+            <div class="text-truncate mb-2"><i class="bi bi-person-circle me-1"></i><span id="user-email"></span></div>
+            <button class="btn btn-sm btn-outline-light w-100" data-action="logout"><i class="bi bi-box-arrow-right me-1"></i>Sign out</button>
+          </div>
+        </div>
+      </aside>
     </div>
-  </aside>
-  <main id="view"></main>
+    <main><div class="page" id="view"></div></main>
+  </div>
 </div>
 
-<dialog id="modal"><div id="modal-content"></div></dialog>
-<div id="toast" role="status" hidden></div>
+<!-- Main dialog -->
+<div class="modal fade" id="modal" tabindex="-1" aria-labelledby="modal-title" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-scrollable modal-fullscreen-sm-down">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title fs-5" id="modal-title"></h2>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" id="modal-body"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Confirmation dialog -->
+<div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirm-title" aria-hidden="true" data-bs-backdrop="static">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header border-0 pb-0">
+        <h2 class="modal-title fs-5" id="confirm-title"></h2>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cancel"></button>
+      </div>
+      <div class="modal-body" id="confirm-body"></div>
+      <div class="modal-footer border-0 pt-0">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-danger" id="confirm-ok">Delete</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast-container position-fixed bottom-0 start-50 translate-middle-x p-3">
+  <div id="toast" class="toast align-items-center text-bg-dark border-0" role="status" aria-live="polite" aria-atomic="true">
+    <div class="d-flex"><div class="toast-body fw-bold" id="toast-body"></div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button></div>
+  </div>
+</div>
 
 <script>
 /* =====================================================
-   Church Asset Manager
+   Church Asset Manager (Bootstrap 5 edition)
    ===================================================== */
-const CFG = Object.assign({ CHURCH_NAME: "Our Church", CURRENCY: "GHS", REMINDER_DAYS: 14 }, window.CONFIG || {});
+const RAW = window.CONFIG || {};
+const CFG = Object.assign({ CURRENCY: "GHS", REMINDER_DAYS: 14 }, RAW);
+if (!RAW.CHURCH_NAME || RAW.CHURCH_NAME === "Our Church") CFG.CHURCH_NAME = "The Church of Pentecost";
+if (!RAW.BRANCH_NAME) CFG.BRANCH_NAME = "Anaji Estate Central";
+const FULL_NAME = `${CFG.CHURCH_NAME}, ${CFG.BRANCH_NAME}`;
+
 const configured = CFG.SUPABASE_URL && !CFG.SUPABASE_URL.startsWith("PASTE") && CFG.SUPABASE_ANON_KEY && !CFG.SUPABASE_ANON_KEY.startsWith("PASTE");
 const sb = configured ? supabase.createClient(CFG.SUPABASE_URL, CFG.SUPABASE_ANON_KEY) : null;
 const BUCKET = "asset-photos";
 
 const STATUSES = ["In use", "In storage", "Under repair", "Lost", "Disposed"];
 const CONDITIONS = ["New", "Good", "Fair", "Poor"];
-const STATUS_PILL = { "In use": "green", "In storage": "", "Under repair": "gold", "Lost": "red", "Disposed": "grey" };
+const STATUS_TONE = { "In use": "success", "In storage": "primary", "Under repair": "warning", "Lost": "danger", "Disposed": "secondary" };
 
 const S = {
   assets: [], categories: [], locations: [], ministries: [], borrowings: [], maintenance: [],
@@ -334,25 +276,13 @@ const S = {
   loanTab: "out", report: "register"
 };
 
-/* ---------- Icons ---------- */
-const ICON = {
-  home: '<path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/>',
-  box: '<path d="M21 8l-9-5-9 5 9 5 9-5zM3 8v8l9 5 9-5V8M12 13v8"/>',
-  loan: '<path d="M7 7h11l-3-3M17 17H6l3 3"/>',
-  wrench: '<path d="M14.7 6.3a4 4 0 0 0-5.4 5.2L3 17.8V21h3.2l6.3-6.3a4 4 0 0 0 5.2-5.4l-2.6 2.6-2.4-.6-.6-2.4z"/>',
-  chart: '<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
-  list: '<path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>',
-  photo: '<rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-8 8"/>'
-};
-const icon = (n) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICON[n]}</svg>`;
-
 const NAV = [
-  { id: "dashboard", label: "Dashboard", short: "Home", icon: "home" },
-  { id: "assets", label: "Assets", short: "Assets", icon: "box" },
-  { id: "loans", label: "Borrowing", short: "Loans", icon: "loan" },
-  { id: "maintenance", label: "Maintenance", short: "Service", icon: "wrench" },
-  { id: "reports", label: "Reports", short: "Reports", icon: "chart" },
-  { id: "lists", label: "Lists", short: "Lists", icon: "list" }
+  { id: "dashboard", label: "Dashboard", icon: "speedometer2" },
+  { id: "assets", label: "Assets", icon: "box-seam" },
+  { id: "loans", label: "Borrowing", icon: "arrow-left-right" },
+  { id: "maintenance", label: "Maintenance", icon: "tools" },
+  { id: "reports", label: "Reports", icon: "file-earmark-bar-graph" },
+  { id: "lists", label: "Lists", icon: "card-checklist" }
 ];
 
 /* ---------- Helpers ---------- */
@@ -365,6 +295,9 @@ const plural = (n, w) => `${n} ${w}${n === 1 ? "" : "s"}`;
 let moneyFmt;
 try { moneyFmt = new Intl.NumberFormat(undefined, { style: "currency", currency: CFG.CURRENCY }); }
 catch { moneyFmt = { format: (n) => `${CFG.CURRENCY} ${Number(n).toFixed(2)}` }; }
+let wholeFmt;
+try { wholeFmt = new Intl.NumberFormat(undefined, { style: "currency", currency: CFG.CURRENCY, maximumFractionDigits: 0 }); }
+catch { wholeFmt = { format: (n) => `${CFG.CURRENCY} ${Math.round(n)}` }; }
 const money = (n) => (n === null || n === undefined || n === "") ? "—" : moneyFmt.format(Number(n));
 const nameOf = (list, id) => list.find((x) => x.id === id)?.name || "—";
 const assetById = (id) => S.assets.find((a) => a.id === Number(id));
@@ -379,17 +312,38 @@ const textOrNull = (v) => { const t = String(v ?? "").trim(); return t ? t : nul
 const options = (list, selected, blank = "— None —") =>
   `<option value="">${blank}</option>` + list.map((x) => `<option value="${x.id}" ${x.id === selected ? "selected" : ""}>${esc(x.name)}</option>`).join("");
 const plainOptions = (arr, selected) => arr.map((v) => `<option ${v === selected ? "selected" : ""}>${v}</option>`).join("");
+const badge = (tone, text, icon = "") =>
+  `<span class="badge rounded-pill bg-${tone}-subtle text-${tone}-emphasis border border-${tone}-subtle">${icon ? `<i class="bi bi-${icon} me-1"></i>` : ""}${text}</span>`;
 
-function toast(msg) {
-  const t = $("#toast"); t.textContent = msg; t.hidden = false;
-  clearTimeout(toast.timer); toast.timer = setTimeout(() => (t.hidden = true), 2600);
-}
+/* ---------- Bootstrap components ---------- */
+const modalEl = $("#modal");
+const bsModal = new bootstrap.Modal(modalEl, { focus: false });
+let modalOpen = false;
+modalEl.addEventListener("show.bs.modal", () => (modalOpen = true));
+modalEl.addEventListener("hidden.bs.modal", () => { modalOpen = false; $("#modal-body").innerHTML = ""; });
+const bsToast = bootstrap.Toast.getOrCreateInstance($("#toast"), { delay: 2800 });
+const bsConfirm = new bootstrap.Modal($("#confirmModal"));
+
+function toast(msg) { $("#toast-body").textContent = msg; bsToast.show(); }
 function friendlyError(err) {
   const m = err?.message || String(err);
   if (/duplicate key/i.test(m)) return "That name or asset tag is already in use. Choose a different one.";
   if (/Failed to fetch/i.test(m)) return "Could not reach the database. Check your internet connection and try again.";
   return m;
 }
+function confirmDialog(title, bodyHtml, okLabel = "Delete") {
+  return new Promise((resolve) => {
+    $("#confirm-title").textContent = title;
+    $("#confirm-body").innerHTML = bodyHtml;
+    const ok = $("#confirm-ok"); ok.textContent = okLabel;
+    let result = false;
+    const onOk = () => { result = true; bsConfirm.hide(); };
+    ok.addEventListener("click", onOk, { once: true });
+    $("#confirmModal").addEventListener("hidden.bs.modal", () => { ok.removeEventListener("click", onOk); resolve(result); }, { once: true });
+    bsConfirm.show();
+  });
+}
+function closeMenu() { const oc = bootstrap.Offcanvas.getInstance($("#sidenav")); if (oc) oc.hide(); }
 
 /* ---------- Data ---------- */
 async function loadAll() {
@@ -415,9 +369,9 @@ async function refresh() {
 
 /* ---------- Auth ---------- */
 async function init() {
-  $("#login-church").textContent = CFG.CHURCH_NAME;
-  $("#brand-name").textContent = CFG.CHURCH_NAME;
-  document.title = `${CFG.CHURCH_NAME} · Assets`;
+  document.querySelectorAll(".js-church").forEach((el) => (el.textContent = CFG.CHURCH_NAME));
+  document.querySelectorAll(".js-branch").forEach((el) => (el.textContent = CFG.BRANCH_NAME));
+  document.title = `Assets · ${CFG.BRANCH_NAME}`;
   if (!configured) { $("#setup-notice").hidden = false; $("#login-form").hidden = true; showLogin(); return; }
   const { data: { session } } = await sb.auth.getSession();
   session ? startApp(session) : showLogin();
@@ -427,68 +381,75 @@ function showLogin() { $("#app").hidden = true; $("#login").hidden = false; }
 async function startApp(session) {
   $("#login").hidden = true; $("#app").hidden = false;
   $("#user-email").textContent = session.user.email;
-  $("#view").innerHTML = '<p class="muted">Loading…</p>';
+  $("#view").innerHTML = `<div class="d-flex align-items-center gap-2 text-body-secondary"><div class="spinner-border spinner-border-sm text-primary"></div> Loading assets…</div>`;
   try { await loadAll(); }
   catch (err) {
-    $("#view").innerHTML = `<div class="form-error">Could not load data: ${esc(friendlyError(err))}<br>Check that you ran <b>setup.sql</b> in Supabase.</div>`;
+    $("#view").innerHTML = `<div class="alert alert-danger"><b>Could not load data.</b> ${esc(friendlyError(err))}<br>Check that you ran <b>setup.sql</b> in Supabase.</div>`;
     return;
   }
   render();
 }
 $("#login-form").addEventListener("submit", async (e) => {
   e.preventDefault();
-  const fd = new FormData(e.target), btn = e.target.querySelector("button"), errBox = $("#login-error");
-  btn.disabled = true; errBox.hidden = true;
+  const form = e.target;
+  if (!form.checkValidity()) { form.classList.add("was-validated"); return; }
+  const fd = new FormData(form), btn = form.querySelector("button"), errBox = $("#login-error");
+  btn.disabled = true; btn.innerHTML = `<span class="spinner-border spinner-border-sm me-2"></span>Signing in`;
+  errBox.hidden = true;
   const { data, error } = await sb.auth.signInWithPassword({ email: fd.get("email"), password: fd.get("password") });
-  btn.disabled = false;
+  btn.disabled = false; btn.textContent = "Sign in";
   if (error) { errBox.textContent = error.message === "Invalid login credentials" ? "Email or password is incorrect." : error.message; errBox.hidden = false; return; }
-  e.target.reset();
+  form.reset(); form.classList.remove("was-validated");
   startApp(data.session);
 });
 
-/* ---------- Alerts (used by dashboard + nav badge) ---------- */
+/* ---------- Alerts ---------- */
 function getAlerts() {
   const alerts = [];
   S.borrowings.filter((b) => !b.returned_on && b.due_on).forEach((b) => {
     const d = daysUntil(b.due_on);
-    if (d < 0) alerts.push({ level: "red", when: d, asset: b.asset_id, text: `${assetName(b.asset_id)} is overdue`, sub: `${b.borrower_name} was due to return it ${plural(-d, "day")} ago` });
-    else if (d <= 2) alerts.push({ level: "gold", when: d, asset: b.asset_id, text: `${assetName(b.asset_id)} is due back ${d === 0 ? "today" : d === 1 ? "tomorrow" : "in 2 days"}`, sub: `Borrowed by ${b.borrower_name}` });
+    if (d < 0) alerts.push({ urgent: true, icon: "arrow-left-right", when: d, asset: b.asset_id, text: `${assetName(b.asset_id)} is overdue`, sub: `${b.borrower_name} was due to return it ${plural(-d, "day")} ago` });
+    else if (d <= 2) alerts.push({ urgent: false, icon: "arrow-left-right", when: d, asset: b.asset_id, text: `${assetName(b.asset_id)} is due back ${d === 0 ? "today" : d === 1 ? "tomorrow" : "in 2 days"}`, sub: `Borrowed by ${b.borrower_name}` });
   });
   S.assets.filter((a) => a.status !== "Disposed" && a.status !== "Lost").forEach((a) => {
     const n = nextDue(a.id); if (!n) return;
     const d = daysUntil(n);
-    if (d < 0) alerts.push({ level: "red", when: d, asset: a.id, text: `${a.name} is overdue for servicing`, sub: `Was due ${fmtDate(n)}` });
-    else if (d <= CFG.REMINDER_DAYS) alerts.push({ level: "gold", when: d, asset: a.id, text: `${a.name} needs servicing ${d === 0 ? "today" : `in ${plural(d, "day")}`}`, sub: `Due ${fmtDate(n)}` });
+    if (d < 0) alerts.push({ urgent: true, icon: "tools", when: d, asset: a.id, text: `${a.name} is overdue for servicing`, sub: `Was due ${fmtDate(n)}` });
+    else if (d <= CFG.REMINDER_DAYS) alerts.push({ urgent: false, icon: "tools", when: d, asset: a.id, text: `${a.name} needs servicing ${d === 0 ? "today" : `in ${plural(d, "day")}`}`, sub: `Due ${fmtDate(n)}` });
   });
   return alerts.sort((x, y) => x.when - y.when);
 }
 
 /* ---------- Render ---------- */
 function render() {
-  const urgent = getAlerts().filter((a) => a.level === "red").length;
+  const urgent = getAlerts().filter((a) => a.urgent).length;
   $("#nav").innerHTML = NAV.map((n) => `
-    <button data-action="nav" data-view="${n.id}" class="${S.view === n.id ? "active" : ""}" ${S.view === n.id ? 'aria-current="page"' : ""}>
-      ${icon(n.icon)}<span class="label">${n.label}</span><span class="short">${n.short}</span>
-      ${n.id === "dashboard" && urgent ? `<span class="badge" aria-label="${urgent} urgent">${urgent}</span>` : ""}
+    <button class="nav-link ${S.view === n.id ? "active" : ""}" data-action="nav" data-view="${n.id}" ${S.view === n.id ? 'aria-current="page"' : ""}>
+      <i class="bi bi-${n.icon}"></i>${n.label}
+      ${n.id === "dashboard" && urgent ? `<span class="badge rounded-pill" aria-label="${urgent} urgent">${urgent}</span>` : ""}
     </button>`).join("");
+  const mb = $("#menu-badge"); mb.hidden = !urgent; mb.textContent = urgent;
   const views = { dashboard: viewDashboard, assets: viewAssets, loans: viewLoans, maintenance: viewMaintenance, reports: viewReports, lists: viewLists };
   $("#view").innerHTML = views[S.view]();
   if (S.view === "assets") renderAssetResults();
   if (S.view === "reports") renderReport();
-  window.scrollTo(0, 0);
 }
 
 function pageHead(title, sub, actions = "") {
-  return `<div class="page-head no-print"><div><h1>${title}</h1>${sub ? `<p class="muted">${sub}</p>` : ""}</div><div class="actions">${actions}</div></div>`;
+  return `<div class="d-flex flex-wrap gap-3 align-items-end justify-content-between mb-4 no-print">
+    <div><h1 class="page-title">${title}</h1>${sub ? `<div class="text-body-secondary">${sub}</div>` : ""}</div>
+    <div class="d-flex flex-wrap gap-2">${actions}</div></div>`;
 }
-function statusPill(a) {
+function statusBadge(a) {
   const loan = openLoan(a.id);
-  return `<span class="pill ${STATUS_PILL[a.status] ?? ""}">${esc(a.status)}</span>${loan ? ' <span class="pill gold">On loan</span>' : ""}`;
+  return `${badge(STATUS_TONE[a.status] || "secondary", esc(a.status))}${loan ? " " + badge("warning", "On loan", "arrow-left-right") : ""}`;
 }
-function thumb(a, cls = "thumb") {
+function thumb(a) {
   const url = a.photo_path && S.photos[a.photo_path];
-  return url ? `<img class="${cls}" src="${url}" alt="">` : `<div class="${cls} empty">${icon("photo")}</div>`;
+  return url ? `<img class="thumb" src="${url}" alt="">` : `<div class="thumb"><i class="bi bi-image"></i></div>`;
 }
+const emptyState = (icon, text, btn = "") => `<div class="empty"><i class="bi bi-${icon}"></i>${text}${btn ? `<div class="mt-3">${btn}</div>` : ""}</div>`;
+const addAssetBtn = (label = "Add asset") => `<button class="btn btn-primary" data-action="add-asset"><i class="bi bi-plus-lg me-1"></i>${label}</button>`;
 
 /* ----- Dashboard ----- */
 function viewDashboard() {
@@ -500,51 +461,62 @@ function viewDashboard() {
   const recent = [...S.assets].sort((a, b) => b.created_at.localeCompare(a.created_at)).slice(0, 5);
 
   if (!S.assets.length) {
-    return pageHead(`Welcome`, CFG.CHURCH_NAME) + `
-      <div class="panel empty-state">
-        <h2 style="color:var(--ink)">Start your asset register</h2>
-        <p>Add the first item the church owns, such as a sound mixer, keyboard, or generator.</p>
-        <button class="btn primary" data-action="add-asset">Add an asset</button>
-      </div>`;
+    return pageHead("Welcome", esc(FULL_NAME)) + `<div class="card"><div class="card-body">
+      ${emptyState("box-seam", `<h2 class="h5 text-body">Start your asset register</h2>Add the first item the church owns, such as a sound mixer, keyboard, or generator.`, addAssetBtn("Add an asset"))}
+    </div></div>`;
   }
-  return pageHead("Dashboard", CFG.CHURCH_NAME, `<button class="btn primary" data-action="add-asset">Add asset</button>`) + `
-    <div class="stats">
-      <div class="stat"><b>${active.length}</b><span>Assets held</span></div>
-      <div class="stat"><b>${money(value)}</b><span>Total recorded value</span></div>
-      <div class="stat"><b>${out}</b><span>Out on loan</span></div>
-      <div class="stat"><b>${repair}</b><span>Under repair</span></div>
+  const stat = (icon, tone, val, label, view) => `
+    <div class="col-6 col-xl-3"><div class="card stat-card h-100 ${view ? "list-group-item-action" : ""}" ${view ? `data-action="nav" data-view="${view}" role="button" tabindex="0"` : ""}>
+      <div class="card-body d-flex gap-3 align-items-center">
+        <div class="icon ${tone}"><i class="bi bi-${icon}"></i></div>
+        <div class="min-w-0"><div class="value">${val}</div><div class="text-body-secondary small">${label}</div></div>
+      </div></div></div>`;
+  return pageHead("Dashboard", esc(FULL_NAME), addAssetBtn()) + `
+    <div class="row g-3 mb-4">
+      ${stat("box-seam", "", active.length, "Assets held", "assets")}
+      ${stat("cash-stack", "", wholeFmt.format(value), "Total recorded value")}
+      ${stat("arrow-left-right", "gold", out, "Out on loan", "loans")}
+      ${stat("tools", repair ? "red" : "", repair, "Under repair", "maintenance")}
     </div>
-    <div class="dash-grid">
-      <section class="panel">
-        <div class="panel-head"><h2>Needs attention</h2></div>
-        ${alerts.length ? `<ul class="alerts">${alerts.map((a) => `
-          <li><button class="${a.level}" data-action="open-asset" data-id="${a.asset}">
-            <span><b>${esc(a.text)}</b><small>${esc(a.sub)}</small></span>
-          </button></li>`).join("")}</ul>`
-        : `<div class="all-clear"><b>All clear.</b> No overdue loans or maintenance due in the next ${CFG.REMINDER_DAYS} days.</div>`}
-      </section>
-      <section class="panel">
-        <div class="panel-head"><h2>Recently added</h2><button class="btn sm" data-action="nav" data-view="assets">See all</button></div>
-        <ul class="plain-list" style="margin:0">${recent.map((a) => `
-          <li style="justify-content:flex-start;gap:.75rem">${thumb(a)}
-            <button class="link" data-action="open-asset" data-id="${a.id}">${esc(a.name)}</button>
-            <span class="muted small" style="margin-left:auto">${esc(nameOf(S.locations, a.location_id))}</span></li>`).join("")}
-        </ul>
-      </section>
+    <div class="row g-4">
+      <div class="col-lg-7"><div class="card h-100">
+        <div class="card-header d-flex justify-content-between align-items-center"><span><i class="bi bi-bell me-2 text-primary"></i>Needs attention</span>
+          ${alerts.length ? `<span class="badge text-bg-primary rounded-pill">${alerts.length}</span>` : ""}</div>
+        ${alerts.length ? `<div class="list-group list-group-flush">${alerts.map((a) => `
+          <button class="list-group-item list-group-item-action alert-item ${a.urgent ? "urgent" : ""} d-flex gap-3 align-items-start py-3" data-action="open-asset" data-id="${a.asset}">
+            <i class="bi bi-${a.icon} fs-5 ${a.urgent ? "text-danger" : "text-warning-emphasis"}"></i>
+            <span><span class="fw-bold d-block">${esc(a.text)}</span><small class="text-body-secondary">${esc(a.sub)}</small></span>
+            ${a.urgent ? `<span class="ms-auto">${badge("danger", "Overdue")}</span>` : ""}
+          </button>`).join("")}</div>`
+        : `<div class="card-body"><div class="alert alert-success mb-0 d-flex gap-2"><i class="bi bi-check-circle-fill"></i>
+            <div><b>All clear.</b> No overdue loans or maintenance due in the next ${CFG.REMINDER_DAYS} days.</div></div></div>`}
+      </div></div>
+      <div class="col-lg-5"><div class="card h-100">
+        <div class="card-header d-flex justify-content-between align-items-center"><span><i class="bi bi-clock-history me-2 text-primary"></i>Recently added</span>
+          <button class="btn btn-sm btn-outline-primary" data-action="nav" data-view="assets">See all</button></div>
+        <div class="list-group list-group-flush">${recent.map((a) => `
+          <button class="list-group-item list-group-item-action d-flex gap-3 align-items-center" data-action="open-asset" data-id="${a.id}">
+            ${thumb(a)}<span class="min-w-0"><span class="fw-bold d-block text-truncate">${esc(a.name)}</span>
+            <small class="text-body-secondary">${esc(nameOf(S.locations, a.location_id))}</small></span>
+          </button>`).join("")}</div>
+      </div></div>
     </div>`;
 }
 
 /* ----- Assets ----- */
 function viewAssets() {
   const f = S.filters;
-  return pageHead("Assets", plural(S.assets.length, "item") + " recorded", `<button class="btn primary" data-action="add-asset">Add asset</button>`) + `
-    <div class="toolbar">
-      <input type="search" id="f-q" placeholder="Search by name, tag, or serial number" value="${esc(f.q)}" aria-label="Search assets">
-      <select id="f-category" aria-label="Category">${options(S.categories, Number(f.category) || null, "All categories")}</select>
-      <select id="f-location" aria-label="Location">${options(S.locations, Number(f.location) || null, "All locations")}</select>
-      <select id="f-ministry" aria-label="Ministry">${options(S.ministries, Number(f.ministry) || null, "All ministries")}</select>
-      <select id="f-status" aria-label="Status"><option value="">All statuses</option>${plainOptions(STATUSES, f.status)}</select>
-    </div>
+  return pageHead("Assets", plural(S.assets.length, "item") + " recorded", addAssetBtn()) + `
+    <div class="card mb-3"><div class="card-body"><div class="row g-2">
+      <div class="col-12 col-lg-4"><div class="input-group">
+        <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+        <input type="search" class="form-control" id="f-q" placeholder="Search name, tag or serial number" value="${esc(f.q)}" aria-label="Search assets">
+      </div></div>
+      <div class="col-6 col-lg-2"><select class="form-select" id="f-category" aria-label="Category">${options(S.categories, Number(f.category) || null, "All categories")}</select></div>
+      <div class="col-6 col-lg-2"><select class="form-select" id="f-location" aria-label="Location">${options(S.locations, Number(f.location) || null, "All locations")}</select></div>
+      <div class="col-6 col-lg-2"><select class="form-select" id="f-ministry" aria-label="Ministry">${options(S.ministries, Number(f.ministry) || null, "All ministries")}</select></div>
+      <div class="col-6 col-lg-2"><select class="form-select" id="f-status" aria-label="Status"><option value="">All statuses</option>${plainOptions(STATUSES, f.status)}</select></div>
+    </div></div></div>
     <div id="asset-results"></div>`;
 }
 function filteredAssets() {
@@ -559,21 +531,21 @@ function filteredAssets() {
 function renderAssetResults() {
   const el = $("#asset-results"); if (!el) return;
   const list = filteredAssets();
-  if (!S.assets.length) { el.innerHTML = `<div class="panel empty-state">No assets yet.<br><button class="btn primary" data-action="add-asset">Add your first asset</button></div>`; return; }
-  if (!list.length) { el.innerHTML = `<div class="panel empty-state">No assets match these filters. Clear the search or choose a different filter.</div>`; return; }
-  el.innerHTML = `<div class="table-wrap"><table>
-    <thead><tr><th></th><th>Name</th><th class="hide-sm">Category</th><th class="hide-sm">Location</th><th class="hide-sm">Ministry</th><th>Status</th><th class="num hide-sm">Value</th></tr></thead>
+  if (!S.assets.length) { el.innerHTML = `<div class="card">${emptyState("box-seam", "No assets yet.", addAssetBtn("Add your first asset"))}</div>`; return; }
+  if (!list.length) { el.innerHTML = `<div class="card">${emptyState("funnel", "No assets match these filters. Clear the search or choose a different filter.")}</div>`; return; }
+  el.innerHTML = `<div class="card"><div class="table-responsive"><table class="table table-hover align-middle mb-0">
+    <thead><tr><th></th><th>Name</th><th class="d-none d-md-table-cell">Category</th><th class="d-none d-lg-table-cell">Location</th><th class="d-none d-lg-table-cell">Ministry</th><th>Status</th><th class="text-end d-none d-md-table-cell">Value</th></tr></thead>
     <tbody>${list.map((a) => `
       <tr data-action="open-asset" data-id="${a.id}">
-        <td style="width:56px">${thumb(a)}</td>
-        <td><button class="link" data-action="open-asset" data-id="${a.id}">${esc(a.name)}</button>${a.asset_tag ? `<div class="muted small">${esc(a.asset_tag)}</div>` : ""}</td>
-        <td class="hide-sm">${esc(nameOf(S.categories, a.category_id))}</td>
-        <td class="hide-sm">${esc(nameOf(S.locations, a.location_id))}</td>
-        <td class="hide-sm">${esc(nameOf(S.ministries, a.ministry_id))}</td>
-        <td>${statusPill(a)}</td>
-        <td class="num hide-sm">${money(a.cost)}</td>
+        <td style="width:62px">${thumb(a)}</td>
+        <td><a href="#" class="fw-bold text-decoration-none" data-action="open-asset" data-id="${a.id}">${esc(a.name)}</a>${a.asset_tag ? `<div class="text-body-secondary small">${esc(a.asset_tag)}</div>` : ""}</td>
+        <td class="d-none d-md-table-cell">${esc(nameOf(S.categories, a.category_id))}</td>
+        <td class="d-none d-lg-table-cell">${esc(nameOf(S.locations, a.location_id))}</td>
+        <td class="d-none d-lg-table-cell">${esc(nameOf(S.ministries, a.ministry_id))}</td>
+        <td>${statusBadge(a)}</td>
+        <td class="text-end text-nowrap d-none d-md-table-cell">${money(a.cost)}</td>
       </tr>`).join("")}</tbody></table></div>
-    <p class="muted small">Showing ${list.length} of ${S.assets.length}</p>`;
+    <div class="card-footer bg-white text-body-secondary small">Showing ${list.length} of ${S.assets.length}</div></div>`;
 }
 
 /* ----- Borrowing ----- */
@@ -582,56 +554,59 @@ function viewLoans() {
   const rows = S.loanTab === "out" ? out : S.borrowings;
   const dueCell = (b) => {
     if (b.returned_on) return fmtDate(b.due_on);
-    if (!b.due_on) return '<span class="muted">No date</span>';
+    if (!b.due_on) return '<span class="text-body-secondary">No date</span>';
     const d = daysUntil(b.due_on);
-    return `${fmtDate(b.due_on)} ${d < 0 ? '<span class="pill red">Overdue</span>' : d <= 2 ? '<span class="pill gold">Soon</span>' : ""}`;
+    return `${fmtDate(b.due_on)} ${d < 0 ? badge("danger", "Overdue") : d <= 2 ? badge("warning", "Soon") : ""}`;
   };
-  return pageHead("Borrowing", `${plural(out.length, "item")} currently out`, `<button class="btn primary" data-action="lend">Lend an item</button>`) + `
-    <div class="tabs" role="tablist">
-      <button role="tab" data-action="loan-tab" data-tab="out" class="${S.loanTab === "out" ? "active" : ""}">Out now (${out.length})</button>
-      <button role="tab" data-action="loan-tab" data-tab="all" class="${S.loanTab === "all" ? "active" : ""}">Full history</button>
-    </div>
-    ${rows.length ? `<div class="table-wrap"><table>
-      <thead><tr><th>Item</th><th>Borrower</th><th class="hide-sm">Purpose</th><th class="hide-sm">Borrowed</th><th>Due back</th><th>${S.loanTab === "out" ? "" : "Returned"}</th></tr></thead>
+  return pageHead("Borrowing", `${plural(out.length, "item")} currently out`,
+      `<button class="btn btn-primary" data-action="lend"><i class="bi bi-box-arrow-up-right me-1"></i>Lend an item</button>`) + `
+    <ul class="nav nav-pills mb-3" role="tablist">
+      <li class="nav-item"><button class="nav-link ${S.loanTab === "out" ? "active" : ""}" data-action="loan-tab" data-tab="out">Out now <span class="badge ${S.loanTab === "out" ? "bg-white text-primary" : "text-bg-primary"} ms-1">${out.length}</span></button></li>
+      <li class="nav-item"><button class="nav-link ${S.loanTab === "all" ? "active" : ""}" data-action="loan-tab" data-tab="all">Full history</button></li>
+    </ul>
+    <div class="card">${rows.length ? `<div class="table-responsive"><table class="table align-middle mb-0">
+      <thead><tr><th>Item</th><th>Borrower</th><th class="d-none d-md-table-cell">Purpose</th><th class="d-none d-md-table-cell">Borrowed</th><th>Due back</th><th>${S.loanTab === "out" ? "" : "Returned"}</th></tr></thead>
       <tbody>${rows.map((b) => `<tr>
-        <td><button class="link" data-action="open-asset" data-id="${b.asset_id}">${esc(assetName(b.asset_id))}</button></td>
-        <td>${esc(b.borrower_name)}${b.borrower_phone ? `<div class="muted small">${esc(b.borrower_phone)}</div>` : ""}</td>
-        <td class="hide-sm">${esc(b.purpose || "—")}</td>
-        <td class="hide-sm">${fmtDate(b.borrowed_on)}</td>
-        <td>${dueCell(b)}</td>
-        <td>${b.returned_on ? fmtDate(b.returned_on) : `<button class="btn sm" data-action="return-loan" data-id="${b.id}">Mark returned</button>`}</td>
+        <td><a href="#" class="fw-bold text-decoration-none" data-action="open-asset" data-id="${b.asset_id}">${esc(assetName(b.asset_id))}</a></td>
+        <td>${esc(b.borrower_name)}${b.borrower_phone ? `<div class="small"><a href="tel:${esc(b.borrower_phone)}" class="text-body-secondary"><i class="bi bi-telephone me-1"></i>${esc(b.borrower_phone)}</a></div>` : ""}</td>
+        <td class="d-none d-md-table-cell">${esc(b.purpose || "—")}</td>
+        <td class="d-none d-md-table-cell text-nowrap">${fmtDate(b.borrowed_on)}</td>
+        <td class="text-nowrap">${dueCell(b)}</td>
+        <td class="text-end">${b.returned_on ? `<span class="text-nowrap">${fmtDate(b.returned_on)}</span>` : `<button class="btn btn-sm btn-outline-primary text-nowrap" data-action="return-loan" data-id="${b.id}"><i class="bi bi-check2 me-1"></i>Mark returned</button>`}</td>
       </tr>`).join("")}</tbody></table></div>`
-    : `<div class="panel empty-state">${S.loanTab === "out" ? "Nothing is out on loan right now." : "No borrowing recorded yet."}</div>`}`;
+    : emptyState("inbox", S.loanTab === "out" ? "Nothing is out on loan right now." : "No borrowing recorded yet.")}</div>`;
 }
 
 /* ----- Maintenance ----- */
 function viewMaintenance() {
   const upcoming = S.assets.filter((a) => a.status !== "Disposed" && nextDue(a.id))
     .map((a) => ({ a, due: nextDue(a.id) })).sort((x, y) => x.due.localeCompare(y.due));
-  return pageHead("Maintenance", "Servicing schedule and repair history", `<button class="btn primary" data-action="log-service">Log maintenance</button>`) + `
-    <section class="panel">
-      <div class="panel-head"><h2>Next services</h2></div>
-      ${upcoming.length ? `<ul class="plain-list" style="margin:0">${upcoming.map(({ a, due }) => {
+  return pageHead("Maintenance", "Servicing schedule and repair history",
+      `<button class="btn btn-primary" data-action="log-service"><i class="bi bi-plus-lg me-1"></i>Log maintenance</button>`) + `
+    <div class="card mb-4">
+      <div class="card-header"><i class="bi bi-calendar-check me-2 text-primary"></i>Next services</div>
+      ${upcoming.length ? `<div class="list-group list-group-flush">${upcoming.map(({ a, due }) => {
         const d = daysUntil(due);
-        const pill = d < 0 ? '<span class="pill red">Overdue</span>' : d <= CFG.REMINDER_DAYS ? '<span class="pill gold">Due soon</span>' : '<span class="pill green">Scheduled</span>';
-        return `<li><button class="link" data-action="open-asset" data-id="${a.id}">${esc(a.name)}</button><span>${fmtDate(due)} ${pill}</span></li>`;
-      }).join("")}</ul>`
-      : `<p class="muted" style="margin:0">No services scheduled. When you log maintenance, add a “next service” date to get reminders.</p>`}
-    </section>
-    <section class="panel">
-      <div class="panel-head"><h2>History</h2></div>
-      ${S.maintenance.length ? `<div class="table-wrap"><table>
-        <thead><tr><th>Date</th><th>Item</th><th>Work done</th><th class="hide-sm">Done by</th><th class="num">Cost</th><th></th></tr></thead>
+        const b = d < 0 ? badge("danger", "Overdue") : d <= CFG.REMINDER_DAYS ? badge("warning", "Due soon") : badge("success", "Scheduled");
+        return `<button class="list-group-item list-group-item-action d-flex justify-content-between align-items-center gap-2" data-action="open-asset" data-id="${a.id}">
+          <span class="fw-bold">${esc(a.name)}</span><span class="text-nowrap">${fmtDate(due)} ${b}</span></button>`;
+      }).join("")}</div>`
+      : `<div class="card-body text-body-secondary">No services scheduled. When you log maintenance, add a “next service” date to get reminders.</div>`}
+    </div>
+    <div class="card">
+      <div class="card-header"><i class="bi bi-journal-text me-2 text-primary"></i>History</div>
+      ${S.maintenance.length ? `<div class="table-responsive"><table class="table align-middle mb-0">
+        <thead><tr><th>Date</th><th>Item</th><th>Work done</th><th class="d-none d-md-table-cell">Done by</th><th class="text-end">Cost</th><th></th></tr></thead>
         <tbody>${S.maintenance.map((m) => `<tr>
-          <td>${fmtDate(m.service_date)}</td>
-          <td><button class="link" data-action="open-asset" data-id="${m.asset_id}">${esc(assetName(m.asset_id))}</button></td>
+          <td class="text-nowrap">${fmtDate(m.service_date)}</td>
+          <td><a href="#" class="fw-bold text-decoration-none" data-action="open-asset" data-id="${m.asset_id}">${esc(assetName(m.asset_id))}</a></td>
           <td>${esc(m.description)}</td>
-          <td class="hide-sm">${esc(m.performed_by || "—")}</td>
-          <td class="num">${money(m.cost)}</td>
-          <td><button class="btn sm danger" data-action="delete-service" data-id="${m.id}" aria-label="Delete record">Delete</button></td>
+          <td class="d-none d-md-table-cell">${esc(m.performed_by || "—")}</td>
+          <td class="text-end text-nowrap">${money(m.cost)}</td>
+          <td class="text-end"><button class="btn btn-sm btn-outline-danger" data-action="delete-service" data-id="${m.id}" aria-label="Delete record"><i class="bi bi-trash"></i></button></td>
         </tr>`).join("")}</tbody></table></div>`
-      : `<p class="muted" style="margin:0">No maintenance logged yet.</p>`}
-    </section>`;
+      : `<div class="card-body text-body-secondary">No maintenance logged yet.</div>`}
+    </div>`;
 }
 
 /* ----- Reports ----- */
@@ -663,54 +638,60 @@ function groupBy(field, list, label) {
 }
 function viewReports() {
   return pageHead("Reports", "Download for audits and council meetings",
-    `<button class="btn" data-action="export-xlsx">Download Excel</button><button class="btn primary" data-action="print">Print or save PDF</button>`) + `
-    <div class="tabs no-print">${Object.entries(REPORTS).map(([k, r]) =>
-      `<button data-action="report" data-report="${k}" class="${S.report === k ? "active" : ""}">${r.title}</button>`).join("")}</div>
-    <div class="print-head"><h1>${esc(CFG.CHURCH_NAME)}</h1><h2>${REPORTS[S.report].title}</h2><p>Printed ${fmtDate(today())}</p></div>
+    `<button class="btn btn-outline-primary" data-action="export-xlsx"><i class="bi bi-file-earmark-excel me-1"></i>Download Excel</button>
+     <button class="btn btn-primary" data-action="print"><i class="bi bi-printer me-1"></i>Print or save PDF</button>`) + `
+    <ul class="nav nav-pills flex-wrap gap-1 mb-3 no-print">${Object.entries(REPORTS).map(([k, r]) =>
+      `<li class="nav-item"><button class="nav-link ${S.report === k ? "active" : ""}" data-action="report" data-report="${k}">${r.title}</button></li>`).join("")}</ul>
+    <div class="print-head"><img src="logo.png" alt=""><div>
+      <div class="fw-bold fs-5">${esc(CFG.CHURCH_NAME)}, ${esc(CFG.BRANCH_NAME)}</div>
+      <div class="fw-bold">${REPORTS[S.report].title}</div><div class="small">Printed ${fmtDate(today())}</div></div></div>
     <div id="report-out"></div>`;
 }
 function renderReport() {
   const rows = REPORTS[S.report].rows();
   const el = $("#report-out");
-  if (!rows.length) { el.innerHTML = `<div class="panel empty-state">No records for this report yet.</div>`; return; }
+  if (!rows.length) { el.innerHTML = `<div class="card">${emptyState("file-earmark", "No records for this report yet.")}</div>`; return; }
   const cols = Object.keys(rows[0]);
   const isMoney = (c) => c.startsWith("Cost") || c.startsWith("Total value");
+  const isNum = (c) => isMoney(c) || c.startsWith("Number");
   const totalCol = cols.find(isMoney);
   const total = totalCol ? rows.reduce((s, r) => s + (Number(r[totalCol]) || 0), 0) : null;
-  el.innerHTML = `<div class="table-wrap"><table>
-    <thead><tr>${cols.map((c) => `<th class="${isMoney(c) || c.startsWith("Number") ? "num" : ""}">${esc(c)}</th>`).join("")}</tr></thead>
-    <tbody>${rows.map((r) => `<tr>${cols.map((c) => `<td class="${isMoney(c) || c.startsWith("Number") ? "num" : ""}">${isMoney(c) ? (r[c] === "" ? "—" : money(r[c])) : esc(r[c])}</td>`).join("")}</tr>`).join("")}</tbody>
-    ${totalCol ? `<tfoot><tr>${cols.map((c, i) => `<td class="${isMoney(c) ? "num" : ""}"><b>${i === 0 ? "Total" : c === totalCol ? money(total) : ""}</b></td>`).join("")}</tr></tfoot>` : ""}
-  </table></div><p class="muted small">${plural(rows.length, "row")}</p>`;
+  el.innerHTML = `<div class="card"><div class="table-responsive"><table class="table table-striped align-middle mb-0">
+    <thead><tr>${cols.map((c) => `<th class="${isNum(c) ? "text-end" : ""}">${esc(c)}</th>`).join("")}</tr></thead>
+    <tbody>${rows.map((r) => `<tr>${cols.map((c) => `<td class="${isNum(c) ? "text-end text-nowrap" : ""}">${isMoney(c) ? (r[c] === "" ? "—" : money(r[c])) : esc(r[c])}</td>`).join("")}</tr>`).join("")}</tbody>
+    ${totalCol ? `<tfoot class="table-group-divider"><tr>${cols.map((c, i) => `<td class="fw-bold ${isMoney(c) ? "text-end text-nowrap" : ""}">${i === 0 ? "Total" : c === totalCol ? money(total) : ""}</td>`).join("")}</tr></tfoot>` : ""}
+  </table></div><div class="card-footer bg-white text-body-secondary small">${plural(rows.length, "row")}</div></div>`;
 }
 
 /* ----- Lists ----- */
 function viewLists() {
-  const block = (table, title, list) => `
-    <section class="panel">
-      <h2>${title}</h2>
-      <form class="inline-form" data-form="list" data-table="${table}" style="margin-top:1rem">
-        <input name="name" required placeholder="Add new…" aria-label="New ${title.toLowerCase()} name">
-        <button class="btn" type="submit">Add</button>
-      </form>
-      <ul class="plain-list">${list.map((x) => `<li><span>${esc(x.name)}</span>
-        <button class="btn sm danger" data-action="delete-item" data-table="${table}" data-id="${x.id}">Remove</button></li>`).join("") || '<li class="muted">None yet</li>'}</ul>
-    </section>`;
+  const block = (table, title, icon, list) => `
+    <div class="col-md-6 col-xl-4"><div class="card h-100">
+      <div class="card-header"><i class="bi bi-${icon} me-2 text-primary"></i>${title}</div>
+      <div class="card-body pb-2">
+        <form class="input-group" data-form="list" data-table="${table}">
+          <input class="form-control" name="name" required placeholder="Add new…" aria-label="New ${title.toLowerCase()} name">
+          <button class="btn btn-primary" type="submit" aria-label="Add"><i class="bi bi-plus-lg"></i></button>
+        </form>
+      </div>
+      <ul class="list-group list-group-flush">${list.map((x) => `<li class="list-group-item d-flex justify-content-between align-items-center">
+        <span>${esc(x.name)}</span>
+        <button class="btn btn-sm btn-link text-danger" data-action="delete-item" data-table="${table}" data-id="${x.id}" aria-label="Remove ${esc(x.name)}"><i class="bi bi-x-circle"></i></button></li>`).join("")
+        || '<li class="list-group-item text-body-secondary">None yet</li>'}</ul>
+    </div></div>`;
   return pageHead("Lists", "The choices that appear when you add or edit an asset") + `
-    <div class="list-grid">${block("categories", "Categories", S.categories)}${block("locations", "Locations", S.locations)}${block("ministries", "Ministries", S.ministries)}</div>
-    <p class="muted small" style="margin-top:1.5rem">Signed in as ${esc($("#user-email").textContent)}.
-      <button class="link mobile-only" data-action="logout" style="display:none">Sign out</button></p>`;
+    <div class="row g-4">${block("categories", "Categories", "tags", S.categories)}${block("locations", "Locations", "geo-alt", S.locations)}${block("ministries", "Ministries", "people", S.ministries)}</div>`;
 }
 
-/* ---------- Modal ---------- */
+/* ---------- Dialogs ---------- */
 function openModal(title, body) {
-  $("#modal-content").innerHTML = `<div class="modal-head"><h2>${title}</h2><button data-action="close-modal" aria-label="Close">×</button></div><div class="modal-body">${body}</div>`;
-  const m = $("#modal"); if (!m.open) m.showModal();
-  const first = m.querySelector(".modal-body input:not([type=hidden]), .modal-body select, .modal-body textarea");
-  if (first && !first.closest(".detail-top")) first.focus();
+  $("#modal-title").innerHTML = title;
+  $("#modal-body").innerHTML = body;
+  $("#modal-body").scrollTop = 0;
+  if (!modalOpen) bsModal.show();
+  setTimeout(() => $("#modal-body").querySelector("form .form-control, form .form-select")?.focus(), modalOpen ? 0 : 320);
 }
-function closeModal() { $("#modal").close(); }
-$("#modal").addEventListener("click", (e) => { if (e.target === e.currentTarget) closeModal(); });
+function closeModal() { bsModal.hide(); }
 
 function assetDetail(id) {
   const a = assetById(id); if (!a) return;
@@ -720,94 +701,141 @@ function assetDetail(id) {
   const due = nextDue(a.id);
   const url = a.photo_path && S.photos[a.photo_path];
   openModal(esc(a.name), `
-    ${loan ? `<div class="callout gold"><b>On loan to ${esc(loan.borrower_name)}</b>${loan.due_on ? `, due back ${fmtDate(loan.due_on)}` : ""}.
-      <button class="btn sm" style="margin-left:.5rem" data-action="return-loan" data-id="${loan.id}">Mark returned</button></div>` : ""}
-    <div class="detail-top">
-      ${url ? `<img class="detail-photo" src="${url}" alt="Photo of ${esc(a.name)}">` : `<div class="detail-photo">${icon("photo")}</div>`}
-      <dl class="facts">
-        <dt>Status</dt><dd>${statusPill(a)}</dd>
-        <dt>Condition</dt><dd>${esc(a.condition)}</dd>
-        <dt>Asset tag</dt><dd>${esc(a.asset_tag || "—")}</dd>
-        <dt>Category</dt><dd>${esc(nameOf(S.categories, a.category_id))}</dd>
-        <dt>Location</dt><dd>${esc(nameOf(S.locations, a.location_id))}</dd>
-        <dt>Ministry</dt><dd>${esc(nameOf(S.ministries, a.ministry_id))}</dd>
-        <dt>Serial no.</dt><dd>${esc(a.serial_number || "—")}</dd>
-        <dt>Purchased</dt><dd>${fmtDate(a.purchase_date)}</dd>
-        <dt>Cost</dt><dd>${money(a.cost)}</dd>
-        <dt>Next service</dt><dd>${fmtDate(due)}</dd>
-      </dl>
+    ${loan ? `<div class="alert alert-warning d-flex flex-wrap gap-2 align-items-center"><i class="bi bi-arrow-left-right"></i>
+      <span><b>On loan to ${esc(loan.borrower_name)}</b>${loan.due_on ? `, due back ${fmtDate(loan.due_on)}` : ""}.</span>
+      <button class="btn btn-sm btn-warning ms-auto" data-action="return-loan" data-id="${loan.id}">Mark returned</button></div>` : ""}
+    <div class="row g-4 mb-3">
+      <div class="col-sm-4">${url ? `<img class="detail-photo" src="${url}" alt="Photo of ${esc(a.name)}">` : `<div class="detail-photo"><i class="bi bi-image"></i></div>`}</div>
+      <div class="col-sm-8"><dl class="row facts mb-0">
+        <dt class="col-5">Status</dt><dd class="col-7">${statusBadge(a)}</dd>
+        <dt class="col-5">Condition</dt><dd class="col-7">${esc(a.condition)}</dd>
+        <dt class="col-5">Asset tag</dt><dd class="col-7">${esc(a.asset_tag || "—")}</dd>
+        <dt class="col-5">Category</dt><dd class="col-7">${esc(nameOf(S.categories, a.category_id))}</dd>
+        <dt class="col-5">Location</dt><dd class="col-7">${esc(nameOf(S.locations, a.location_id))}</dd>
+        <dt class="col-5">Ministry</dt><dd class="col-7">${esc(nameOf(S.ministries, a.ministry_id))}</dd>
+        <dt class="col-5">Serial no.</dt><dd class="col-7">${esc(a.serial_number || "—")}</dd>
+        <dt class="col-5">Purchased</dt><dd class="col-7">${fmtDate(a.purchase_date)}</dd>
+        <dt class="col-5">Cost</dt><dd class="col-7">${money(a.cost)}</dd>
+        <dt class="col-5">Next service</dt><dd class="col-7">${fmtDate(due)}</dd>
+      </dl></div>
     </div>
-    ${a.notes ? `<p style="white-space:pre-wrap">${esc(a.notes)}</p>` : ""}
-    <div class="actions">
-      <button class="btn primary" data-action="edit-asset" data-id="${a.id}">Edit</button>
-      ${loan ? "" : `<button class="btn" data-action="lend" data-id="${a.id}">Lend out</button>`}
-      <button class="btn" data-action="log-service" data-id="${a.id}">Log maintenance</button>
-      <button class="btn danger" data-action="delete-asset" data-id="${a.id}">Delete</button>
+    ${a.notes ? `<p class="bg-body-tertiary rounded p-3" style="white-space:pre-wrap">${esc(a.notes)}</p>` : ""}
+    <div class="d-flex flex-wrap gap-2 mb-4">
+      <button class="btn btn-primary" data-action="edit-asset" data-id="${a.id}"><i class="bi bi-pencil me-1"></i>Edit</button>
+      ${loan ? "" : `<button class="btn btn-outline-primary" data-action="lend" data-id="${a.id}"><i class="bi bi-box-arrow-up-right me-1"></i>Lend out</button>`}
+      <button class="btn btn-outline-primary" data-action="log-service" data-id="${a.id}"><i class="bi bi-tools me-1"></i>Log maintenance</button>
+      <button class="btn btn-outline-danger ms-sm-auto" data-action="delete-asset" data-id="${a.id}"><i class="bi bi-trash me-1"></i>Delete</button>
     </div>
-    <h3 class="section-title">Maintenance (${services.length})</h3>
-    ${services.length ? `<ul class="plain-list" style="margin:0">${services.map((m) => `<li><span>${fmtDate(m.service_date)}: ${esc(m.description)}</span><span class="muted">${money(m.cost)}</span></li>`).join("")}</ul>` : '<p class="muted small" style="margin:0">None logged.</p>'}
-    <h3 class="section-title">Borrowing (${loans.length})</h3>
-    ${loans.length ? `<ul class="plain-list" style="margin:0">${loans.map((b) => `<li><span>${esc(b.borrower_name)}${b.purpose ? ` · ${esc(b.purpose)}` : ""}</span><span class="muted small">${fmtDate(b.borrowed_on)} → ${b.returned_on ? fmtDate(b.returned_on) : "not returned"}</span></li>`).join("")}</ul>` : '<p class="muted small" style="margin:0">Never borrowed.</p>'}
-  `);
+    <div class="accordion" id="history">
+      <div class="accordion-item">
+        <h3 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#h-maint">
+          <i class="bi bi-tools me-2"></i>Maintenance history <span class="badge text-bg-primary rounded-pill ms-2">${services.length}</span></button></h3>
+        <div id="h-maint" class="accordion-collapse collapse" data-bs-parent="#history"><div class="accordion-body p-0">
+          ${services.length ? `<ul class="list-group list-group-flush">${services.map((m) => `<li class="list-group-item d-flex justify-content-between gap-2"><span>${fmtDate(m.service_date)}: ${esc(m.description)}</span><span class="text-body-secondary text-nowrap">${money(m.cost)}</span></li>`).join("")}</ul>`
+          : '<p class="text-body-secondary m-3">None logged.</p>'}</div></div>
+      </div>
+      <div class="accordion-item">
+        <h3 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#h-loans">
+          <i class="bi bi-arrow-left-right me-2"></i>Borrowing history <span class="badge text-bg-primary rounded-pill ms-2">${loans.length}</span></button></h3>
+        <div id="h-loans" class="accordion-collapse collapse" data-bs-parent="#history"><div class="accordion-body p-0">
+          ${loans.length ? `<ul class="list-group list-group-flush">${loans.map((b) => `<li class="list-group-item d-flex flex-wrap justify-content-between gap-2"><span>${esc(b.borrower_name)}${b.purpose ? ` · ${esc(b.purpose)}` : ""}</span><span class="text-body-secondary small">${fmtDate(b.borrowed_on)} → ${b.returned_on ? fmtDate(b.returned_on) : "not returned"}</span></li>`).join("")}</ul>`
+          : '<p class="text-body-secondary m-3">Never borrowed.</p>'}</div></div>
+      </div>
+    </div>`);
 }
 
+const formFoot = (label) => `<div class="alert alert-danger mt-3 mb-0 js-error" hidden></div>
+  <div class="d-flex justify-content-end gap-2 mt-4">
+    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+    <button class="btn btn-primary" type="submit">${label}</button></div>`;
+const money_input = (name, value = "") => `<div class="input-group"><span class="input-group-text">${esc(CFG.CURRENCY)}</span>
+  <input type="number" class="form-control" id="f_${name}" name="${name}" min="0" step="0.01" value="${value ?? ""}"></div>`;
+
 function assetForm(a = {}) {
-  openModal(a.id ? "Edit asset" : "Add asset", `
-    <form data-form="asset" data-id="${a.id || ""}">
-      <div class="form-grid">
-        <label class="full">Name <input name="name" required value="${esc(a.name)}" placeholder="e.g. Yamaha MG16 mixer"></label>
-        <label>Asset tag <span class="hint">Your own label number, optional</span><input name="asset_tag" value="${esc(a.asset_tag)}" placeholder="e.g. CH-0042"></label>
-        <label>Serial number <span class="hint">From the manufacturer</span><input name="serial_number" value="${esc(a.serial_number)}"></label>
-        <label>Category <select name="category_id">${options(S.categories, a.category_id ?? null)}</select></label>
-        <label>Location <select name="location_id">${options(S.locations, a.location_id ?? null)}</select></label>
-        <label>Ministry responsible <select name="ministry_id">${options(S.ministries, a.ministry_id ?? null)}</select></label>
-        <label>Status <select name="status">${plainOptions(STATUSES, a.status || "In use")}</select></label>
-        <label>Condition <select name="condition">${plainOptions(CONDITIONS, a.condition || "Good")}</select></label>
-        <label>Purchase date <input type="date" name="purchase_date" value="${esc(a.purchase_date)}"></label>
-        <label>Cost (${esc(CFG.CURRENCY)}) <input type="number" name="cost" min="0" step="0.01" value="${a.cost ?? ""}"></label>
-        <label>Photo <span class="hint">${a.photo_path ? "Choose a file to replace the current photo" : "Optional, up to 5 MB"}</span><input type="file" name="photo" accept="image/*"></label>
-        <label class="full">Notes <textarea name="notes" placeholder="Donor, warranty details, accessories included…">${esc(a.notes)}</textarea></label>
+  openModal(a.id ? `<i class="bi bi-pencil me-2"></i>Edit asset` : `<i class="bi bi-plus-circle me-2"></i>Add asset`, `
+    <form data-form="asset" data-id="${a.id || ""}" novalidate>
+      <div class="row g-3">
+        <div class="col-12"><label class="form-label fw-bold" for="f_name">Name</label>
+          <input class="form-control" id="f_name" name="name" required value="${esc(a.name)}" placeholder="e.g. Yamaha MG16 mixer">
+          <div class="invalid-feedback">Enter a name for this asset.</div></div>
+        <div class="col-md-6"><label class="form-label fw-bold" for="f_tag">Asset tag</label>
+          <input class="form-control" id="f_tag" name="asset_tag" value="${esc(a.asset_tag)}" placeholder="e.g. COP-AEC-0042">
+          <div class="form-text">Your own label number, optional</div></div>
+        <div class="col-md-6"><label class="form-label fw-bold" for="f_serial">Serial number</label>
+          <input class="form-control" id="f_serial" name="serial_number" value="${esc(a.serial_number)}">
+          <div class="form-text">From the manufacturer</div></div>
+        <div class="col-md-4"><label class="form-label fw-bold" for="f_cat">Category</label>
+          <select class="form-select" id="f_cat" name="category_id">${options(S.categories, a.category_id ?? null)}</select></div>
+        <div class="col-md-4"><label class="form-label fw-bold" for="f_loc">Location</label>
+          <select class="form-select" id="f_loc" name="location_id">${options(S.locations, a.location_id ?? null)}</select></div>
+        <div class="col-md-4"><label class="form-label fw-bold" for="f_min">Ministry responsible</label>
+          <select class="form-select" id="f_min" name="ministry_id">${options(S.ministries, a.ministry_id ?? null)}</select></div>
+        <div class="col-md-6"><label class="form-label fw-bold" for="f_status">Status</label>
+          <select class="form-select" id="f_status" name="status">${plainOptions(STATUSES, a.status || "In use")}</select></div>
+        <div class="col-md-6"><label class="form-label fw-bold" for="f_cond">Condition</label>
+          <select class="form-select" id="f_cond" name="condition">${plainOptions(CONDITIONS, a.condition || "Good")}</select></div>
+        <div class="col-md-6"><label class="form-label fw-bold" for="f_pdate">Purchase date</label>
+          <input type="date" class="form-control" id="f_pdate" name="purchase_date" value="${esc(a.purchase_date)}"></div>
+        <div class="col-md-6"><label class="form-label fw-bold" for="f_cost">Cost</label>${money_input("cost", a.cost)}</div>
+        <div class="col-12"><label class="form-label fw-bold" for="f_photo">Photo</label>
+          <input type="file" class="form-control" id="f_photo" name="photo" accept="image/*">
+          <div class="form-text">${a.photo_path ? "Choose a file to replace the current photo." : "Optional, up to 5 MB. On a phone you can take a picture directly."}</div></div>
+        <div class="col-12"><label class="form-label fw-bold" for="f_notes">Notes</label>
+          <textarea class="form-control" id="f_notes" name="notes" rows="3" placeholder="Donor, warranty details, accessories included…">${esc(a.notes)}</textarea></div>
       </div>
-      <div class="form-error" hidden></div>
-      <div class="form-foot"><button type="button" class="btn" data-action="close-modal">Cancel</button><button class="btn primary" type="submit">${a.id ? "Save changes" : "Add asset"}</button></div>
+      ${formFoot(a.id ? "Save changes" : "Add asset")}
     </form>`);
 }
 
 function loanForm(assetId) {
   const available = S.assets.filter((a) => !openLoan(a.id) && !["Disposed", "Lost"].includes(a.status));
   if (!available.length) { toast("Every item is already out on loan or unavailable."); return; }
-  openModal("Lend an item", `
-    <form data-form="loan">
-      <div class="form-grid">
-        <label class="full">Item <select name="asset_id" required>${options(available, Number(assetId) || null, "Choose an item")}</select></label>
-        <label>Borrower name <input name="borrower_name" required></label>
-        <label>Phone <input name="borrower_phone" type="tel"></label>
-        <label class="full">Purpose <input name="purpose" placeholder="e.g. Youth camp, funeral service"></label>
-        <label>Date borrowed <input type="date" name="borrowed_on" required value="${today()}"></label>
-        <label>Due back <input type="date" name="due_on"></label>
-        <label class="full">Notes <textarea name="notes" placeholder="Condition when lent, accessories included…"></textarea></label>
+  openModal(`<i class="bi bi-box-arrow-up-right me-2"></i>Lend an item`, `
+    <form data-form="loan" novalidate>
+      <div class="row g-3">
+        <div class="col-12"><label class="form-label fw-bold" for="l_item">Item</label>
+          <select class="form-select" id="l_item" name="asset_id" required>${options(available, Number(assetId) || null, "Choose an item")}</select>
+          <div class="invalid-feedback">Choose the item being lent.</div></div>
+        <div class="col-md-6"><label class="form-label fw-bold" for="l_name">Borrower name</label>
+          <input class="form-control" id="l_name" name="borrower_name" required><div class="invalid-feedback">Enter who is borrowing it.</div></div>
+        <div class="col-md-6"><label class="form-label fw-bold" for="l_phone">Phone</label>
+          <div class="input-group"><span class="input-group-text"><i class="bi bi-telephone"></i></span><input class="form-control" id="l_phone" name="borrower_phone" type="tel"></div></div>
+        <div class="col-12"><label class="form-label fw-bold" for="l_purpose">Purpose</label>
+          <input class="form-control" id="l_purpose" name="purpose" placeholder="e.g. Youth camp, funeral service"></div>
+        <div class="col-md-6"><label class="form-label fw-bold" for="l_from">Date borrowed</label>
+          <input type="date" class="form-control" id="l_from" name="borrowed_on" required value="${today()}"></div>
+        <div class="col-md-6"><label class="form-label fw-bold" for="l_due">Due back</label>
+          <input type="date" class="form-control" id="l_due" name="due_on"></div>
+        <div class="col-12"><label class="form-label fw-bold" for="l_notes">Notes</label>
+          <textarea class="form-control" id="l_notes" name="notes" rows="2" placeholder="Condition when lent, accessories included…"></textarea></div>
       </div>
-      <div class="form-error" hidden></div>
-      <div class="form-foot"><button type="button" class="btn" data-action="close-modal">Cancel</button><button class="btn primary" type="submit">Record loan</button></div>
+      ${formFoot("Record loan")}
     </form>`);
 }
 
 function serviceForm(assetId) {
   if (!S.assets.length) { toast("Add an asset first."); return; }
-  openModal("Log maintenance", `
-    <form data-form="service">
-      <div class="form-grid">
-        <label class="full">Item <select name="asset_id" required>${options(S.assets, Number(assetId) || null, "Choose an item")}</select></label>
-        <label>Date done <input type="date" name="service_date" required value="${today()}"></label>
-        <label>Cost (${esc(CFG.CURRENCY)}) <input type="number" name="cost" min="0" step="0.01"></label>
-        <label class="full">Work done <input name="description" required placeholder="e.g. Oil change and filter replacement"></label>
-        <label>Done by <input name="performed_by" placeholder="Technician or company"></label>
-        <label>Next service due <span class="hint">For reminders</span><input type="date" name="next_due"></label>
-        <label class="full" style="display:flex;gap:.5rem;align-items:center;font-weight:400">
-          <input type="checkbox" name="mark_in_use" style="width:auto"> Item is working again: set status to “In use”</label>
+  openModal(`<i class="bi bi-tools me-2"></i>Log maintenance`, `
+    <form data-form="service" novalidate>
+      <div class="row g-3">
+        <div class="col-12"><label class="form-label fw-bold" for="m_item">Item</label>
+          <select class="form-select" id="m_item" name="asset_id" required>${options(S.assets, Number(assetId) || null, "Choose an item")}</select>
+          <div class="invalid-feedback">Choose the item that was serviced.</div></div>
+        <div class="col-md-6"><label class="form-label fw-bold" for="m_date">Date done</label>
+          <input type="date" class="form-control" id="m_date" name="service_date" required value="${today()}"></div>
+        <div class="col-md-6"><label class="form-label fw-bold" for="f_cost">Cost</label>${money_input("cost")}</div>
+        <div class="col-12"><label class="form-label fw-bold" for="m_desc">Work done</label>
+          <input class="form-control" id="m_desc" name="description" required placeholder="e.g. Oil change and filter replacement">
+          <div class="invalid-feedback">Describe the work done.</div></div>
+        <div class="col-md-6"><label class="form-label fw-bold" for="m_by">Done by</label>
+          <input class="form-control" id="m_by" name="performed_by" placeholder="Technician or company"></div>
+        <div class="col-md-6"><label class="form-label fw-bold" for="m_next">Next service due</label>
+          <input type="date" class="form-control" id="m_next" name="next_due"><div class="form-text">Set this to get reminders</div></div>
+        <div class="col-12"><div class="form-check form-switch">
+          <input class="form-check-input" type="checkbox" role="switch" id="m_inuse" name="mark_in_use">
+          <label class="form-check-label" for="m_inuse">Item is working again: set status to “In use”</label></div></div>
       </div>
-      <div class="form-error" hidden></div>
-      <div class="form-foot"><button type="button" class="btn" data-action="close-modal">Cancel</button><button class="btn primary" type="submit">Save record</button></div>
+      ${formFoot("Save record")}
     </form>`);
 }
 
@@ -867,25 +895,33 @@ const FORMS = {
   async list(form) {
     const name = textOrNull(new FormData(form).get("name")); if (!name) return {};
     const { error } = await sb.from(form.dataset.table).insert({ name }); if (error) throw error;
-    return { msg: `“${name}” added`, keepModal: true };
+    return { msg: `“${name}” added` };
   }
 };
 
 document.addEventListener("submit", async (e) => {
   const form = e.target.closest("[data-form]"); if (!form) return;
   e.preventDefault();
-  const btn = form.querySelector("button[type=submit]"), errBox = form.querySelector(".form-error");
-  btn.disabled = true; if (errBox) errBox.hidden = true;
+  if (!form.checkValidity()) {
+    form.classList.add("was-validated");
+    form.querySelector(":invalid")?.focus();
+    return;
+  }
+  const btn = form.querySelector("button[type=submit]"), errBox = form.querySelector(".js-error");
+  const label = btn.innerHTML;
+  btn.disabled = true; btn.innerHTML = `<span class="spinner-border spinner-border-sm me-2"></span>Saving`;
+  if (errBox) errBox.hidden = true;
   try {
     const res = await FORMS[form.dataset.form](form);
-    if (!res.keepModal && $("#modal").open) closeModal();
     await refresh();
     if (res.msg) toast(res.msg);
     if (res.reopen) assetDetail(res.reopen);
+    else if (form.closest("#modal")) closeModal();
   } catch (err) {
     const msg = friendlyError(err);
     if (errBox) { errBox.textContent = msg; errBox.hidden = false; } else toast(msg);
-  } finally { btn.disabled = false; }
+    btn.disabled = false; btn.innerHTML = label;
+  }
 });
 
 /* ---------- Filters ---------- */
@@ -896,20 +932,23 @@ document.addEventListener("change", (e) => {
   const map = { "f-category": "category", "f-location": "location", "f-ministry": "ministry", "f-status": "status" };
   if (map[e.target.id]) { S.filters[map[e.target.id]] = e.target.value; renderAssetResults(); }
 });
+document.addEventListener("keydown", (e) => {
+  if ((e.key === "Enter" || e.key === " ") && e.target.matches(".stat-card[data-action]")) { e.preventDefault(); e.target.click(); }
+});
 
 /* ---------- Click actions ---------- */
 document.addEventListener("click", async (e) => {
   const el = e.target.closest("[data-action]"); if (!el) return;
+  if (el.tagName === "A") e.preventDefault();
   const { action, id } = el.dataset;
   try {
     switch (action) {
-      case "nav": S.view = el.dataset.view; if ($("#modal").open) closeModal(); render(); break;
+      case "nav": S.view = el.dataset.view; closeMenu(); if (modalOpen) closeModal(); render(); window.scrollTo(0, 0); break;
       case "add-asset": assetForm(); break;
       case "open-asset": assetDetail(id); break;
       case "edit-asset": assetForm(assetById(id)); break;
       case "lend": loanForm(id); break;
       case "log-service": serviceForm(id); break;
-      case "close-modal": closeModal(); break;
       case "loan-tab": S.loanTab = el.dataset.tab; render(); break;
       case "report": S.report = el.dataset.report; render(); break;
       case "print": window.print(); break;
@@ -922,32 +961,37 @@ document.addEventListener("click", async (e) => {
         break;
       }
       case "return-loan": {
+        el.disabled = true;
+        const b = S.borrowings.find((x) => x.id === Number(id));
         const { error } = await sb.from("borrowings").update({ returned_on: today() }).eq("id", Number(id));
         if (error) throw error;
-        const wasOpen = $("#modal").open; const b = S.borrowings.find((x) => x.id === Number(id));
         await refresh(); toast("Marked as returned");
-        if (wasOpen && b) assetDetail(b.asset_id);
+        if (modalOpen && b) assetDetail(b.asset_id);
         break;
       }
       case "delete-service": {
-        if (!confirm("Delete this maintenance record? This cannot be undone.")) break;
+        if (!(await confirmDialog("Delete this maintenance record?", "<p class='mb-0'>This cannot be undone.</p>"))) break;
         const { error } = await sb.from("maintenance").delete().eq("id", Number(id)); if (error) throw error;
         await refresh(); toast("Record deleted"); break;
       }
       case "delete-asset": {
         const a = assetById(id);
-        if (!confirm(`Delete “${a.name}” and all its borrowing and maintenance records? This cannot be undone.\n\nTip: to keep the history, edit the asset and set its status to “Disposed” instead.`)) break;
+        const ok = await confirmDialog(`Delete “${a.name}”?`,
+          `<p>This also deletes all its borrowing and maintenance records, and cannot be undone.</p>
+           <div class="alert alert-info mb-0 small"><i class="bi bi-lightbulb me-1"></i>To keep the history, edit the asset and set its status to “Disposed” instead.</div>`, "Delete asset");
+        if (!ok) break;
         const { error } = await sb.from("assets").delete().eq("id", a.id); if (error) throw error;
         if (a.photo_path) await sb.storage.from(BUCKET).remove([a.photo_path]);
         closeModal(); await refresh(); toast("Asset deleted"); break;
       }
       case "delete-item": {
         const table = el.dataset.table;
-        if (!confirm("Remove this from the list? Assets using it will show “—” instead.")) break;
+        const item = (S[table] || []).find((x) => x.id === Number(id));
+        if (!(await confirmDialog(`Remove “${item?.name ?? "this item"}”?`, "<p class='mb-0'>Assets using it will show “—” instead.</p>", "Remove"))) break;
         const { error } = await sb.from(table).delete().eq("id", Number(id)); if (error) throw error;
         await refresh(); toast("Removed"); break;
       }
-      case "logout": await sb.auth.signOut(); break;
+      case "logout": closeMenu(); await sb.auth.signOut(); break;
     }
   } catch (err) { toast(friendlyError(err)); }
 });
