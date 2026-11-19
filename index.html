@@ -118,8 +118,10 @@ main { min-width: 0; flex: 1; }
 .stat-card .value { font-size: 1.5rem; font-weight: 700; line-height: 1.2; }
 @media (max-width: 575.98px) { .stat-card .icon { display: none; } .stat-card .value { font-size: 1.2rem; } .stat-card .card-body { padding: .85rem; } }
 .table > :not(caption) > * > * { padding: .75rem .9rem; }
+.table-sm > :not(caption) > * > * { padding: .4rem .6rem; }
 .table thead th { font-size: .82rem; color: var(--bs-secondary-color); font-weight: 700; background: #F3F6FA; white-space: nowrap; }
 .table-hover tbody tr[data-action] { cursor: pointer; }
+.flex-none { flex: none; }
 .thumb { width: 42px; height: 42px; border-radius: .4rem; object-fit: cover; background: var(--brand-tint); display: grid; place-items: center; color: #7F9AC2; flex: none; }
 .detail-photo { width: 100%; aspect-ratio: 1; border-radius: .75rem; object-fit: cover; background: var(--brand-tint); display: grid; place-items: center; color: #7F9AC2; font-size: 2.5rem; }
 .list-group-item-action { cursor: pointer; }
@@ -462,7 +464,7 @@ function viewDashboard() {
 
   if (!S.assets.length) {
     return pageHead("Welcome", esc(FULL_NAME)) + `<div class="card"><div class="card-body">
-      ${emptyState("box-seam", `<h2 class="h5 text-body">Start your asset register</h2>Add the first item the church owns, such as a sound mixer, keyboard, or generator.`, addAssetBtn("Add an asset"))}
+      ${emptyState("box-seam", `<h2 class="h5 text-body">Start your asset register</h2>Add items one by one, or fill in the Excel template to add many at once.`, addAssetBtn("Add an asset") + " " + `<button class="btn btn-outline-primary" data-action="open-import"><i class="bi bi-file-earmark-arrow-up me-1"></i>Import from Excel</button>`)}
     </div></div>`;
   }
   const stat = (icon, tone, val, label, view) => `
@@ -506,7 +508,7 @@ function viewDashboard() {
 /* ----- Assets ----- */
 function viewAssets() {
   const f = S.filters;
-  return pageHead("Assets", plural(S.assets.length, "item") + " recorded", addAssetBtn()) + `
+  return pageHead("Assets", plural(S.assets.length, "item") + " recorded", `<button class="btn btn-outline-primary" data-action="open-import"><i class="bi bi-file-earmark-arrow-up me-1"></i>Import from Excel</button>` + addAssetBtn()) + `
     <div class="card mb-3"><div class="card-body"><div class="row g-2">
       <div class="col-12 col-lg-4"><div class="input-group">
         <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
@@ -531,7 +533,7 @@ function filteredAssets() {
 function renderAssetResults() {
   const el = $("#asset-results"); if (!el) return;
   const list = filteredAssets();
-  if (!S.assets.length) { el.innerHTML = `<div class="card">${emptyState("box-seam", "No assets yet.", addAssetBtn("Add your first asset"))}</div>`; return; }
+  if (!S.assets.length) { el.innerHTML = `<div class="card">${emptyState("box-seam", "No assets yet.", addAssetBtn("Add your first asset") + " " + `<button class="btn btn-outline-primary" data-action="open-import"><i class="bi bi-file-earmark-arrow-up me-1"></i>Import from Excel</button>`)}</div>`; return; }
   if (!list.length) { el.innerHTML = `<div class="card">${emptyState("funnel", "No assets match these filters. Clear the search or choose a different filter.")}</div>`; return; }
   el.innerHTML = `<div class="card"><div class="table-responsive"><table class="table table-hover align-middle mb-0">
     <thead><tr><th></th><th>Name</th><th class="d-none d-md-table-cell">Category</th><th class="d-none d-lg-table-cell">Location</th><th class="d-none d-lg-table-cell">Ministry</th><th>Status</th><th class="text-end d-none d-md-table-cell">Value</th></tr></thead>
@@ -839,6 +841,238 @@ function serviceForm(assetId) {
     </form>`);
 }
 
+/* ---------- Excel import ---------- */
+const IMPORT_COLS = [
+  { key: "name", header: "Name *", width: 30 },
+  { key: "asset_tag", header: "Asset tag", width: 16 },
+  { key: "serial_number", header: "Serial number", width: 18 },
+  { key: "category", header: "Category", width: 22 },
+  { key: "location", header: "Location", width: 22 },
+  { key: "ministry", header: "Ministry", width: 22 },
+  { key: "status", header: "Status", width: 14 },
+  { key: "condition", header: "Condition", width: 12 },
+  { key: "purchase_date", header: "Purchase date (YYYY-MM-DD)", width: 26 },
+  { key: "cost", header: `Cost (${CFG.CURRENCY})`, width: 14 },
+  { key: "notes", header: "Notes", width: 40 }
+];
+const LOOKUPS = { category: ["categories", "category_id", "Category"], location: ["locations", "location_id", "Location"], ministry: ["ministries", "ministry_id", "Ministry"] };
+const normHeader = (h) => String(h ?? "").toLowerCase().replace(/\(.*?\)|\*/g, "").replace(/[^a-z]/g, "");
+const HEADER_KEYS = Object.fromEntries(IMPORT_COLS.map((c) => [normHeader(c.header), c.key]));
+Object.assign(HEADER_KEYS, { tag: "asset_tag", serial: "serial_number", serialno: "serial_number", date: "purchase_date", purchased: "purchase_date", value: "cost", price: "cost", assetname: "name", item: "name", itemname: "name" });
+const cellText = (v) => (v instanceof Date ? v : String(v ?? "").trim());
+const isoDate = (y, m, d) => {
+  const dt = new Date(Date.UTC(y, m - 1, d));
+  if (dt.getUTCFullYear() !== y || dt.getUTCMonth() !== m - 1 || dt.getUTCDate() !== d || y < 1900 || y > 2100) return null;
+  return `${y}-${String(m).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+};
+function parseDate(v) {
+  if (v instanceof Date) { const t = new Date(v.getTime() + 12 * 3600e3); return isoDate(t.getFullYear(), t.getMonth() + 1, t.getDate()); }
+  if (typeof v === "number") { const p = XLSX.SSF.parse_date_code(v); return p ? isoDate(p.y, p.m, p.d) : null; }
+  const t = String(v).trim(); let m;
+  if ((m = t.match(/^(\d{4})[-/.](\d{1,2})[-/.](\d{1,2})$/))) return isoDate(+m[1], +m[2], +m[3]);
+  if ((m = t.match(/^(\d{1,2})[-/.](\d{1,2})[-/.](\d{4})$/))) return isoDate(+m[3], +m[2], +m[1]);
+  return null;
+}
+
+function downloadTemplate(withData) {
+  const head = IMPORT_COLS.map((c) => c.header);
+  const rows = withData ? S.assets.map((a) => [a.name, a.asset_tag || "", a.serial_number || "",
+    S.categories.find((x) => x.id === a.category_id)?.name || "", S.locations.find((x) => x.id === a.location_id)?.name || "",
+    S.ministries.find((x) => x.id === a.ministry_id)?.name || "", a.status, a.condition, a.purchase_date || "",
+    a.cost === null ? "" : Number(a.cost), a.notes || ""]) : [];
+  const ws = XLSX.utils.aoa_to_sheet([head, ...rows]);
+  ws["!cols"] = IMPORT_COLS.map((c) => ({ wch: c.width }));
+  ws["!autofilter"] = { ref: XLSX.utils.encode_range({ s: { r: 0, c: 0 }, e: { r: Math.max(rows.length, 1), c: head.length - 1 } }) };
+
+  const lists = [["Categories", "Locations", "Ministries", "Status", "Condition"]];
+  const n = Math.max(S.categories.length, S.locations.length, S.ministries.length, STATUSES.length, CONDITIONS.length);
+  for (let i = 0; i < n; i++) lists.push([S.categories[i]?.name || "", S.locations[i]?.name || "", S.ministries[i]?.name || "", STATUSES[i] || "", CONDITIONS[i] || ""]);
+  const wl = XLSX.utils.aoa_to_sheet(lists); wl["!cols"] = [24, 24, 24, 16, 12].map((w) => ({ wch: w }));
+
+  const help = [
+    [`${CFG.CHURCH_NAME}, ${CFG.BRANCH_NAME}: asset import template`], [""],
+    ["How to use"],
+    ["1. Fill in one asset per row on the Assets sheet. Do not rename or reorder the column headings."],
+    ["2. Only Name is required. Leave any other cell empty if you don't know it."],
+    ["3. Category, Location and Ministry: use names from the Lists sheet. New names are added to the app's lists for you."],
+    [`4. Status must be one of: ${STATUSES.join(", ")}. Empty means "In use".`],
+    [`5. Condition must be one of: ${CONDITIONS.join(", ")}. Empty means "Good".`],
+    ["6. Purchase date: write it as 2024-03-15 (year-month-day). 15/03/2024 (day/month/year) also works."],
+    [`7. Cost: numbers only, in ${CFG.CURRENCY}, e.g. 8500 or 8500.50.`],
+    ["8. Asset tags must be unique. If a tag already exists in the app, that asset is updated instead of added twice."],
+    ["9. Save the file, then in the app go to Assets → Import from Excel and upload it. You'll see a check of every row before anything is saved."],
+    [""], ["Example row"], IMPORT_COLS.map((c) => c.header),
+    ["Yamaha MG16 mixer", "COP-AEC-0001", "YM123456", "Sound & media", "Main auditorium", "Media team", "In use", "Good", "2024-03-15", 8500, "Donated by the youth ministry"]
+  ];
+  const wh = XLSX.utils.aoa_to_sheet(help); wh["!cols"] = [{ wch: 110 }];
+
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, "Assets");
+  XLSX.utils.book_append_sheet(wb, wh, "Instructions");
+  XLSX.utils.book_append_sheet(wb, wl, "Lists");
+  XLSX.writeFile(wb, withData ? `assets-${today()}.xlsx` : "asset-import-template.xlsx");
+}
+
+async function parseImportFile(file) {
+  if (file.size > 5 * 1024 * 1024) throw new Error("This file is larger than 5 MB. Check that it is the asset template.");
+  const wb = XLSX.read(await file.arrayBuffer(), { cellDates: true });
+  const sheetName = wb.SheetNames.find((n) => n.toLowerCase() === "assets") || wb.SheetNames[0];
+  const aoa = XLSX.utils.sheet_to_json(wb.Sheets[sheetName], { header: 1, defval: "", raw: true, blankrows: false });
+  const headerIdx = aoa.slice(0, 10).findIndex((r) => r.some((h) => HEADER_KEYS[normHeader(h)] === "name"));
+  if (headerIdx < 0) throw new Error("No “Name” column was found. Download the template from this page and fill that in.");
+  const colMap = {};
+  aoa[headerIdx].forEach((h, i) => { const k = HEADER_KEYS[normHeader(h)]; if (k && !(k in colMap)) colMap[k] = i; });
+
+  const byName = (list, name) => list.find((x) => x.name.trim().toLowerCase() === name.toLowerCase());
+  const byTag = Object.fromEntries(S.assets.filter((a) => a.asset_tag).map((a) => [a.asset_tag.toLowerCase(), a]));
+  const seenTags = {};
+  const newLookups = { category: new Map(), location: new Map(), ministry: new Map() };
+  const rows = [];
+
+  aoa.slice(headerIdx + 1).forEach((r, i) => {
+    const get = (k) => (k in colMap ? cellText(r[colMap[k]]) : "");
+    if (IMPORT_COLS.every((c) => get(c.key) === "")) return;
+    const line = headerIdx + i + 2, errors = [], notes = [], rec = {};
+    const name = String(get("name"));
+    if (!name) errors.push("Name is missing");
+    else rec.name = name;
+
+    for (const k of ["asset_tag", "serial_number", "notes"]) { const v = String(get(k)); if (v) rec[k] = v; }
+
+    const status = String(get("status"));
+    if (status) { const m = STATUSES.find((x) => x.toLowerCase() === status.toLowerCase()); m ? (rec.status = m) : errors.push(`Status “${status}” is not one of: ${STATUSES.join(", ")}`); }
+    const cond = String(get("condition"));
+    if (cond) { const m = CONDITIONS.find((x) => x.toLowerCase() === cond.toLowerCase()); m ? (rec.condition = m) : errors.push(`Condition “${cond}” is not one of: ${CONDITIONS.join(", ")}`); }
+
+    for (const [k, [table, field, label]] of Object.entries(LOOKUPS)) {
+      const v = String(get(k)); if (!v) continue;
+      const hit = byName(S[table], v);
+      if (hit) rec[field] = hit.id;
+      else { const key = v.toLowerCase(); if (!newLookups[k].has(key)) newLookups[k].set(key, v); rec["_" + k] = key; notes.push(`New ${label.toLowerCase()}: ${v}`); }
+    }
+
+    const rawDate = get("purchase_date");
+    if (rawDate !== "") { const d = parseDate(rawDate); d ? (rec.purchase_date = d) : errors.push(`Purchase date “${rawDate}” isn't a date. Use 2024-03-15`); }
+
+    const rawCost = get("cost");
+    if (rawCost !== "") {
+      const n = typeof rawCost === "number" ? rawCost : Number(String(rawCost).replace(/[^0-9.\-]/g, ""));
+      if (!isFinite(n) || n < 0 || String(rawCost).replace(/[^0-9]/g, "") === "") errors.push(`Cost “${rawCost}” isn't a number`);
+      else rec.cost = Math.round(n * 100) / 100;
+    }
+
+    let action = "new", existing = null;
+    if (rec.asset_tag) {
+      const t = rec.asset_tag.toLowerCase();
+      if (seenTags[t]) errors.push(`Asset tag ${rec.asset_tag} is also used on row ${seenTags[t]}`);
+      else seenTags[t] = line;
+      existing = byTag[t];
+      if (existing) action = "update";
+    }
+    rows.push({ line, rec, action, id: existing?.id, errors, notes });
+  });
+  if (!rows.length) throw new Error("The file has headings but no assets. Add one asset per row under the headings.");
+  return { file: file.name, rows, newLookups };
+}
+
+function importDialog() {
+  S.importPlan = null;
+  openModal(`<i class="bi bi-file-earmark-arrow-up me-2"></i>Import assets from Excel`, `
+    <div class="d-flex gap-3 mb-4">
+      <span class="badge rounded-circle text-bg-primary d-grid flex-none" style="width:2rem;height:2rem;place-items:center">1</span>
+      <div class="flex-grow-1"><h3 class="h6 fw-bold mb-1">Download the template</h3>
+        <p class="text-body-secondary small mb-2">It has the exact columns the app expects, a sheet of instructions, and your current lists of categories, locations and ministries.</p>
+        <div class="d-flex flex-wrap gap-2">
+          <button class="btn btn-primary btn-sm" data-action="dl-template"><i class="bi bi-download me-1"></i>Blank template</button>
+          ${S.assets.length ? `<button class="btn btn-outline-primary btn-sm" data-action="dl-template" data-with="1"><i class="bi bi-download me-1"></i>Template with current assets</button>` : ""}
+        </div>
+        ${S.assets.length ? `<div class="form-text">Use “with current assets” to correct many items at once: rows whose asset tag already exists are updated, not duplicated.</div>` : ""}
+      </div>
+    </div>
+    <div class="d-flex gap-3">
+      <span class="badge rounded-circle text-bg-primary d-grid flex-none" style="width:2rem;height:2rem;place-items:center">2</span>
+      <div class="flex-grow-1 min-w-0"><h3 class="h6 fw-bold mb-1">Upload the filled-in file</h3>
+        <p class="text-body-secondary small mb-2">Every row is checked first. Nothing is saved until you confirm.</p>
+        <input type="file" class="form-control" id="import-file" accept=".xlsx,.xls,.csv" aria-label="Choose the filled-in Excel file">
+        <div id="import-preview" class="mt-3"></div>
+      </div>
+    </div>`);
+}
+
+function renderImportPreview() {
+  const plan = S.importPlan, el = $("#import-preview"); if (!el || !plan) return;
+  const ok = plan.rows.filter((r) => !r.errors.length);
+  const adds = ok.filter((r) => r.action === "new").length, ups = ok.length - adds;
+  const bad = plan.rows.length - ok.length;
+  const newOnes = Object.entries(plan.newLookups).flatMap(([k, m]) => [...m.values()].map((v) => `${LOOKUPS[k][2]}: ${esc(v)}`));
+  el.innerHTML = `
+    <div class="d-flex flex-wrap gap-2 mb-2">
+      ${adds ? badge("success", `${adds} to add`, "plus-circle") : ""}
+      ${ups ? badge("primary", `${ups} to update`, "arrow-repeat") : ""}
+      ${bad ? badge("danger", `${bad} with problems`, "exclamation-triangle") : ""}
+    </div>
+    ${bad ? `<div class="alert alert-danger small py-2"><b>Rows with problems will be skipped.</b> Fix them in Excel and upload the file again, or import the good rows now and add the rest later.</div>` : ""}
+    ${newOnes.length ? `<div class="alert alert-info small py-2"><b>These will be added to your lists:</b> ${newOnes.join(", ")}</div>` : ""}
+    <div class="table-responsive border rounded" style="max-height:300px">
+      <table class="table table-sm align-middle mb-0 small">
+        <thead class="sticky-top"><tr><th>Row</th><th>Name</th><th>Tag</th><th>Result</th></tr></thead>
+        <tbody>${plan.rows.map((r) => `<tr class="${r.errors.length ? "table-danger" : ""}">
+          <td>${r.line}</td><td>${esc(r.rec.name || "—")}</td><td class="text-nowrap">${esc(r.rec.asset_tag || "")}</td>
+          <td>${r.errors.length ? r.errors.map(esc).join("<br>") : r.action === "update" ? badge("primary", "Update") : badge("success", "Add")}</td>
+        </tr>`).join("")}</tbody>
+      </table>
+    </div>
+    <div class="d-flex justify-content-end gap-2 mt-3">
+      <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+      <button class="btn btn-primary" data-action="run-import" ${ok.length ? "" : "disabled"}>
+        <i class="bi bi-check2-circle me-1"></i>${ok.length ? `Import ${plural(ok.length, "asset")}` : "Nothing to import"}</button>
+    </div>`;
+}
+
+async function runImport(btn) {
+  const plan = S.importPlan; if (!plan) return;
+  const ok = plan.rows.filter((r) => !r.errors.length);
+  const setBtn = (t) => (btn.innerHTML = `<span class="spinner-border spinner-border-sm me-2"></span>${t}`);
+  btn.disabled = true;
+  let done = 0;
+  try {
+    setBtn("Updating lists");
+    const newIds = {};
+    for (const [k, m] of Object.entries(plan.newLookups)) {
+      const needed = [...m.entries()].filter(([key]) => ok.some((r) => r.rec["_" + k] === key));
+      if (!needed.length) continue;
+      const { data, error } = await sb.from(LOOKUPS[k][0]).insert(needed.map(([, name]) => ({ name }))).select();
+      if (error) throw error;
+      newIds[k] = Object.fromEntries(data.map((x) => [x.name.trim().toLowerCase(), x.id]));
+    }
+    const finalRec = (r) => {
+      const out = {};
+      for (const [f, v] of Object.entries(r.rec)) if (!f.startsWith("_")) out[f] = v;
+      for (const k of Object.keys(LOOKUPS)) if (r.rec["_" + k]) out[LOOKUPS[k][1]] = newIds[k][r.rec["_" + k]];
+      return out;
+    };
+    const inserts = ok.filter((r) => r.action === "new").map((r) => Object.assign({ status: "In use", condition: "Good" }, finalRec(r)));
+    for (let i = 0; i < inserts.length; i += 100) {
+      setBtn(`Saving ${done + 1}–${Math.min(done + 100, ok.length)} of ${ok.length}`);
+      const { error } = await sb.from("assets").insert(inserts.slice(i, i + 100)); if (error) throw error;
+      done += Math.min(100, inserts.length - i);
+    }
+    for (const r of ok.filter((r) => r.action === "update")) {
+      setBtn(`Saving ${done + 1} of ${ok.length}`);
+      const { error } = await sb.from("assets").update({ ...finalRec(r), updated_at: new Date().toISOString() }).eq("id", r.id);
+      if (error) throw error;
+      done++;
+    }
+    S.importPlan = null; closeModal(); await refresh();
+    toast(`Imported ${plural(done, "asset")}`);
+  } catch (err) {
+    await refresh();
+    const el = $("#import-preview");
+    if (el) el.insertAdjacentHTML("afterbegin", `<div class="alert alert-danger small">${done ? `${plural(done, "asset")} were saved before the import stopped. ` : ""}${esc(friendlyError(err))}. Upload the file again to retry the rest; saved rows with an asset tag will be updated, not duplicated.</div>`);
+    btn.disabled = false; btn.textContent = "Import";
+  }
+}
+
 /* ---------- Form handling ---------- */
 const FORMS = {
   async asset(form) {
@@ -931,6 +1165,13 @@ document.addEventListener("input", (e) => {
 document.addEventListener("change", (e) => {
   const map = { "f-category": "category", "f-location": "location", "f-ministry": "ministry", "f-status": "status" };
   if (map[e.target.id]) { S.filters[map[e.target.id]] = e.target.value; renderAssetResults(); }
+  if (e.target.id === "import-file" && e.target.files[0]) {
+    const el = $("#import-preview");
+    el.innerHTML = `<div class="d-flex align-items-center gap-2 text-body-secondary small"><div class="spinner-border spinner-border-sm text-primary"></div>Checking the file…</div>`;
+    parseImportFile(e.target.files[0])
+      .then((plan) => { S.importPlan = plan; renderImportPreview(); })
+      .catch((err) => { S.importPlan = null; el.innerHTML = `<div class="alert alert-danger small mb-0"><i class="bi bi-exclamation-triangle me-1"></i>${esc(err.message || "This file could not be read. Save it as an Excel (.xlsx) file and try again.")}</div>`; e.target.value = ""; });
+  }
 });
 document.addEventListener("keydown", (e) => {
   if ((e.key === "Enter" || e.key === " ") && e.target.matches(".stat-card[data-action]")) { e.preventDefault(); e.target.click(); }
@@ -949,6 +1190,9 @@ document.addEventListener("click", async (e) => {
       case "edit-asset": assetForm(assetById(id)); break;
       case "lend": loanForm(id); break;
       case "log-service": serviceForm(id); break;
+      case "open-import": importDialog(); break;
+      case "dl-template": downloadTemplate(!!el.dataset.with); break;
+      case "run-import": await runImport(el); break;
       case "loan-tab": S.loanTab = el.dataset.tab; render(); break;
       case "report": S.report = el.dataset.report; render(); break;
       case "print": window.print(); break;
