@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#2B1B45">
+<title>Church Asset Manager</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4/dist/umd/supabase.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="config.js"></script>
+<style>
+:root {
+  color-scheme: light;
+  --bg: #F1F0F5;
+  --surface: #FFFFFF;
+  --ink: #211C2E;
+  --muted: #645E72;
+  --line: #DEDAE7;
+  --accent: #4E2F7F;
+  --accent-ink: #FFFFFF;
+  --accent-soft: #ECE6F5;
+  --side: #2B1B45;
+  --side-ink: #E9E2F5;
+  --gold: #8A5F0C;
+  --gold-soft: #FBF0D9;
+  --green: #2A6E4E;
+  --green-soft: #E2F1E9;
+  --red: #A3362E;
+  --red-soft: #F8E3E0;
+  --radius: 10px;
+  --font: "Atkinson Hyperlegible", "Segoe UI", system-ui, -apple-system, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --bg: #15121C;
+    --surface: #201C2A;
+    --ink: #ECE8F3;
+    --muted: #A59FB3;
+    --line: #362F47;
+    --accent: #B99DE8;
+    --accent-ink: #1A1425;
+    --accent-soft: #2E2641;
+    --side: #1B1427;
+    --side-ink: #DCD3EC;
+    --gold: #E2B65C;
+    --gold-soft: #3A2E16;
+    --green: #74C89F;
+    --green-soft: #1A3328;
+    --red: #EF8B81;
+    --red-soft: #3E1F1C;
+  }
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  margin: 0; background: var(--bg); color: var(--ink);
+  font: 16px/1.5 var(--font);
+  padding-top: env(safe-area-inset-top, 0px);
+}
+button, input, select, textarea { font: inherit; color: inherit; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+[hidden] { display: none !important; }
+h1, h2, h3 { line-height: 1.2; margin: 0; }
+h1 { font-size: 1.75rem; }
+h2 { font-size: 1.25rem; }
+h3 { font-size: 1.05rem; }
+.muted { color: var(--muted); }
+.small { font-size: .875rem; }
+
+/* ---------- Buttons ---------- */
+.btn {
+  display: inline-flex; align-items: center; gap: .4rem; justify-content: center;
+  border: 1px solid var(--line); background: var(--surface);
+  padding: .55rem 1rem; border-radius: 8px; cursor: pointer; font-weight: 700;
+  white-space: nowrap;
+}
+.btn:hover { border-color: var(--accent); }
+.btn.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.btn.primary:hover { filter: brightness(1.08); }
+.btn.danger { color: var(--red); }
+.btn.danger:hover { border-color: var(--red); }
+.btn.sm { padding: .3rem .65rem; font-size: .875rem; }
+.btn:disabled { opacity: .6; cursor: wait; }
+.link { background: none; border: 0; padding: 0; cursor: pointer; font-weight: 700; color: var(--ink); text-align: left; }
+.link:hover { color: var(--accent); text-decoration: underline; }
+
+/* ---------- Login ---------- */
+#login {
+  min-height: 100%; display: grid; place-items: center; padding: 1.5rem;
+  background:
+    radial-gradient(circle at 20% 15%, rgba(185,157,232,.25), transparent 45%),
+    var(--side);
+}
+.login-card {
+  width: 100%; max-width: 380px; background: var(--surface); border-radius: 14px;
+  padding: 2rem; box-shadow: 0 20px 50px rgba(0,0,0,.35);
+}
+.login-card .mark { width: 44px; height: 44px; margin-bottom: 1rem; color: var(--accent); }
+.login-card h1 { margin-bottom: .25rem; }
+.login-card form { margin-top: 1.5rem; display: grid; gap: 1rem; }
+
+/* ---------- App layout ---------- */
+#app { display: grid; grid-template-columns: 236px 1fr; min-height: 100%; }
+.sidebar {
+  background: var(--side); color: var(--side-ink);
+  display: flex; flex-direction: column; padding: 1.25rem .85rem;
+  position: sticky; top: 0; height: 100vh;
+}
+.brand { display: flex; gap: .65rem; align-items: center; padding: 0 .5rem 1.5rem; }
+.brand svg { width: 30px; height: 30px; flex: none; color: #CDB8F0; }
+.brand strong { display: block; line-height: 1.2; }
+.brand span { font-size: .8rem; opacity: .7; }
+.nav { display: grid; gap: .2rem; }
+.nav button {
+  display: flex; align-items: center; gap: .7rem; width: 100%;
+  background: none; border: 0; color: var(--side-ink); padding: .6rem .75rem;
+  border-radius: 8px; cursor: pointer; text-align: left; opacity: .8;
+}
+.nav button svg { width: 20px; height: 20px; flex: none; }
+.nav button:hover { opacity: 1; background: rgba(255,255,255,.06); }
+.nav button.active { opacity: 1; background: rgba(205,184,240,.18); font-weight: 700; }
+.nav .badge {
+  margin-left: auto; background: #E2B65C; color: #2B1B45; font-size: .75rem;
+  font-weight: 700; border-radius: 99px; padding: 0 .45rem; min-width: 1.4rem; text-align: center;
+}
+.side-foot { margin-top: auto; padding: 1rem .5rem 0; font-size: .82rem; opacity: .85; display: grid; gap: .5rem; }
+.side-foot button { background: none; border: 1px solid rgba(255,255,255,.25); color: var(--side-ink); border-radius: 8px; padding: .4rem; cursor: pointer; }
+
+main { padding: 2rem clamp(1rem, 3vw, 2.5rem) 3rem; min-width: 0; max-width: 1200px; }
+.page-head { display: flex; flex-wrap: wrap; gap: 1rem; align-items: flex-end; justify-content: space-between; margin-bottom: 1.5rem; }
+.page-head p { margin: .3rem 0 0; }
+.actions { display: flex; gap: .5rem; flex-wrap: wrap; }
+
+/* ---------- Panels & stats ---------- */
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 1.25rem; }
+.panel + .panel { margin-top: 1.25rem; }
+.panel-head { display: flex; justify-content: space-between; align-items: center; gap: 1rem; margin-bottom: 1rem; }
+.stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; margin-bottom: 1.25rem; }
+.stat { background: var(--surface); padding: 1rem 1.25rem; }
+.stat b { display: block; font-size: 1.6rem; line-height: 1.2; }
+.stat span { color: var(--muted); font-size: .9rem; }
+.dash-grid { display: grid; grid-template-columns: 3fr 2fr; gap: 1.25rem; align-items: start; }
+
+.alerts { list-style: none; margin: 0; padding: 0; display: grid; gap: .5rem; }
+.alerts li button {
+  width: 100%; display: flex; gap: .75rem; align-items: flex-start; text-align: left;
+  border: 0; border-left: 4px solid; border-radius: 6px; padding: .7rem .9rem; cursor: pointer;
+}
+.alerts .red { background: var(--red-soft); border-color: var(--red); }
+.alerts .gold { background: var(--gold-soft); border-color: var(--gold); }
+.alerts small { display: block; color: var(--muted); }
+.all-clear { padding: 1.25rem; text-align: center; color: var(--green); background: var(--green-soft); border-radius: 8px; }
+
+/* ---------- Pills ---------- */
+.pill { display: inline-block; padding: .1rem .55rem; border-radius: 99px; font-size: .8rem; font-weight: 700; white-space: nowrap; background: var(--accent-soft); color: var(--accent); }
+.pill.green { background: var(--green-soft); color: var(--green); }
+.pill.gold { background: var(--gold-soft); color: var(--gold); }
+.pill.red { background: var(--red-soft); color: var(--red); }
+.pill.grey { background: var(--bg); color: var(--muted); }
+
+/* ---------- Toolbar & tables ---------- */
+.toolbar { display: flex; flex-wrap: wrap; gap: .5rem; margin-bottom: 1rem; }
+.toolbar input[type=search] { flex: 1 1 220px; }
+input, select, textarea {
+  background: var(--surface); border: 1px solid var(--line); border-radius: 8px;
+  padding: .55rem .7rem; width: 100%; min-width: 0;
+}
+.toolbar select { width: auto; flex: 0 1 auto; }
+textarea { min-height: 80px; resize: vertical; }
+.table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
+table { width: 100%; border-collapse: collapse; font-size: .95rem; }
+th, td { padding: .7rem .9rem; text-align: left; border-bottom: 1px solid var(--line); vertical-align: middle; }
+th { font-size: .82rem; color: var(--muted); font-weight: 700; background: var(--bg); white-space: nowrap; }
+tr:last-child td { border-bottom: 0; }
+tbody tr[data-action] { cursor: pointer; }
+tbody tr[data-action]:hover td { background: var(--accent-soft); }
+td.num, th.num { text-align: right; white-space: nowrap; }
+.thumb { width: 40px; height: 40px; border-radius: 6px; object-fit: cover; background: var(--bg); display: block; }
+.thumb.empty { display: grid; place-items: center; color: var(--muted); }
+.thumb.empty svg { width: 20px; height: 20px; }
+.empty-state { text-align: center; padding: 2.5rem 1rem; color: var(--muted); }
+.empty-state .btn { margin-top: 1rem; }
+
+.tabs { display: inline-flex; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 3px; margin-bottom: 1rem; flex-wrap: wrap; }
+.tabs button { border: 0; background: none; padding: .45rem .9rem; border-radius: 6px; cursor: pointer; }
+.tabs button.active { background: var(--accent); color: var(--accent-ink); font-weight: 700; }
+
+/* ---------- Lists (settings) ---------- */
+.list-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; align-items: start; }
+.list-grid .panel + .panel { margin-top: 0; }
+.plain-list { list-style: none; margin: 1rem 0 0; padding: 0; }
+.plain-list li { display: flex; justify-content: space-between; align-items: center; gap: .5rem; padding: .45rem 0; border-top: 1px solid var(--line); }
+.inline-form { display: flex; gap: .5rem; }
+
+/* ---------- Modal ---------- */
+dialog {
+  border: 0; border-radius: 14px; padding: 0; width: min(640px, calc(100vw - 2rem));
+  max-height: calc(100vh - 2rem); background: var(--surface); color: var(--ink);
+  box-shadow: 0 24px 60px rgba(0,0,0,.35);
+}
+dialog::backdrop { background: rgba(20,12,35,.55); }
+.modal-head { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: 1.1rem 1.4rem; border-bottom: 1px solid var(--line); position: sticky; top: 0; background: var(--surface); z-index: 1; }
+.modal-head button { background: none; border: 0; font-size: 1.5rem; line-height: 1; cursor: pointer; color: var(--muted); padding: .25rem; }
+.modal-body { padding: 1.25rem 1.4rem 1.5rem; }
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.form-grid .full { grid-column: 1 / -1; }
+label { display: grid; gap: .3rem; font-weight: 700; font-size: .9rem; }
+label .hint { font-weight: 400; color: var(--muted); font-size: .82rem; }
+.form-foot { display: flex; justify-content: flex-end; gap: .5rem; margin-top: 1.5rem; }
+.form-error { color: var(--red); background: var(--red-soft); padding: .6rem .8rem; border-radius: 8px; margin-top: 1rem; }
+
+.detail-top { display: grid; grid-template-columns: 160px 1fr; gap: 1.25rem; margin-bottom: 1.25rem; }
+.detail-photo { width: 160px; height: 160px; border-radius: 10px; object-fit: cover; background: var(--bg); display: grid; place-items: center; color: var(--muted); }
+.detail-photo svg { width: 40px; height: 40px; }
+dl.facts { display: grid; grid-template-columns: auto 1fr; gap: .35rem 1rem; margin: 0; font-size: .95rem; }
+dl.facts dt { color: var(--muted); }
+dl.facts dd { margin: 0; }
+.callout { padding: .8rem 1rem; border-radius: 8px; margin-bottom: 1rem; }
+.callout.gold { background: var(--gold-soft); }
+.section-title { margin: 1.5rem 0 .6rem; }
+
+/* ---------- Toast ---------- */
+#toast {
+  position: fixed; left: 50%; bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px));
+  transform: translateX(-50%); background: var(--ink); color: var(--bg);
+  padding: .7rem 1.2rem; border-radius: 8px; font-weight: 700; z-index: 100;
+}
+
+.print-head { display: none; }
+
+/* ---------- Mobile ---------- */
+@media (max-width: 860px) {
+  .stats { grid-template-columns: 1fr 1fr; }
+  .dash-grid, .list-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 760px) {
+  #app { grid-template-columns: 1fr; }
+  main { padding-bottom: calc(6rem + env(safe-area-inset-bottom, 0px)); }
+  .sidebar {
+    position: fixed; top: auto; bottom: 0; left: 0; right: 0; height: auto; z-index: 20;
+    padding: .35rem .25rem calc(.35rem + env(safe-area-inset-bottom, 0px));
+  }
+  .brand, .side-foot { display: none; }
+  .nav { grid-template-columns: repeat(6, 1fr); gap: 0; }
+  .nav button { flex-direction: column; gap: .15rem; padding: .4rem .1rem; font-size: .68rem; text-align: center; justify-content: center; position: relative; }
+  .nav .label { display: none; }
+  .nav .short { display: block; }
+  .nav .badge { position: absolute; top: 2px; right: 18%; margin: 0; font-size: .65rem; min-width: 1.1rem; }
+  .mobile-only { display: inline-flex !important; }
+  .hide-sm { display: none; }
+  .form-grid { grid-template-columns: 1fr; }
+  .detail-top { grid-template-columns: 1fr; }
+  .detail-photo { width: 100%; height: 200px; }
+  h1 { font-size: 1.5rem; }
+}
+@media (min-width: 761px) { .nav .short { display: none; } .mobile-only { display: none !important; } }
+
+/* ---------- Printing reports ---------- */
+@media print {
+  :root { color-scheme: light; --bg: #fff; --surface: #fff; --ink: #000; --muted: #444; --line: #bbb; }
+  body { background: #fff; padding: 0; }
+  #app { display: block; }
+  .sidebar, .no-print, #toast, dialog { display: none !important; }
+  main { padding: 0; max-width: none; }
+  .print-head { display: block; margin-bottom: 1rem; }
+  .table-wrap { border: 0; overflow: visible; }
+  th { background: #eee; }
+  table { font-size: 11px; }
+  th, td { padding: 4px 6px; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+
+<!-- ============ Login ============ -->
+<section id="login" hidden>
+  <div class="login-card">
+    <svg class="mark" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M24 4v10M19 9h10M10 44V24l14-10 14 10v20M10 44h28M20 44v-9a4 4 0 0 1 8 0v9"/></svg>
+    <h1 id="login-church">Asset Manager</h1>
+    <p class="muted" style="margin:.25rem 0 0">Sign in to manage church property.</p>
+    <div id="setup-notice" class="form-error" hidden>
+      The app is not connected yet. Open <b>config.js</b> and paste your Supabase project URL and key.
+    </div>
+    <form id="login-form">
+      <label>Email <input type="email" name="email" required autocomplete="username"></label>
+      <label>Password <input type="password" name="password" required autocomplete="current-password"></label>
+      <button class="btn primary" type="submit">Sign in</button>
+      <div id="login-error" class="form-error" hidden></div>
+    </form>
+  </div>
+</section>
+
+<!-- ============ App ============ -->
+<div id="app" hidden>
+  <aside class="sidebar">
+    <div class="brand">
+      <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M24 4v10M19 9h10M10 44V24l14-10 14 10v20M10 44h28M20 44v-9a4 4 0 0 1 8 0v9"/></svg>
+      <div><strong id="brand-name">Our Church</strong><span>Asset Manager</span></div>
+    </div>
+    <nav class="nav" id="nav"></nav>
+    <div class="side-foot">
+      <span id="user-email"></span>
+      <button data-action="logout">Sign out</button>
+    </div>
+  </aside>
+  <main id="view"></main>
+</div>
+
+<dialog id="modal"><div id="modal-content"></div></dialog>
+<div id="toast" role="status" hidden></div>
+
+<script>
+/* =====================================================
+   Church Asset Manager
+   ===================================================== */
+const CFG = Object.assign({ CHURCH_NAME: "Our Church", CURRENCY: "GHS", REMINDER_DAYS: 14 }, window.CONFIG || {});
+const configured = CFG.SUPABASE_URL && !CFG.SUPABASE_URL.startsWith("PASTE") && CFG.SUPABASE_ANON_KEY && !CFG.SUPABASE_ANON_KEY.startsWith("PASTE");
+const sb = configured ? supabase.createClient(CFG.SUPABASE_URL, CFG.SUPABASE_ANON_KEY) : null;
+const BUCKET = "asset-photos";
+
+const STATUSES = ["In use", "In storage", "Under repair", "Lost", "Disposed"];
+const CONDITIONS = ["New", "Good", "Fair", "Poor"];
+const STATUS_PILL = { "In use": "green", "In storage": "", "Under repair": "gold", "Lost": "red", "Disposed": "grey" };
+
+const S = {
+  assets: [], categories: [], locations: [], ministries: [], borrowings: [], maintenance: [],
+  photos: {}, view: "dashboard",
+  filters: { q: "", category: "", location: "", ministry: "", status: "" },
+  loanTab: "out", report: "register"
+};
+
+/* ---------- Icons ---------- */
+const ICON = {
+  home: '<path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/>',
+  box: '<path d="M21 8l-9-5-9 5 9 5 9-5zM3 8v8l9 5 9-5V8M12 13v8"/>',
+  loan: '<path d="M7 7h11l-3-3M17 17H6l3 3"/>',
+  wrench: '<path d="M14.7 6.3a4 4 0 0 0-5.4 5.2L3 17.8V21h3.2l6.3-6.3a4 4 0 0 0 5.2-5.4l-2.6 2.6-2.4-.6-.6-2.4z"/>',
+  chart: '<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
+  list: '<path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>',
+  photo: '<rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-8 8"/>'
+};
+const icon = (n) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICON[n]}</svg>`;
+
+const NAV = [
+  { id: "dashboard", label: "Dashboard", short: "Home", icon: "home" },
+  { id: "assets", label: "Assets", short: "Assets", icon: "box" },
+  { id: "loans", label: "Borrowing", short: "Loans", icon: "loan" },
+  { id: "maintenance", label: "Maintenance", short: "Service", icon: "wrench" },
+  { id: "reports", label: "Reports", short: "Reports", icon: "chart" },
+  { id: "lists", label: "Lists", short: "Lists", icon: "list" }
+];
+
+/* ---------- Helpers ---------- */
+const $ = (s) => document.querySelector(s);
+const esc = (v) => String(v ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const today = () => { const d = new Date(); d.setMinutes(d.getMinutes() - d.getTimezoneOffset()); return d.toISOString().slice(0, 10); };
+const daysUntil = (d) => Math.round((new Date(d + "T00:00") - new Date(today() + "T00:00")) / 86400000);
+const fmtDate = (d) => d ? new Date(d + "T00:00").toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" }) : "—";
+const plural = (n, w) => `${n} ${w}${n === 1 ? "" : "s"}`;
+let moneyFmt;
+try { moneyFmt = new Intl.NumberFormat(undefined, { style: "currency", currency: CFG.CURRENCY }); }
+catch { moneyFmt = { format: (n) => `${CFG.CURRENCY} ${Number(n).toFixed(2)}` }; }
+const money = (n) => (n === null || n === undefined || n === "") ? "—" : moneyFmt.format(Number(n));
+const nameOf = (list, id) => list.find((x) => x.id === id)?.name || "—";
+const assetById = (id) => S.assets.find((a) => a.id === Number(id));
+const assetName = (id) => assetById(id)?.name || "(deleted item)";
+const openLoan = (assetId) => S.borrowings.find((b) => b.asset_id === assetId && !b.returned_on);
+const nextDue = (assetId) => {
+  const recs = S.maintenance.filter((m) => m.asset_id === assetId).sort((a, b) => b.service_date.localeCompare(a.service_date));
+  return recs[0]?.next_due || null;
+};
+const numOrNull = (v) => (v === null || v === "" ? null : Number(v));
+const textOrNull = (v) => { const t = String(v ?? "").trim(); return t ? t : null; };
+const options = (list, selected, blank = "— None —") =>
+  `<option value="">${blank}</option>` + list.map((x) => `<option value="${x.id}" ${x.id === selected ? "selected" : ""}>${esc(x.name)}</option>`).join("");
+const plainOptions = (arr, selected) => arr.map((v) => `<option ${v === selected ? "selected" : ""}>${v}</option>`).join("");
+
+function toast(msg) {
+  const t = $("#toast"); t.textContent = msg; t.hidden = false;
+  clearTimeout(toast.timer); toast.timer = setTimeout(() => (t.hidden = true), 2600);
+}
+function friendlyError(err) {
+  const m = err?.message || String(err);
+  if (/duplicate key/i.test(m)) return "That name or asset tag is already in use. Choose a different one.";
+  if (/Failed to fetch/i.test(m)) return "Could not reach the database. Check your internet connection and try again.";
+  return m;
+}
+
+/* ---------- Data ---------- */
+async function loadAll() {
+  const q = (t, col, asc) => sb.from(t).select("*").order(col, { ascending: asc });
+  const res = await Promise.all([
+    q("assets", "name", true), q("categories", "name", true), q("locations", "name", true),
+    q("ministries", "name", true), q("borrowings", "borrowed_on", false), q("maintenance", "service_date", false)
+  ]);
+  const bad = res.find((r) => r.error);
+  if (bad) throw bad.error;
+  [S.assets, S.categories, S.locations, S.ministries, S.borrowings, S.maintenance] = res.map((r) => r.data || []);
+  S.photos = {};
+  const paths = S.assets.map((a) => a.photo_path).filter(Boolean);
+  if (paths.length) {
+    const { data } = await sb.storage.from(BUCKET).createSignedUrls(paths, 60 * 60 * 6);
+    (data || []).forEach((d) => { if (d.signedUrl) S.photos[d.path] = d.signedUrl; });
+  }
+}
+async function refresh() {
+  try { await loadAll(); render(); }
+  catch (err) { toast(friendlyError(err)); }
+}
+
+/* ---------- Auth ---------- */
+async function init() {
+  $("#login-church").textContent = CFG.CHURCH_NAME;
+  $("#brand-name").textContent = CFG.CHURCH_NAME;
+  document.title = `${CFG.CHURCH_NAME} · Assets`;
+  if (!configured) { $("#setup-notice").hidden = false; $("#login-form").hidden = true; showLogin(); return; }
+  const { data: { session } } = await sb.auth.getSession();
+  session ? startApp(session) : showLogin();
+  sb.auth.onAuthStateChange((event) => { if (event === "SIGNED_OUT") showLogin(); });
+}
+function showLogin() { $("#app").hidden = true; $("#login").hidden = false; }
+async function startApp(session) {
+  $("#login").hidden = true; $("#app").hidden = false;
+  $("#user-email").textContent = session.user.email;
+  $("#view").innerHTML = '<p class="muted">Loading…</p>';
+  try { await loadAll(); }
+  catch (err) {
+    $("#view").innerHTML = `<div class="form-error">Could not load data: ${esc(friendlyError(err))}<br>Check that you ran <b>setup.sql</b> in Supabase.</div>`;
+    return;
+  }
+  render();
+}
+$("#login-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const fd = new FormData(e.target), btn = e.target.querySelector("button"), errBox = $("#login-error");
+  btn.disabled = true; errBox.hidden = true;
+  const { data, error } = await sb.auth.signInWithPassword({ email: fd.get("email"), password: fd.get("password") });
+  btn.disabled = false;
+  if (error) { errBox.textContent = error.message === "Invalid login credentials" ? "Email or password is incorrect." : error.message; errBox.hidden = false; return; }
+  e.target.reset();
+  startApp(data.session);
+});
+
+/* ---------- Alerts (used by dashboard + nav badge) ---------- */
+function getAlerts() {
+  const alerts = [];
+  S.borrowings.filter((b) => !b.returned_on && b.due_on).forEach((b) => {
+    const d = daysUntil(b.due_on);
+    if (d < 0) alerts.push({ level: "red", when: d, asset: b.asset_id, text: `${assetName(b.asset_id)} is overdue`, sub: `${b.borrower_name} was due to return it ${plural(-d, "day")} ago` });
+    else if (d <= 2) alerts.push({ level: "gold", when: d, asset: b.asset_id, text: `${assetName(b.asset_id)} is due back ${d === 0 ? "today" : d === 1 ? "tomorrow" : "in 2 days"}`, sub: `Borrowed by ${b.borrower_name}` });
+  });
+  S.assets.filter((a) => a.status !== "Disposed" && a.status !== "Lost").forEach((a) => {
+    const n = nextDue(a.id); if (!n) return;
+    const d = daysUntil(n);
+    if (d < 0) alerts.push({ level: "red", when: d, asset: a.id, text: `${a.name} is overdue for servicing`, sub: `Was due ${fmtDate(n)}` });
+    else if (d <= CFG.REMINDER_DAYS) alerts.push({ level: "gold", when: d, asset: a.id, text: `${a.name} needs servicing ${d === 0 ? "today" : `in ${plural(d, "day")}`}`, sub: `Due ${fmtDate(n)}` });
+  });
+  return alerts.sort((x, y) => x.when - y.when);
+}
+
+/* ---------- Render ---------- */
+function render() {
+  const urgent = getAlerts().filter((a) => a.level === "red").length;
+  $("#nav").innerHTML = NAV.map((n) => `
+    <button data-action="nav" data-view="${n.id}" class="${S.view === n.id ? "active" : ""}" ${S.view === n.id ? 'aria-current="page"' : ""}>
+      ${icon(n.icon)}<span class="label">${n.label}</span><span class="short">${n.short}</span>
+      ${n.id === "dashboard" && urgent ? `<span class="badge" aria-label="${urgent} urgent">${urgent}</span>` : ""}
+    </button>`).join("");
+  const views = { dashboard: viewDashboard, assets: viewAssets, loans: viewLoans, maintenance: viewMaintenance, reports: viewReports, lists: viewLists };
+  $("#view").innerHTML = views[S.view]();
+  if (S.view === "assets") renderAssetResults();
+  if (S.view === "reports") renderReport();
+  window.scrollTo(0, 0);
+}
+
+function pageHead(title, sub, actions = "") {
+  return `<div class="page-head no-print"><div><h1>${title}</h1>${sub ? `<p class="muted">${sub}</p>` : ""}</div><div class="actions">${actions}</div></div>`;
+}
+function statusPill(a) {
+  const loan = openLoan(a.id);
+  return `<span class="pill ${STATUS_PILL[a.status] ?? ""}">${esc(a.status)}</span>${loan ? ' <span class="pill gold">On loan</span>' : ""}`;
+}
+function thumb(a, cls = "thumb") {
+  const url = a.photo_path && S.photos[a.photo_path];
+  return url ? `<img class="${cls}" src="${url}" alt="">` : `<div class="${cls} empty">${icon("photo")}</div>`;
+}
+
+/* ----- Dashboard ----- */
+function viewDashboard() {
+  const active = S.assets.filter((a) => a.status !== "Disposed");
+  const value = active.reduce((s, a) => s + Number(a.cost || 0), 0);
+  const out = S.borrowings.filter((b) => !b.returned_on).length;
+  const repair = active.filter((a) => a.status === "Under repair").length;
+  const alerts = getAlerts();
+  const recent = [...S.assets].sort((a, b) => b.created_at.localeCompare(a.created_at)).slice(0, 5);
+
+  if (!S.assets.length) {
+    return pageHead(`Welcome`, CFG.CHURCH_NAME) + `
+      <div class="panel empty-state">
+        <h2 style="color:var(--ink)">Start your asset register</h2>
+        <p>Add the first item the church owns, such as a sound mixer, keyboard, or generator.</p>
+        <button class="btn primary" data-action="add-asset">Add an asset</button>
+      </div>`;
+  }
+  return pageHead("Dashboard", CFG.CHURCH_NAME, `<button class="btn primary" data-action="add-asset">Add asset</button>`) + `
+    <div class="stats">
+      <div class="stat"><b>${active.length}</b><span>Assets held</span></div>
+      <div class="stat"><b>${money(value)}</b><span>Total recorded value</span></div>
+      <div class="stat"><b>${out}</b><span>Out on loan</span></div>
+      <div class="stat"><b>${repair}</b><span>Under repair</span></div>
+    </div>
+    <div class="dash-grid">
+      <section class="panel">
+        <div class="panel-head"><h2>Needs attention</h2></div>
+        ${alerts.length ? `<ul class="alerts">${alerts.map((a) => `
+          <li><button class="${a.level}" data-action="open-asset" data-id="${a.asset}">
+            <span><b>${esc(a.text)}</b><small>${esc(a.sub)}</small></span>
+          </button></li>`).join("")}</ul>`
+        : `<div class="all-clear"><b>All clear.</b> No overdue loans or maintenance due in the next ${CFG.REMINDER_DAYS} days.</div>`}
+      </section>
+      <section class="panel">
+        <div class="panel-head"><h2>Recently added</h2><button class="btn sm" data-action="nav" data-view="assets">See all</button></div>
+        <ul class="plain-list" style="margin:0">${recent.map((a) => `
+          <li style="justify-content:flex-start;gap:.75rem">${thumb(a)}
+            <button class="link" data-action="open-asset" data-id="${a.id}">${esc(a.name)}</button>
+            <span class="muted small" style="margin-left:auto">${esc(nameOf(S.locations, a.location_id))}</span></li>`).join("")}
+        </ul>
+      </section>
+    </div>`;
+}
+
+/* ----- Assets ----- */
+function viewAssets() {
+  const f = S.filters;
+  return pageHead("Assets", plural(S.assets.length, "item") + " recorded", `<button class="btn primary" data-action="add-asset">Add asset</button>`) + `
+    <div class="toolbar">
+      <input type="search" id="f-q" placeholder="Search by name, tag, or serial number" value="${esc(f.q)}" aria-label="Search assets">
+      <select id="f-category" aria-label="Category">${options(S.categories, Number(f.category) || null, "All categories")}</select>
+      <select id="f-location" aria-label="Location">${options(S.locations, Number(f.location) || null, "All locations")}</select>
+      <select id="f-ministry" aria-label="Ministry">${options(S.ministries, Number(f.ministry) || null, "All ministries")}</select>
+      <select id="f-status" aria-label="Status"><option value="">All statuses</option>${plainOptions(STATUSES, f.status)}</select>
+    </div>
+    <div id="asset-results"></div>`;
+}
+function filteredAssets() {
+  const f = S.filters, q = f.q.trim().toLowerCase();
+  return S.assets.filter((a) =>
+    (!q || [a.name, a.asset_tag, a.serial_number, a.notes].some((v) => (v || "").toLowerCase().includes(q))) &&
+    (!f.category || a.category_id === Number(f.category)) &&
+    (!f.location || a.location_id === Number(f.location)) &&
+    (!f.ministry || a.ministry_id === Number(f.ministry)) &&
+    (!f.status || a.status === f.status));
+}
+function renderAssetResults() {
+  const el = $("#asset-results"); if (!el) return;
+  const list = filteredAssets();
+  if (!S.assets.length) { el.innerHTML = `<div class="panel empty-state">No assets yet.<br><button class="btn primary" data-action="add-asset">Add your first asset</button></div>`; return; }
+  if (!list.length) { el.innerHTML = `<div class="panel empty-state">No assets match these filters. Clear the search or choose a different filter.</div>`; return; }
+  el.innerHTML = `<div class="table-wrap"><table>
+    <thead><tr><th></th><th>Name</th><th class="hide-sm">Category</th><th class="hide-sm">Location</th><th class="hide-sm">Ministry</th><th>Status</th><th class="num hide-sm">Value</th></tr></thead>
+    <tbody>${list.map((a) => `
+      <tr data-action="open-asset" data-id="${a.id}">
+        <td style="width:56px">${thumb(a)}</td>
+        <td><button class="link" data-action="open-asset" data-id="${a.id}">${esc(a.name)}</button>${a.asset_tag ? `<div class="muted small">${esc(a.asset_tag)}</div>` : ""}</td>
+        <td class="hide-sm">${esc(nameOf(S.categories, a.category_id))}</td>
+        <td class="hide-sm">${esc(nameOf(S.locations, a.location_id))}</td>
+        <td class="hide-sm">${esc(nameOf(S.ministries, a.ministry_id))}</td>
+        <td>${statusPill(a)}</td>
+        <td class="num hide-sm">${money(a.cost)}</td>
+      </tr>`).join("")}</tbody></table></div>
+    <p class="muted small">Showing ${list.length} of ${S.assets.length}</p>`;
+}
+
+/* ----- Borrowing ----- */
+function viewLoans() {
+  const out = S.borrowings.filter((b) => !b.returned_on).sort((a, b) => (a.due_on || "9999").localeCompare(b.due_on || "9999"));
+  const rows = S.loanTab === "out" ? out : S.borrowings;
+  const dueCell = (b) => {
+    if (b.returned_on) return fmtDate(b.due_on);
+    if (!b.due_on) return '<span class="muted">No date</span>';
+    const d = daysUntil(b.due_on);
+    return `${fmtDate(b.due_on)} ${d < 0 ? '<span class="pill red">Overdue</span>' : d <= 2 ? '<span class="pill gold">Soon</span>' : ""}`;
+  };
+  return pageHead("Borrowing", `${plural(out.length, "item")} currently out`, `<button class="btn primary" data-action="lend">Lend an item</button>`) + `
+    <div class="tabs" role="tablist">
+      <button role="tab" data-action="loan-tab" data-tab="out" class="${S.loanTab === "out" ? "active" : ""}">Out now (${out.length})</button>
+      <button role="tab" data-action="loan-tab" data-tab="all" class="${S.loanTab === "all" ? "active" : ""}">Full history</button>
+    </div>
+    ${rows.length ? `<div class="table-wrap"><table>
+      <thead><tr><th>Item</th><th>Borrower</th><th class="hide-sm">Purpose</th><th class="hide-sm">Borrowed</th><th>Due back</th><th>${S.loanTab === "out" ? "" : "Returned"}</th></tr></thead>
+      <tbody>${rows.map((b) => `<tr>
+        <td><button class="link" data-action="open-asset" data-id="${b.asset_id}">${esc(assetName(b.asset_id))}</button></td>
+        <td>${esc(b.borrower_name)}${b.borrower_phone ? `<div class="muted small">${esc(b.borrower_phone)}</div>` : ""}</td>
+        <td class="hide-sm">${esc(b.purpose || "—")}</td>
+        <td class="hide-sm">${fmtDate(b.borrowed_on)}</td>
+        <td>${dueCell(b)}</td>
+        <td>${b.returned_on ? fmtDate(b.returned_on) : `<button class="btn sm" data-action="return-loan" data-id="${b.id}">Mark returned</button>`}</td>
+      </tr>`).join("")}</tbody></table></div>`
+    : `<div class="panel empty-state">${S.loanTab === "out" ? "Nothing is out on loan right now." : "No borrowing recorded yet."}</div>`}`;
+}
+
+/* ----- Maintenance ----- */
+function viewMaintenance() {
+  const upcoming = S.assets.filter((a) => a.status !== "Disposed" && nextDue(a.id))
+    .map((a) => ({ a, due: nextDue(a.id) })).sort((x, y) => x.due.localeCompare(y.due));
+  return pageHead("Maintenance", "Servicing schedule and repair history", `<button class="btn primary" data-action="log-service">Log maintenance</button>`) + `
+    <section class="panel">
+      <div class="panel-head"><h2>Next services</h2></div>
+      ${upcoming.length ? `<ul class="plain-list" style="margin:0">${upcoming.map(({ a, due }) => {
+        const d = daysUntil(due);
+        const pill = d < 0 ? '<span class="pill red">Overdue</span>' : d <= CFG.REMINDER_DAYS ? '<span class="pill gold">Due soon</span>' : '<span class="pill green">Scheduled</span>';
+        return `<li><button class="link" data-action="open-asset" data-id="${a.id}">${esc(a.name)}</button><span>${fmtDate(due)} ${pill}</span></li>`;
+      }).join("")}</ul>`
+      : `<p class="muted" style="margin:0">No services scheduled. When you log maintenance, add a “next service” date to get reminders.</p>`}
+    </section>
+    <section class="panel">
+      <div class="panel-head"><h2>History</h2></div>
+      ${S.maintenance.length ? `<div class="table-wrap"><table>
+        <thead><tr><th>Date</th><th>Item</th><th>Work done</th><th class="hide-sm">Done by</th><th class="num">Cost</th><th></th></tr></thead>
+        <tbody>${S.maintenance.map((m) => `<tr>
+          <td>${fmtDate(m.service_date)}</td>
+          <td><button class="link" data-action="open-asset" data-id="${m.asset_id}">${esc(assetName(m.asset_id))}</button></td>
+          <td>${esc(m.description)}</td>
+          <td class="hide-sm">${esc(m.performed_by || "—")}</td>
+          <td class="num">${money(m.cost)}</td>
+          <td><button class="btn sm danger" data-action="delete-service" data-id="${m.id}" aria-label="Delete record">Delete</button></td>
+        </tr>`).join("")}</tbody></table></div>`
+      : `<p class="muted" style="margin:0">No maintenance logged yet.</p>`}
+    </section>`;
+}
+
+/* ----- Reports ----- */
+const REPORTS = {
+  register: { title: "Asset register", rows: () => S.assets.map((a) => ({
+    "Asset tag": a.asset_tag || "", "Name": a.name, "Category": nameOf(S.categories, a.category_id),
+    "Location": nameOf(S.locations, a.location_id), "Ministry": nameOf(S.ministries, a.ministry_id),
+    "Status": a.status, "Condition": a.condition, "Serial number": a.serial_number || "",
+    "Purchase date": a.purchase_date || "", [`Cost (${CFG.CURRENCY})`]: a.cost === null ? "" : Number(a.cost)
+  })) },
+  ministry: { title: "Assets by ministry", rows: () => groupBy("ministry_id", S.ministries, "Ministry") },
+  location: { title: "Assets by location", rows: () => groupBy("location_id", S.locations, "Location") },
+  loans: { title: "Borrowing history", rows: () => S.borrowings.map((b) => ({
+    "Item": assetName(b.asset_id), "Borrower": b.borrower_name, "Phone": b.borrower_phone || "",
+    "Purpose": b.purpose || "", "Borrowed": b.borrowed_on, "Due back": b.due_on || "", "Returned": b.returned_on || "Not yet"
+  })) },
+  maintenance: { title: "Maintenance costs", rows: () => S.maintenance.map((m) => ({
+    "Date": m.service_date, "Item": assetName(m.asset_id), "Work done": m.description,
+    "Done by": m.performed_by || "", [`Cost (${CFG.CURRENCY})`]: m.cost === null ? "" : Number(m.cost), "Next service": m.next_due || ""
+  })) }
+};
+function groupBy(field, list, label) {
+  const held = S.assets.filter((a) => a.status !== "Disposed");
+  const groups = [...list.map((x) => ({ id: x.id, name: x.name })), { id: null, name: "Not assigned" }];
+  return groups.map((g) => {
+    const items = held.filter((a) => (a[field] ?? null) === g.id);
+    return { [label]: g.name, "Number of assets": items.length, [`Total value (${CFG.CURRENCY})`]: items.reduce((s, a) => s + Number(a.cost || 0), 0) };
+  }).filter((r) => r["Number of assets"] > 0);
+}
+function viewReports() {
+  return pageHead("Reports", "Download for audits and council meetings",
+    `<button class="btn" data-action="export-xlsx">Download Excel</button><button class="btn primary" data-action="print">Print or save PDF</button>`) + `
+    <div class="tabs no-print">${Object.entries(REPORTS).map(([k, r]) =>
+      `<button data-action="report" data-report="${k}" class="${S.report === k ? "active" : ""}">${r.title}</button>`).join("")}</div>
+    <div class="print-head"><h1>${esc(CFG.CHURCH_NAME)}</h1><h2>${REPORTS[S.report].title}</h2><p>Printed ${fmtDate(today())}</p></div>
+    <div id="report-out"></div>`;
+}
+function renderReport() {
+  const rows = REPORTS[S.report].rows();
+  const el = $("#report-out");
+  if (!rows.length) { el.innerHTML = `<div class="panel empty-state">No records for this report yet.</div>`; return; }
+  const cols = Object.keys(rows[0]);
+  const isMoney = (c) => c.startsWith("Cost") || c.startsWith("Total value");
+  const totalCol = cols.find(isMoney);
+  const total = totalCol ? rows.reduce((s, r) => s + (Number(r[totalCol]) || 0), 0) : null;
+  el.innerHTML = `<div class="table-wrap"><table>
+    <thead><tr>${cols.map((c) => `<th class="${isMoney(c) || c.startsWith("Number") ? "num" : ""}">${esc(c)}</th>`).join("")}</tr></thead>
+    <tbody>${rows.map((r) => `<tr>${cols.map((c) => `<td class="${isMoney(c) || c.startsWith("Number") ? "num" : ""}">${isMoney(c) ? (r[c] === "" ? "—" : money(r[c])) : esc(r[c])}</td>`).join("")}</tr>`).join("")}</tbody>
+    ${totalCol ? `<tfoot><tr>${cols.map((c, i) => `<td class="${isMoney(c) ? "num" : ""}"><b>${i === 0 ? "Total" : c === totalCol ? money(total) : ""}</b></td>`).join("")}</tr></tfoot>` : ""}
+  </table></div><p class="muted small">${plural(rows.length, "row")}</p>`;
+}
+
+/* ----- Lists ----- */
+function viewLists() {
+  const block = (table, title, list) => `
+    <section class="panel">
+      <h2>${title}</h2>
+      <form class="inline-form" data-form="list" data-table="${table}" style="margin-top:1rem">
+        <input name="name" required placeholder="Add new…" aria-label="New ${title.toLowerCase()} name">
+        <button class="btn" type="submit">Add</button>
+      </form>
+      <ul class="plain-list">${list.map((x) => `<li><span>${esc(x.name)}</span>
+        <button class="btn sm danger" data-action="delete-item" data-table="${table}" data-id="${x.id}">Remove</button></li>`).join("") || '<li class="muted">None yet</li>'}</ul>
+    </section>`;
+  return pageHead("Lists", "The choices that appear when you add or edit an asset") + `
+    <div class="list-grid">${block("categories", "Categories", S.categories)}${block("locations", "Locations", S.locations)}${block("ministries", "Ministries", S.ministries)}</div>
+    <p class="muted small" style="margin-top:1.5rem">Signed in as ${esc($("#user-email").textContent)}.
+      <button class="link mobile-only" data-action="logout" style="display:none">Sign out</button></p>`;
+}
+
+/* ---------- Modal ---------- */
+function openModal(title, body) {
+  $("#modal-content").innerHTML = `<div class="modal-head"><h2>${title}</h2><button data-action="close-modal" aria-label="Close">×</button></div><div class="modal-body">${body}</div>`;
+  const m = $("#modal"); if (!m.open) m.showModal();
+  const first = m.querySelector(".modal-body input:not([type=hidden]), .modal-body select, .modal-body textarea");
+  if (first && !first.closest(".detail-top")) first.focus();
+}
+function closeModal() { $("#modal").close(); }
+$("#modal").addEventListener("click", (e) => { if (e.target === e.currentTarget) closeModal(); });
+
+function assetDetail(id) {
+  const a = assetById(id); if (!a) return;
+  const loan = openLoan(a.id);
+  const loans = S.borrowings.filter((b) => b.asset_id === a.id);
+  const services = S.maintenance.filter((m) => m.asset_id === a.id);
+  const due = nextDue(a.id);
+  const url = a.photo_path && S.photos[a.photo_path];
+  openModal(esc(a.name), `
+    ${loan ? `<div class="callout gold"><b>On loan to ${esc(loan.borrower_name)}</b>${loan.due_on ? `, due back ${fmtDate(loan.due_on)}` : ""}.
+      <button class="btn sm" style="margin-left:.5rem" data-action="return-loan" data-id="${loan.id}">Mark returned</button></div>` : ""}
+    <div class="detail-top">
+      ${url ? `<img class="detail-photo" src="${url}" alt="Photo of ${esc(a.name)}">` : `<div class="detail-photo">${icon("photo")}</div>`}
+      <dl class="facts">
+        <dt>Status</dt><dd>${statusPill(a)}</dd>
+        <dt>Condition</dt><dd>${esc(a.condition)}</dd>
+        <dt>Asset tag</dt><dd>${esc(a.asset_tag || "—")}</dd>
+        <dt>Category</dt><dd>${esc(nameOf(S.categories, a.category_id))}</dd>
+        <dt>Location</dt><dd>${esc(nameOf(S.locations, a.location_id))}</dd>
+        <dt>Ministry</dt><dd>${esc(nameOf(S.ministries, a.ministry_id))}</dd>
+        <dt>Serial no.</dt><dd>${esc(a.serial_number || "—")}</dd>
+        <dt>Purchased</dt><dd>${fmtDate(a.purchase_date)}</dd>
+        <dt>Cost</dt><dd>${money(a.cost)}</dd>
+        <dt>Next service</dt><dd>${fmtDate(due)}</dd>
+      </dl>
+    </div>
+    ${a.notes ? `<p style="white-space:pre-wrap">${esc(a.notes)}</p>` : ""}
+    <div class="actions">
+      <button class="btn primary" data-action="edit-asset" data-id="${a.id}">Edit</button>
+      ${loan ? "" : `<button class="btn" data-action="lend" data-id="${a.id}">Lend out</button>`}
+      <button class="btn" data-action="log-service" data-id="${a.id}">Log maintenance</button>
+      <button class="btn danger" data-action="delete-asset" data-id="${a.id}">Delete</button>
+    </div>
+    <h3 class="section-title">Maintenance (${services.length})</h3>
+    ${services.length ? `<ul class="plain-list" style="margin:0">${services.map((m) => `<li><span>${fmtDate(m.service_date)}: ${esc(m.description)}</span><span class="muted">${money(m.cost)}</span></li>`).join("")}</ul>` : '<p class="muted small" style="margin:0">None logged.</p>'}
+    <h3 class="section-title">Borrowing (${loans.length})</h3>
+    ${loans.length ? `<ul class="plain-list" style="margin:0">${loans.map((b) => `<li><span>${esc(b.borrower_name)}${b.purpose ? ` · ${esc(b.purpose)}` : ""}</span><span class="muted small">${fmtDate(b.borrowed_on)} → ${b.returned_on ? fmtDate(b.returned_on) : "not returned"}</span></li>`).join("")}</ul>` : '<p class="muted small" style="margin:0">Never borrowed.</p>'}
+  `);
+}
+
+function assetForm(a = {}) {
+  openModal(a.id ? "Edit asset" : "Add asset", `
+    <form data-form="asset" data-id="${a.id || ""}">
+      <div class="form-grid">
+        <label class="full">Name <input name="name" required value="${esc(a.name)}" placeholder="e.g. Yamaha MG16 mixer"></label>
+        <label>Asset tag <span class="hint">Your own label number, optional</span><input name="asset_tag" value="${esc(a.asset_tag)}" placeholder="e.g. CH-0042"></label>
+        <label>Serial number <span class="hint">From the manufacturer</span><input name="serial_number" value="${esc(a.serial_number)}"></label>
+        <label>Category <select name="category_id">${options(S.categories, a.category_id ?? null)}</select></label>
+        <label>Location <select name="location_id">${options(S.locations, a.location_id ?? null)}</select></label>
+        <label>Ministry responsible <select name="ministry_id">${options(S.ministries, a.ministry_id ?? null)}</select></label>
+        <label>Status <select name="status">${plainOptions(STATUSES, a.status || "In use")}</select></label>
+        <label>Condition <select name="condition">${plainOptions(CONDITIONS, a.condition || "Good")}</select></label>
+        <label>Purchase date <input type="date" name="purchase_date" value="${esc(a.purchase_date)}"></label>
+        <label>Cost (${esc(CFG.CURRENCY)}) <input type="number" name="cost" min="0" step="0.01" value="${a.cost ?? ""}"></label>
+        <label>Photo <span class="hint">${a.photo_path ? "Choose a file to replace the current photo" : "Optional, up to 5 MB"}</span><input type="file" name="photo" accept="image/*"></label>
+        <label class="full">Notes <textarea name="notes" placeholder="Donor, warranty details, accessories included…">${esc(a.notes)}</textarea></label>
+      </div>
+      <div class="form-error" hidden></div>
+      <div class="form-foot"><button type="button" class="btn" data-action="close-modal">Cancel</button><button class="btn primary" type="submit">${a.id ? "Save changes" : "Add asset"}</button></div>
+    </form>`);
+}
+
+function loanForm(assetId) {
+  const available = S.assets.filter((a) => !openLoan(a.id) && !["Disposed", "Lost"].includes(a.status));
+  if (!available.length) { toast("Every item is already out on loan or unavailable."); return; }
+  openModal("Lend an item", `
+    <form data-form="loan">
+      <div class="form-grid">
+        <label class="full">Item <select name="asset_id" required>${options(available, Number(assetId) || null, "Choose an item")}</select></label>
+        <label>Borrower name <input name="borrower_name" required></label>
+        <label>Phone <input name="borrower_phone" type="tel"></label>
+        <label class="full">Purpose <input name="purpose" placeholder="e.g. Youth camp, funeral service"></label>
+        <label>Date borrowed <input type="date" name="borrowed_on" required value="${today()}"></label>
+        <label>Due back <input type="date" name="due_on"></label>
+        <label class="full">Notes <textarea name="notes" placeholder="Condition when lent, accessories included…"></textarea></label>
+      </div>
+      <div class="form-error" hidden></div>
+      <div class="form-foot"><button type="button" class="btn" data-action="close-modal">Cancel</button><button class="btn primary" type="submit">Record loan</button></div>
+    </form>`);
+}
+
+function serviceForm(assetId) {
+  if (!S.assets.length) { toast("Add an asset first."); return; }
+  openModal("Log maintenance", `
+    <form data-form="service">
+      <div class="form-grid">
+        <label class="full">Item <select name="asset_id" required>${options(S.assets, Number(assetId) || null, "Choose an item")}</select></label>
+        <label>Date done <input type="date" name="service_date" required value="${today()}"></label>
+        <label>Cost (${esc(CFG.CURRENCY)}) <input type="number" name="cost" min="0" step="0.01"></label>
+        <label class="full">Work done <input name="description" required placeholder="e.g. Oil change and filter replacement"></label>
+        <label>Done by <input name="performed_by" placeholder="Technician or company"></label>
+        <label>Next service due <span class="hint">For reminders</span><input type="date" name="next_due"></label>
+        <label class="full" style="display:flex;gap:.5rem;align-items:center;font-weight:400">
+          <input type="checkbox" name="mark_in_use" style="width:auto"> Item is working again: set status to “In use”</label>
+      </div>
+      <div class="form-error" hidden></div>
+      <div class="form-foot"><button type="button" class="btn" data-action="close-modal">Cancel</button><button class="btn primary" type="submit">Save record</button></div>
+    </form>`);
+}
+
+/* ---------- Form handling ---------- */
+const FORMS = {
+  async asset(form) {
+    const fd = new FormData(form), id = Number(form.dataset.id) || null;
+    const old = id ? assetById(id) : null;
+    const rec = {
+      name: textOrNull(fd.get("name")), asset_tag: textOrNull(fd.get("asset_tag")), serial_number: textOrNull(fd.get("serial_number")),
+      category_id: numOrNull(fd.get("category_id")), location_id: numOrNull(fd.get("location_id")), ministry_id: numOrNull(fd.get("ministry_id")),
+      status: fd.get("status"), condition: fd.get("condition"), purchase_date: fd.get("purchase_date") || null,
+      cost: numOrNull(fd.get("cost")), notes: textOrNull(fd.get("notes"))
+    };
+    const file = fd.get("photo");
+    if (file && file.size) {
+      if (file.size > 5 * 1024 * 1024) throw new Error("The photo is larger than 5 MB. Choose a smaller photo.");
+      const ext = (file.name.split(".").pop() || "jpg").toLowerCase().replace(/[^a-z0-9]/g, "");
+      const path = `${crypto.randomUUID()}.${ext}`;
+      const { error } = await sb.storage.from(BUCKET).upload(path, file, { contentType: file.type });
+      if (error) throw error;
+      rec.photo_path = path;
+      if (old?.photo_path) await sb.storage.from(BUCKET).remove([old.photo_path]);
+    }
+    if (id) {
+      rec.updated_at = new Date().toISOString();
+      const { error } = await sb.from("assets").update(rec).eq("id", id); if (error) throw error;
+      return { msg: "Changes saved", reopen: id };
+    }
+    const { data, error } = await sb.from("assets").insert(rec).select().single(); if (error) throw error;
+    return { msg: "Asset added", reopen: data.id };
+  },
+  async loan(form) {
+    const fd = new FormData(form);
+    const due = fd.get("due_on") || null, borrowed = fd.get("borrowed_on");
+    if (due && due < borrowed) throw new Error("The due-back date is before the borrowed date.");
+    const { error } = await sb.from("borrowings").insert({
+      asset_id: Number(fd.get("asset_id")), borrower_name: textOrNull(fd.get("borrower_name")), borrower_phone: textOrNull(fd.get("borrower_phone")),
+      purpose: textOrNull(fd.get("purpose")), borrowed_on: borrowed, due_on: due, notes: textOrNull(fd.get("notes"))
+    });
+    if (error) throw error;
+    return { msg: "Loan recorded" };
+  },
+  async service(form) {
+    const fd = new FormData(form), assetId = Number(fd.get("asset_id"));
+    const { error } = await sb.from("maintenance").insert({
+      asset_id: assetId, service_date: fd.get("service_date"), description: textOrNull(fd.get("description")),
+      cost: numOrNull(fd.get("cost")), performed_by: textOrNull(fd.get("performed_by")), next_due: fd.get("next_due") || null
+    });
+    if (error) throw error;
+    if (fd.get("mark_in_use")) {
+      const { error: e2 } = await sb.from("assets").update({ status: "In use", updated_at: new Date().toISOString() }).eq("id", assetId);
+      if (e2) throw e2;
+    }
+    return { msg: "Maintenance saved" };
+  },
+  async list(form) {
+    const name = textOrNull(new FormData(form).get("name")); if (!name) return {};
+    const { error } = await sb.from(form.dataset.table).insert({ name }); if (error) throw error;
+    return { msg: `“${name}” added`, keepModal: true };
+  }
+};
+
+document.addEventListener("submit", async (e) => {
+  const form = e.target.closest("[data-form]"); if (!form) return;
+  e.preventDefault();
+  const btn = form.querySelector("button[type=submit]"), errBox = form.querySelector(".form-error");
+  btn.disabled = true; if (errBox) errBox.hidden = true;
+  try {
+    const res = await FORMS[form.dataset.form](form);
+    if (!res.keepModal && $("#modal").open) closeModal();
+    await refresh();
+    if (res.msg) toast(res.msg);
+    if (res.reopen) assetDetail(res.reopen);
+  } catch (err) {
+    const msg = friendlyError(err);
+    if (errBox) { errBox.textContent = msg; errBox.hidden = false; } else toast(msg);
+  } finally { btn.disabled = false; }
+});
+
+/* ---------- Filters ---------- */
+document.addEventListener("input", (e) => {
+  if (e.target.id === "f-q") { S.filters.q = e.target.value; renderAssetResults(); }
+});
+document.addEventListener("change", (e) => {
+  const map = { "f-category": "category", "f-location": "location", "f-ministry": "ministry", "f-status": "status" };
+  if (map[e.target.id]) { S.filters[map[e.target.id]] = e.target.value; renderAssetResults(); }
+});
+
+/* ---------- Click actions ---------- */
+document.addEventListener("click", async (e) => {
+  const el = e.target.closest("[data-action]"); if (!el) return;
+  const { action, id } = el.dataset;
+  try {
+    switch (action) {
+      case "nav": S.view = el.dataset.view; if ($("#modal").open) closeModal(); render(); break;
+      case "add-asset": assetForm(); break;
+      case "open-asset": assetDetail(id); break;
+      case "edit-asset": assetForm(assetById(id)); break;
+      case "lend": loanForm(id); break;
+      case "log-service": serviceForm(id); break;
+      case "close-modal": closeModal(); break;
+      case "loan-tab": S.loanTab = el.dataset.tab; render(); break;
+      case "report": S.report = el.dataset.report; render(); break;
+      case "print": window.print(); break;
+      case "export-xlsx": {
+        const r = REPORTS[S.report], rows = r.rows();
+        if (!rows.length) { toast("This report has no rows to download."); break; }
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(rows), r.title.slice(0, 31));
+        XLSX.writeFile(wb, `${r.title.toLowerCase().replace(/\s+/g, "-")}-${today()}.xlsx`);
+        break;
+      }
+      case "return-loan": {
+        const { error } = await sb.from("borrowings").update({ returned_on: today() }).eq("id", Number(id));
+        if (error) throw error;
+        const wasOpen = $("#modal").open; const b = S.borrowings.find((x) => x.id === Number(id));
+        await refresh(); toast("Marked as returned");
+        if (wasOpen && b) assetDetail(b.asset_id);
+        break;
+      }
+      case "delete-service": {
+        if (!confirm("Delete this maintenance record? This cannot be undone.")) break;
+        const { error } = await sb.from("maintenance").delete().eq("id", Number(id)); if (error) throw error;
+        await refresh(); toast("Record deleted"); break;
+      }
+      case "delete-asset": {
+        const a = assetById(id);
+        if (!confirm(`Delete “${a.name}” and all its borrowing and maintenance records? This cannot be undone.\n\nTip: to keep the history, edit the asset and set its status to “Disposed” instead.`)) break;
+        const { error } = await sb.from("assets").delete().eq("id", a.id); if (error) throw error;
+        if (a.photo_path) await sb.storage.from(BUCKET).remove([a.photo_path]);
+        closeModal(); await refresh(); toast("Asset deleted"); break;
+      }
+      case "delete-item": {
+        const table = el.dataset.table;
+        if (!confirm("Remove this from the list? Assets using it will show “—” instead.")) break;
+        const { error } = await sb.from(table).delete().eq("id", Number(id)); if (error) throw error;
+        await refresh(); toast("Removed"); break;
+      }
+      case "logout": await sb.auth.signOut(); break;
+    }
+  } catch (err) { toast(friendlyError(err)); }
+});
+
+init();
+</script>
+</body>
+</html>
