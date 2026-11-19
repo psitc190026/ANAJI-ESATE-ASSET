@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-bs-theme="light">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -7,25 +7,39 @@
 <title>Church Asset Manager</title>
 <link rel="icon" type="image/png" href="logo.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
+<script>
+  /* Apply the saved light/dark choice before the page paints */
+  (function () {
+    var pref = "system";
+    try { pref = localStorage.getItem("theme") || "system"; } catch (e) {}
+    var dark = pref === "dark" || (pref === "system" && window.matchMedia && matchMedia("(prefers-color-scheme: dark)").matches);
+    document.documentElement.setAttribute("data-bs-theme", dark ? "dark" : "light");
+  })();
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4/dist/umd/supabase.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="config.js"></script>
 <style>
-/* ---------- Brand: The Church of Pentecost blue, gold and red ---------- */
-:root {
+/* =========================================================
+   Brand: The Church of Pentecost blue, gold and red
+   ========================================================= */
+:root, [data-bs-theme="light"] {
   --brand: #0C4A9A;
   --brand-dark: #08346D;
   --brand-hover: #093C7E;
+  --brand-text: #0C4A9A;
   --brand-tint: #E8EFF9;
-  --brand-line: #C9D8EE;
+  --side-bg: #0C4A9A;
   --gold: #F8E80A;
-  --flame: #E52421;
+  --page-bg: #F5F8FC;
+  --head-bg: #F3F6FA;
+  --icon-gold-bg: #FFF8C4; --icon-gold: #7A6A00;
+  --icon-red-bg: #FCE6E5;  --icon-red: #C8201D;
 
   --bs-primary: #0C4A9A;
   --bs-primary-rgb: 12, 74, 154;
@@ -38,17 +52,57 @@
   --bs-link-hover-color-rgb: 8, 52, 109;
   --bs-danger: #C8201D;
   --bs-danger-rgb: 200, 32, 29;
-  --bs-body-font-family: "Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", sans-serif;
-  --page-bg: #F5F8FC;
   --bs-body-color: #1B2433;
   --bs-border-color: #DCE4EF;
+}
+[data-bs-theme="dark"] {
+  --brand: #1557B0;
+  --brand-dark: #0C4A9A;
+  --brand-hover: #1A63C4;
+  --brand-text: #8DB6EE;
+  --brand-tint: #182B47;
+  --side-bg: #0A2C5C;
+  --page-bg: #0D131D;
+  --head-bg: #1A2332;
+  --icon-gold-bg: #3A3410; --icon-gold: #F3E36A;
+  --icon-red-bg: #3D1A1A;  --icon-red: #F28B86;
+
+  --bs-body-bg: #141C29;
+  --bs-body-color: #E3E8F0;
+  --bs-secondary-color: rgba(227, 232, 240, .68);
+  --bs-border-color: #2A3750;
+  --bs-tertiary-bg: #1A2332;
+  --bs-primary: #8DB6EE;
+  --bs-primary-rgb: 141, 182, 238;
+  --bs-primary-bg-subtle: #15294A;
+  --bs-primary-border-subtle: #2B4E85;
+  --bs-primary-text-emphasis: #A9C6F0;
+  --bs-link-color: #8DB6EE;
+  --bs-link-color-rgb: 141, 182, 238;
+  --bs-link-hover-color: #B5D0F5;
+  --bs-link-hover-color-rgb: 181, 208, 245;
+  --bs-danger: #F06A64;
+  --bs-danger-rgb: 240, 106, 100;
+}
+:root {
+  --bs-body-font-family: "Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", sans-serif;
   --bs-border-radius: .5rem;
   --bs-border-radius-lg: .75rem;
 }
 [hidden] { display: none !important; }
 body { background: var(--page-bg); }
 .min-w-0 { min-width: 0; }
+.flex-none { flex: none; }
 
+/* ---------- Lucide icons ---------- */
+.ic { width: 1.15em; height: 1.15em; flex: none; vertical-align: -.2em; stroke-width: 2; }
+
+.btn-icon { display: inline-flex; align-items: center; justify-content: center; width: 2.25rem; height: 2.25rem; padding: 0; }
+.btn-sm.btn-icon { width: 2rem; height: 2rem; }
+
+/* ---------- Buttons ---------- */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: .45rem; font-weight: 700; white-space: nowrap; }
+.btn .spinner-border { margin-right: 0 !important; }
 .btn-primary {
   --bs-btn-bg: var(--brand); --bs-btn-border-color: var(--brand);
   --bs-btn-hover-bg: var(--brand-hover); --bs-btn-hover-border-color: var(--brand-hover);
@@ -57,88 +111,121 @@ body { background: var(--page-bg); }
   --bs-btn-focus-shadow-rgb: 12, 74, 154;
 }
 .btn-outline-primary {
-  --bs-btn-color: var(--brand); --bs-btn-border-color: var(--brand);
-  --bs-btn-hover-bg: var(--brand); --bs-btn-hover-border-color: var(--brand);
-  --bs-btn-active-bg: var(--brand-dark); --bs-btn-active-border-color: var(--brand-dark);
+  --bs-btn-color: var(--brand-text); --bs-btn-border-color: var(--brand-text);
+  --bs-btn-hover-color: #fff; --bs-btn-hover-bg: var(--brand); --bs-btn-hover-border-color: var(--brand);
+  --bs-btn-active-color: #fff; --bs-btn-active-bg: var(--brand-dark); --bs-btn-active-border-color: var(--brand-dark);
   --bs-btn-focus-shadow-rgb: 12, 74, 154;
 }
-.nav-pills { --bs-nav-pills-link-active-bg: var(--brand); --bs-nav-link-color: var(--brand); --bs-nav-link-hover-color: var(--brand-dark); }
-.form-control:focus, .form-select:focus, .form-check-input:focus {
-  border-color: #6E95CC; box-shadow: 0 0 0 .25rem rgba(12, 74, 154, .2);
-}
+.btn-check:checked + .btn-outline-primary { color: #fff; background: var(--brand); border-color: var(--brand); }
+.nav-pills { --bs-nav-pills-link-active-bg: var(--brand); --bs-nav-link-color: var(--brand-text); --bs-nav-link-hover-color: var(--brand-text); }
+.nav-pills .nav-link { font-weight: 700; display: inline-flex; align-items: center; gap: .4rem; }
+.form-control:focus, .form-select:focus, .form-check-input:focus { border-color: #6E95CC; box-shadow: 0 0 0 .25rem rgba(12, 74, 154, .25); }
 .form-check-input:checked { background-color: var(--brand); border-color: var(--brand); }
-.btn:focus-visible, .nav-link:focus-visible, .list-group-item-action:focus-visible { outline: 3px solid var(--brand); outline-offset: 2px; }
+.btn:focus-visible, .nav-link:focus-visible, .list-group-item-action:focus-visible, .dropdown-item:focus-visible { outline: 3px solid var(--brand-text); outline-offset: 2px; }
+.text-brand { color: var(--brand-text) !important; }
 
 /* ---------- Login ---------- */
 #login {
   min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 1.5rem;
-  background: linear-gradient(180deg, var(--brand) 0 42%, var(--bs-body-bg) 42% 100%);
+  background: linear-gradient(180deg, var(--side-bg) 0 40%, var(--page-bg) 40% 100%);
 }
-.login-card { width: 100%; max-width: 400px; }
-.login-logo { width: 120px; height: 120px; margin: -76px auto 1rem; display: block;
-  background: #fff; border-radius: 50%; box-shadow: 0 6px 20px rgba(8, 52, 109, .25); }
+.login-card { width: 100%; max-width: 410px; margin-top: 60px; }
+.login-logo { width: 120px; height: 120px; margin: -76px auto 1rem; display: block; background: #fff; border-radius: 50%; box-shadow: 0 6px 20px rgba(8, 52, 109, .25); }
 
 /* ---------- Layout ---------- */
-.brandbar { background: var(--brand); }
+.brandbar { background: var(--side-bg); }
 .brandbar .navbar-brand { color: #fff; font-weight: 700; display: flex; align-items: center; gap: .6rem; font-size: 1rem; line-height: 1.2; }
 .brandbar img { width: 38px; height: 38px; background: #fff; border-radius: 50%; }
-
-.sidebar.offcanvas-lg { --bs-offcanvas-width: 280px; background: var(--brand); color: #fff; }
+.sidebar.offcanvas-lg { --bs-offcanvas-width: 280px; background: var(--side-bg); color: #fff; }
 .sidebar .btn-close { filter: invert(1) grayscale(1) brightness(2); }
-.side-brand { text-align: center; padding: .5rem .5rem 1.5rem; border-bottom: 1px solid rgba(255,255,255,.15); margin-bottom: 1rem; }
-.side-brand img { width: 96px; height: 96px; background: #fff; border-radius: 50%; padding: 2px; margin-bottom: .75rem; }
+.side-brand { text-align: center; padding: .5rem .5rem 1.25rem; border-bottom: 1px solid rgba(255,255,255,.15); margin-bottom: 1rem; }
+.side-brand img { width: 88px; height: 88px; background: #fff; border-radius: 50%; padding: 2px; margin-bottom: .7rem; }
 .side-brand strong { display: block; font-size: 1.05rem; line-height: 1.25; }
 .side-brand span { display: block; font-size: .85rem; color: var(--gold); font-weight: 700; margin-top: .15rem; }
 .side-nav .nav-link {
   color: rgba(255,255,255,.85); display: flex; align-items: center; gap: .75rem;
-  padding: .65rem .9rem; border-radius: .5rem; border-left: 4px solid transparent; width: 100%; text-align: left;
+  padding: .6rem .9rem; border-radius: .5rem; border-left: 4px solid transparent; width: 100%; text-align: left;
 }
-.side-nav .nav-link i { font-size: 1.15rem; }
+.side-nav .nav-link .ic { width: 1.25rem; height: 1.25rem; }
 .side-nav .nav-link:hover { color: #fff; background: rgba(255,255,255,.08); }
 .side-nav .nav-link.active { color: #fff; background: rgba(255,255,255,.16); border-left-color: var(--gold); font-weight: 700; }
 .side-nav .badge { margin-left: auto; background: var(--gold); color: #1B2433; }
-.side-foot { margin-top: auto; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,.15); font-size: .85rem; color: rgba(255,255,255,.8); }
-.side-foot .btn { --bs-btn-color: #fff; --bs-btn-border-color: rgba(255,255,255,.35); --bs-btn-hover-bg: rgba(255,255,255,.12); --bs-btn-hover-border-color: #fff; --bs-btn-hover-color: #fff; }
-
+.side-nav hr { border-color: rgba(255,255,255,.2); opacity: 1; margin: .5rem 0; }
+.side-foot { margin-top: auto; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,.15); font-size: .85rem; color: rgba(255,255,255,.85); }
+.side-foot .who { font-weight: 700; color: #fff; }
+.side-foot .btn {
+  --bs-btn-color: #fff; --bs-btn-border-color: rgba(255,255,255,.35);
+  --bs-btn-hover-bg: rgba(255,255,255,.12); --bs-btn-hover-border-color: #fff; --bs-btn-hover-color: #fff;
+  --bs-btn-active-bg: rgba(255,255,255,.2); --bs-btn-active-color: #fff;
+}
 @media (min-width: 992px) {
-  .sidebar-wrap { width: 270px; flex: none; background: var(--brand); position: sticky; top: 0; height: 100vh; overflow-y: auto; }
+  .sidebar-wrap { width: 270px; flex: none; background: var(--side-bg); position: sticky; top: 0; height: 100vh; overflow-y: auto; }
   .sidebar.offcanvas-lg { height: 100%; }
   .sidebar .offcanvas-body { flex-direction: column; height: 100%; padding: 1.5rem 1rem !important; }
 }
 main { min-width: 0; flex: 1; }
 .page { max-width: 1240px; padding: 1.75rem clamp(1rem, 3vw, 2.25rem) 3rem; }
 .page-title { font-size: 1.6rem; font-weight: 700; margin: 0; }
+.page-actions .btn { min-height: 2.5rem; }
 
-/* ---------- Components ---------- */
-.card { --bs-card-border-color: var(--bs-border-color); --bs-card-cap-bg: #fff; box-shadow: 0 1px 2px rgba(16, 38, 74, .05); }
-.card-header { font-weight: 700; padding: .9rem 1.25rem; }
-.stat-card .icon { width: 46px; height: 46px; border-radius: .6rem; display: grid; place-items: center; font-size: 1.35rem; background: var(--brand-tint); color: var(--brand); flex: none; }
-.stat-card .icon.gold { background: #FFF8C4; color: #7A6A00; }
-.stat-card .icon.red { background: #FCE6E5; color: var(--bs-danger); }
+/* ---------- Cards, tables, lists ---------- */
+.card { --bs-card-cap-bg: var(--bs-body-bg); box-shadow: 0 1px 2px rgba(16, 38, 74, .05); }
+.card-header { font-weight: 700; padding: .9rem 1.25rem; display: flex; align-items: center; gap: .5rem; }
+.card-header > .ic { color: var(--brand-text); }
+.stat-card .icon { width: 46px; height: 46px; border-radius: .6rem; display: grid; place-items: center; background: var(--brand-tint); color: var(--brand-text); flex: none; }
+.stat-card .icon .ic { width: 1.4rem; height: 1.4rem; }
+.stat-card .icon.gold { background: var(--icon-gold-bg); color: var(--icon-gold); }
+.stat-card .icon.red { background: var(--icon-red-bg); color: var(--icon-red); }
 .stat-card .value { font-size: 1.5rem; font-weight: 700; line-height: 1.2; }
+.stat-card[data-action] { cursor: pointer; }
+.stat-card[data-action]:hover { border-color: var(--bs-primary-border-subtle); }
 @media (max-width: 575.98px) { .stat-card .icon { display: none; } .stat-card .value { font-size: 1.2rem; } .stat-card .card-body { padding: .85rem; } }
+.table { --bs-table-bg: var(--bs-body-bg); }
 .table > :not(caption) > * > * { padding: .75rem .9rem; }
 .table-sm > :not(caption) > * > * { padding: .4rem .6rem; }
-.table thead th { font-size: .82rem; color: var(--bs-secondary-color); font-weight: 700; background: #F3F6FA; white-space: nowrap; }
+.table thead th { font-size: .82rem; color: var(--bs-secondary-color); font-weight: 700; background: var(--head-bg); white-space: nowrap; }
 .table-hover tbody tr[data-action] { cursor: pointer; }
-.flex-none { flex: none; }
-.thumb { width: 42px; height: 42px; border-radius: .4rem; object-fit: cover; background: var(--brand-tint); display: grid; place-items: center; color: #7F9AC2; flex: none; }
-.detail-photo { width: 100%; aspect-ratio: 1; border-radius: .75rem; object-fit: cover; background: var(--brand-tint); display: grid; place-items: center; color: #7F9AC2; font-size: 2.5rem; }
+.thumb { width: 42px; height: 42px; border-radius: .4rem; object-fit: cover; background: var(--brand-tint); display: grid; place-items: center; color: var(--brand-text); flex: none; }
+.detail-photo { width: 100%; aspect-ratio: 1; border-radius: .75rem; object-fit: cover; background: var(--brand-tint); display: grid; place-items: center; color: var(--brand-text); }
+.detail-photo .ic { width: 2.5rem; height: 2.5rem; opacity: .6; }
 .list-group-item-action { cursor: pointer; }
 .alert-item { border-left: 4px solid var(--bs-warning) !important; }
 .alert-item.urgent { border-left-color: var(--bs-danger) !important; }
-.empty { text-align: center; padding: 3rem 1rem; color: var(--bs-secondary-color); }
-.empty i { font-size: 2.5rem; color: #9DB3D3; display: block; margin-bottom: .5rem; }
-.nav-pills .nav-link { font-weight: 700; }
+.alert .ic { flex: none; margin-top: .15rem; }
+.badge { display: inline-flex; align-items: center; gap: .25rem; }
+.badge .ic { width: .95em; height: .95em; }
 dl.facts dt { font-weight: 400; color: var(--bs-secondary-color); }
 dl.facts dd { margin-bottom: .45rem; }
-.modal-header { background: var(--brand); color: #fff; }
+.step-num { width: 2rem; height: 2rem; border-radius: 50%; display: grid; place-items: center; background: var(--brand); color: #fff; font-weight: 700; flex: none; }
+.avatar { width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; background: var(--brand-tint); color: var(--brand-text); font-weight: 700; flex: none; }
+.role-option { cursor: pointer; }
+.role-option .btn { justify-content: flex-start; text-align: left; white-space: normal; height: 100%; flex-direction: column; align-items: flex-start; font-weight: 400; }
+.role-option .btn strong { display: flex; align-items: center; gap: .4rem; }
+.settings-wrap { max-width: 820px; }
+.dropdown-item { display: flex; align-items: center; gap: .6rem; }
+
+/* Empty states: one large icon, then a row of normal-sized buttons */
+.empty { text-align: center; padding: 3rem 1rem; color: var(--bs-secondary-color); }
+.empty-icon { width: 3rem; height: 3rem; border-radius: 50%; margin: 0 auto .75rem; display: grid; place-items: center; background: var(--brand-tint); color: var(--brand-text); }
+.empty-icon .ic { width: 1.5rem; height: 1.5rem; }
+.empty-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: .5rem; margin-top: 1.25rem; }
+
+/* ---------- Dialogs and toast ---------- */
+.modal-header { background: var(--side-bg); color: #fff; }
+.modal-header .modal-title { display: flex; align-items: center; gap: .5rem; }
 .modal-header .btn-close { filter: invert(1) grayscale(1) brightness(2); }
 #confirmModal { background: rgba(10, 25, 50, .45); z-index: 1070; }
-#confirmModal .modal-header { background: #fff; color: inherit; }
+#confirmModal .modal-header { background: var(--bs-body-bg); color: inherit; }
 #confirmModal .modal-header .btn-close { filter: none; }
-.print-head { display: none; }
+[data-bs-theme="dark"] #confirmModal .modal-header .btn-close { filter: invert(1) grayscale(1) brightness(2); }
+.app-toast { background: var(--bs-emphasis-color); color: var(--bs-body-bg); }
+.app-toast .btn-close { filter: invert(1) grayscale(1) brightness(2); }
+[data-bs-theme="dark"] .app-toast .btn-close { filter: none; }
 
+/* Role-based visibility (the database enforces the same rules) */
+body.role-viewer .needs-edit, body:not(.role-admin) .needs-admin { display: none !important; }
+
+.print-head { display: none; }
 @media print {
   body { background: #fff; }
   .sidebar-wrap, .brandbar, .no-print, .toast-container, .modal { display: none !important; }
@@ -149,33 +236,64 @@ dl.facts dd { margin-bottom: .45rem; }
   .table { font-size: 11px; }
   .table > :not(caption) > * > * { padding: 4px 6px; }
 }
-@media (prefers-reduced-motion: reduce) { .modal.fade .modal-dialog, .offcanvas, .toast { transition: none !important; } }
+@media (prefers-reduced-motion: reduce) { .modal.fade .modal-dialog, .offcanvas, .toast, .collapsing { transition: none !important; } }
 </style>
 </head>
 <body>
 
-<!-- ============ Login ============ -->
+<!-- ============ Sign in / create account ============ -->
 <section id="login" hidden>
   <div class="card login-card border-0 shadow">
     <div class="card-body p-4 pt-0">
       <img class="login-logo" src="logo.png" alt="Church logo">
       <h1 class="h4 text-center fw-bold mb-0 js-church">The Church of Pentecost</h1>
       <p class="text-center text-body-secondary mb-4"><span class="js-branch">Anaji Estate Central</span> · Asset Manager</p>
+
       <div id="setup-notice" class="alert alert-danger" hidden>
         The app is not connected yet. Open <b>config.js</b> and paste your Supabase project URL and key.
       </div>
-      <form id="login-form" novalidate>
-        <div class="form-floating mb-3">
-          <input type="email" class="form-control" id="login-email" name="email" placeholder="name@example.com" required autocomplete="username">
-          <label for="login-email">Email address</label>
-        </div>
-        <div class="form-floating mb-3">
-          <input type="password" class="form-control" id="login-password" name="password" placeholder="Password" required autocomplete="current-password">
-          <label for="login-password">Password</label>
-        </div>
-        <div id="login-error" class="alert alert-danger py-2" hidden></div>
-        <button class="btn btn-primary btn-lg w-100" type="submit">Sign in</button>
-      </form>
+      <div id="blocked-notice" class="alert alert-warning" hidden></div>
+
+      <div id="auth-forms">
+        <ul class="nav nav-pills nav-fill mb-3" role="tablist">
+          <li class="nav-item"><button class="nav-link active" data-action="auth-tab" data-tab="signin" type="button">Sign in</button></li>
+          <li class="nav-item"><button class="nav-link" data-action="auth-tab" data-tab="signup" type="button">Create account</button></li>
+        </ul>
+
+        <form id="signin-form" novalidate>
+          <div class="form-floating mb-3">
+            <input type="email" class="form-control" id="si-email" name="email" placeholder="name@example.com" required autocomplete="username">
+            <label for="si-email">Email address</label>
+          </div>
+          <div class="form-floating mb-3">
+            <input type="password" class="form-control" id="si-password" name="password" placeholder="Password" required autocomplete="current-password">
+            <label for="si-password">Password</label>
+          </div>
+          <div class="alert alert-danger py-2 js-error" hidden></div>
+          <button class="btn btn-primary btn-lg w-100" type="submit">Sign in</button>
+          <p class="small text-body-secondary text-center mt-3 mb-0">Forgot your password? Ask an admin to set a temporary one for you.</p>
+        </form>
+
+        <form id="signup-form" novalidate hidden>
+          <p class="small text-body-secondary">For people an admin has invited. Use the email address you were invited with.</p>
+          <div class="form-floating mb-3">
+            <input type="email" class="form-control" id="su-email" name="email" placeholder="name@example.com" required autocomplete="username">
+            <label for="su-email">Invited email address</label>
+          </div>
+          <div class="form-floating mb-1">
+            <input type="password" class="form-control" id="su-password" name="password" placeholder="Password" required minlength="8" autocomplete="new-password">
+            <label for="su-password">Choose a password</label>
+          </div>
+          <div class="form-text mb-3">At least 8 characters.</div>
+          <div class="form-floating mb-3">
+            <input type="password" class="form-control" id="su-confirm" name="confirm" placeholder="Password" required minlength="8" autocomplete="new-password">
+            <label for="su-confirm">Type the password again</label>
+          </div>
+          <div class="alert py-2 js-error" hidden></div>
+          <button class="btn btn-primary btn-lg w-100" type="submit">Create account</button>
+        </form>
+      </div>
+      <button class="btn btn-outline-secondary w-100 mt-2" data-action="logout" id="blocked-signout" hidden>Sign out</button>
     </div>
   </div>
 </section>
@@ -185,8 +303,9 @@ dl.facts dd { margin-bottom: .45rem; }
   <nav class="navbar brandbar d-lg-none sticky-top no-print">
     <div class="container-fluid">
       <span class="navbar-brand"><img src="logo.png" alt=""><span class="js-branch">Anaji Estate Central</span></span>
-      <button class="btn text-white fs-3 p-1 position-relative" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidenav" aria-controls="sidenav" aria-label="Open menu">
-        <i class="bi bi-list"></i><span id="menu-badge" class="position-absolute top-0 end-0 badge rounded-pill bg-danger" style="font-size:.65rem" hidden></span>
+      <button class="btn text-white p-1 position-relative" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidenav" aria-controls="sidenav" aria-label="Open menu">
+        <span data-icon="menu" data-size="1.75rem"></span>
+        <span id="menu-badge" class="position-absolute top-0 end-0 badge rounded-pill bg-danger" style="font-size:.65rem" hidden></span>
       </button>
     </div>
   </nav>
@@ -206,8 +325,14 @@ dl.facts dd { margin-bottom: .45rem; }
           </div>
           <nav class="nav flex-column gap-1 side-nav" id="nav"></nav>
           <div class="side-foot">
-            <div class="text-truncate mb-2"><i class="bi bi-person-circle me-1"></i><span id="user-email"></span></div>
-            <button class="btn btn-sm btn-outline-light w-100" data-action="logout"><i class="bi bi-box-arrow-right me-1"></i>Sign out</button>
+            <div class="d-flex align-items-center gap-2 mb-2">
+              <div class="min-w-0 flex-grow-1">
+                <div class="who text-truncate" id="me-name"></div>
+                <div class="small opacity-75" id="me-role"></div>
+              </div>
+              <button class="btn btn-sm btn-outline-light btn-icon" data-action="toggle-theme" id="theme-btn" aria-label="Switch to dark mode" title="Switch light or dark mode"></button>
+            </div>
+            <button class="btn btn-sm btn-outline-light w-100" data-action="logout"><span data-icon="log-out"></span>Sign out</button>
           </div>
         </div>
       </aside>
@@ -247,44 +372,63 @@ dl.facts dd { margin-bottom: .45rem; }
 </div>
 
 <div class="toast-container position-fixed bottom-0 start-50 translate-middle-x p-3">
-  <div id="toast" class="toast align-items-center text-bg-dark border-0" role="status" aria-live="polite" aria-atomic="true">
+  <div id="toast" class="toast app-toast align-items-center border-0" role="status" aria-live="polite" aria-atomic="true">
     <div class="d-flex"><div class="toast-body fw-bold" id="toast-body"></div>
-      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button></div>
+      <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button></div>
   </div>
 </div>
 
 <script>
 /* =====================================================
-   Church Asset Manager (Bootstrap 5 edition)
+   Church Asset Manager
+   Icons: Lucide (https://lucide.dev), ISC licence
    ===================================================== */
+const ICONS = {"layout-dashboard":"<rect width=\"7\" height=\"9\" x=\"3\" y=\"3\" rx=\"1\"/><rect width=\"7\" height=\"5\" x=\"14\" y=\"3\" rx=\"1\"/><rect width=\"7\" height=\"9\" x=\"14\" y=\"12\" rx=\"1\"/><rect width=\"7\" height=\"5\" x=\"3\" y=\"16\" rx=\"1\"/>","package":"<path d=\"M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z\"/><path d=\"M12 22V12\"/><polyline points=\"3.29 7 12 12 20.71 7\"/><path d=\"m7.5 4.27 9 5.15\"/>","arrow-left-right":"<path d=\"M8 3 4 7l4 4\"/><path d=\"M4 7h16\"/><path d=\"m16 21 4-4-4-4\"/><path d=\"M20 17H4\"/>","wrench":"<path d=\"M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.106-3.105c.32-.322.863-.22.983.218a6 6 0 0 1-8.259 7.057l-7.91 7.91a1 1 0 0 1-2.999-3l7.91-7.91a6 6 0 0 1 7.057-8.259c.438.12.54.662.219.984z\"/>","chart-column":"<path d=\"M3 3v16a2 2 0 0 0 2 2h16\"/><path d=\"M18 17V9\"/><path d=\"M13 17V5\"/><path d=\"M8 17v-3\"/>","list-checks":"<path d=\"M13 5h8\"/><path d=\"M13 12h8\"/><path d=\"M13 19h8\"/><path d=\"m3 17 2 2 4-4\"/><path d=\"m3 7 2 2 4-4\"/>","users":"<path d=\"M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2\"/><path d=\"M16 3.128a4 4 0 0 1 0 7.744\"/><path d=\"M22 21v-2a4 4 0 0 0-3-3.87\"/><circle cx=\"9\" cy=\"7\" r=\"4\"/>","settings":"<path d=\"M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915\"/><circle cx=\"12\" cy=\"12\" r=\"3\"/>","sun":"<circle cx=\"12\" cy=\"12\" r=\"4\"/><path d=\"M12 2v2\"/><path d=\"M12 20v2\"/><path d=\"m4.93 4.93 1.41 1.41\"/><path d=\"m17.66 17.66 1.41 1.41\"/><path d=\"M2 12h2\"/><path d=\"M20 12h2\"/><path d=\"m6.34 17.66-1.41 1.41\"/><path d=\"m19.07 4.93-1.41 1.41\"/>","moon":"<path d=\"M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401\"/>","monitor":"<rect width=\"20\" height=\"14\" x=\"2\" y=\"3\" rx=\"2\"/><line x1=\"8\" x2=\"16\" y1=\"21\" y2=\"21\"/><line x1=\"12\" x2=\"12\" y1=\"17\" y2=\"21\"/>","log-out":"<path d=\"m16 17 5-5-5-5\"/><path d=\"M21 12H9\"/><path d=\"M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4\"/>","menu":"<path d=\"M4 5h16\"/><path d=\"M4 12h16\"/><path d=\"M4 19h16\"/>","plus":"<path d=\"M5 12h14\"/><path d=\"M12 5v14\"/>","search":"<path d=\"m21 21-4.34-4.34\"/><circle cx=\"11\" cy=\"11\" r=\"8\"/>","image":"<rect width=\"18\" height=\"18\" x=\"3\" y=\"3\" rx=\"2\" ry=\"2\"/><circle cx=\"9\" cy=\"9\" r=\"2\"/><path d=\"m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21\"/>","pencil":"<path d=\"M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z\"/><path d=\"m15 5 4 4\"/>","trash-2":"<path d=\"M10 11v6\"/><path d=\"M14 11v6\"/><path d=\"M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6\"/><path d=\"M3 6h18\"/><path d=\"M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2\"/>","external-link":"<path d=\"M15 3h6v6\"/><path d=\"M10 14 21 3\"/><path d=\"M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6\"/>","history":"<path d=\"M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8\"/><path d=\"M3 3v5h5\"/><path d=\"M12 7v5l4 2\"/>","bell":"<path d=\"M10.268 21a2 2 0 0 0 3.464 0\"/><path d=\"M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326\"/>","circle-check":"<circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"m16 9-5.5 5.5L8 12\"/>","triangle-alert":"<path d=\"m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3\"/><path d=\"M12 9v4\"/><path d=\"M12 17h.01\"/>","calendar-check":"<path d=\"M8 2v3\"/><path d=\"M16 2v3\"/><rect x=\"3\" y=\"3\" width=\"18\" height=\"18\" rx=\"2\"/><path d=\"M3 9h18\"/><path d=\"m9 15 2 2 4-4\"/>","notebook-text":"<path d=\"M2 6h4\"/><path d=\"M2 10h4\"/><path d=\"M2 14h4\"/><path d=\"M2 18h4\"/><rect width=\"16\" height=\"20\" x=\"4\" y=\"2\" rx=\"2\"/><path d=\"M9.5 8h5\"/><path d=\"M9.5 12H16\"/><path d=\"M9.5 16H14\"/>","download":"<path d=\"M12 15V3\"/><path d=\"M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4\"/><path d=\"m7 10 5 5 5-5\"/>","file-up":"<path d=\"M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z\"/><path d=\"M14 2v5a1 1 0 0 0 1 1h5\"/><path d=\"M12 12v6\"/><path d=\"m15 15-3-3-3 3\"/>","file-spreadsheet":"<path d=\"M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z\"/><path d=\"M14 2v5a1 1 0 0 0 1 1h5\"/><path d=\"M8 13h2\"/><path d=\"M14 13h2\"/><path d=\"M8 17h2\"/><path d=\"M14 17h2\"/>","printer":"<path d=\"M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2\"/><path d=\"M6 9V3a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v6\"/><rect x=\"6\" y=\"14\" width=\"12\" height=\"8\" rx=\"1\"/>","phone":"<path d=\"M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 14 14 0 0 0 6.392 6.384\"/>","check":"<path d=\"M20 6 9 17l-5-5\"/>","circle-x":"<circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"m15 9-6 6\"/><path d=\"m9 9 6 6\"/>","lightbulb":"<path d=\"M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5\"/><path d=\"M9 18h6\"/><path d=\"M10 22h4\"/>","banknote":"<rect width=\"20\" height=\"12\" x=\"2\" y=\"6\" rx=\"2\"/><circle cx=\"12\" cy=\"12\" r=\"2\"/><path d=\"M6 12h.01M18 12h.01\"/>","tag":"<path d=\"M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z\"/><circle cx=\"7.5\" cy=\"7.5\" r=\".5\" fill=\"currentColor\"/>","map-pin":"<path d=\"M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0\"/><circle cx=\"12\" cy=\"10\" r=\"3\"/>","user-plus":"<path d=\"M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2\"/><circle cx=\"9\" cy=\"7\" r=\"4\"/><line x1=\"19\" x2=\"19\" y1=\"8\" y2=\"14\"/><line x1=\"22\" x2=\"16\" y1=\"11\" y2=\"11\"/>","key-round":"<path d=\"M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z\"/><circle cx=\"16.5\" cy=\"7.5\" r=\".5\" fill=\"currentColor\"/>","shield-check":"<path d=\"M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z\"/><path d=\"m9 12 2 2 4-4\"/>","eye":"<path d=\"M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0\"/><circle cx=\"12\" cy=\"12\" r=\"3\"/>","copy":"<rect width=\"14\" height=\"14\" x=\"8\" y=\"8\" rx=\"2\" ry=\"2\"/><path d=\"M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2\"/>","message-circle":"<path d=\"M2.992 16.342a2 2 0 0 1 .094 1.167l-1.065 3.29a1 1 0 0 0 1.236 1.168l3.413-.998a2 2 0 0 1 1.099.092 10 10 0 1 0-4.777-4.719\"/>","mail":"<path d=\"m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7\"/><rect x=\"2\" y=\"4\" width=\"20\" height=\"16\" rx=\"2\"/>","user-x":"<path d=\"M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2\"/><circle cx=\"9\" cy=\"7\" r=\"4\"/><line x1=\"17\" x2=\"22\" y1=\"8\" y2=\"13\"/><line x1=\"22\" x2=\"17\" y1=\"8\" y2=\"13\"/>","user-check":"<path d=\"m16 11 2 2 4-4\"/><path d=\"M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2\"/><circle cx=\"9\" cy=\"7\" r=\"4\"/>","ellipsis":"<circle cx=\"12\" cy=\"12\" r=\"1\"/><circle cx=\"19\" cy=\"12\" r=\"1\"/><circle cx=\"5\" cy=\"12\" r=\"1\"/>","lock":"<rect width=\"18\" height=\"11\" x=\"3\" y=\"11\" rx=\"2\" ry=\"2\"/><path d=\"M7 11V7a5 5 0 0 1 10 0v4\"/>","building-2":"<path d=\"M10 12h4\"/><path d=\"M10 8h4\"/><path d=\"M14 21v-3a2 2 0 0 0-4 0v3\"/><path d=\"M6 10H4a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-2\"/><path d=\"M6 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16\"/>","palette":"<path d=\"M12 22a1 1 0 0 1 0-20 10 9 0 0 1 10 9 5 5 0 0 1-5 5h-2.25a1.75 1.75 0 0 0-1.4 2.8l.3.4a1.75 1.75 0 0 1-1.4 2.8z\"/><circle cx=\"13.5\" cy=\"6.5\" r=\".5\" fill=\"currentColor\"/><circle cx=\"17.5\" cy=\"10.5\" r=\".5\" fill=\"currentColor\"/><circle cx=\"6.5\" cy=\"12.5\" r=\".5\" fill=\"currentColor\"/><circle cx=\"8.5\" cy=\"7.5\" r=\".5\" fill=\"currentColor\"/>","info":"<circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"M12 16v-4\"/><path d=\"M12 8h.01\"/>","x":"<path d=\"M18 6 6 18\"/><path d=\"m6 6 12 12\"/>","circle-user":"<circle cx=\"12\" cy=\"12\" r=\"10\"/><circle cx=\"12\" cy=\"10\" r=\"3\"/><path d=\"M7 20.662V19a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v1.662\"/>","refresh-cw":"<path d=\"M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8\"/><path d=\"M21 3v5h-5\"/><path d=\"M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16\"/><path d=\"M8 16H3v5\"/>","inbox":"<polyline points=\"22 12 16 12 14 15 10 15 8 12 2 12\"/><path d=\"M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z\"/>","funnel":"<path d=\"M10 20a1 1 0 0 0 .553.895l2 1A1 1 0 0 0 14 21v-7a2 2 0 0 1 .517-1.341L21.74 4.67A1 1 0 0 0 21 3H3a1 1 0 0 0-.742 1.67l7.225 7.989A2 2 0 0 1 10 14z\"/>","file-text":"<path d=\"M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z\"/><path d=\"M14 2v5a1 1 0 0 0 1 1h5\"/><path d=\"M10 9H8\"/><path d=\"M16 13H8\"/><path d=\"M16 17H8\"/>","package-open":"<path d=\"M12 22v-9\"/><path d=\"M15.17 2.21a1.67 1.67 0 0 1 1.63 0L21 4.57a1.93 1.93 0 0 1 0 3.36L8.82 14.79a1.655 1.655 0 0 1-1.64 0L3 12.43a1.93 1.93 0 0 1 0-3.36z\"/><path d=\"M20 13v3.87a2.06 2.06 0 0 1-1.11 1.83l-6 3.08a1.93 1.93 0 0 1-1.78 0l-6-3.08A2.06 2.06 0 0 1 4 16.87V13\"/><path d=\"M21 12.43a1.93 1.93 0 0 0 0-3.36L8.83 2.2a1.64 1.64 0 0 0-1.63 0L3 4.57a1.93 1.93 0 0 0 0 3.36l12.18 6.86a1.636 1.636 0 0 0 1.63 0z\"/>","undo-2":"<path d=\"M9 14 4 9l5-5\"/><path d=\"M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5a5.5 5.5 0 0 1-5.5 5.5H11\"/>","ban":"<circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"M4.929 4.929 19.07 19.071\"/>","circle-plus":"<circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"M8 12h8\"/><path d=\"M12 8v8\"/>"};
+const ic = (name, cls = "") =>
+  `<svg class="ic ${cls}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[name] || ""}</svg>`;
+document.querySelectorAll("[data-icon]").forEach((el) => {
+  el.outerHTML = el.dataset.size ? ic(el.dataset.icon).replace('class="ic ', `style="width:${el.dataset.size};height:${el.dataset.size}" class="ic `) : ic(el.dataset.icon);
+});
+
+/* ---------- Settings: config.js, then the church settings saved in the app ---------- */
 const RAW = window.CONFIG || {};
 const CFG = Object.assign({ CURRENCY: "GHS", REMINDER_DAYS: 14 }, RAW);
 if (!RAW.CHURCH_NAME || RAW.CHURCH_NAME === "Our Church") CFG.CHURCH_NAME = "The Church of Pentecost";
 if (!RAW.BRANCH_NAME) CFG.BRANCH_NAME = "Anaji Estate Central";
-const FULL_NAME = `${CFG.CHURCH_NAME}, ${CFG.BRANCH_NAME}`;
+const fullName = () => `${CFG.CHURCH_NAME}, ${CFG.BRANCH_NAME}`;
 
 const configured = CFG.SUPABASE_URL && !CFG.SUPABASE_URL.startsWith("PASTE") && CFG.SUPABASE_ANON_KEY && !CFG.SUPABASE_ANON_KEY.startsWith("PASTE");
 const sb = configured ? supabase.createClient(CFG.SUPABASE_URL, CFG.SUPABASE_ANON_KEY) : null;
 const BUCKET = "asset-photos";
+const APP_URL = location.origin + location.pathname;
 
 const STATUSES = ["In use", "In storage", "Under repair", "Lost", "Disposed"];
 const CONDITIONS = ["New", "Good", "Fair", "Poor"];
 const STATUS_TONE = { "In use": "success", "In storage": "primary", "Under repair": "warning", "Lost": "danger", "Disposed": "secondary" };
+const ROLES = {
+  admin:  { label: "Admin",  icon: "shield-check", tone: "primary",   text: "Everything, including inviting people and changing church settings." },
+  editor: { label: "Editor", icon: "pencil",       tone: "success",   text: "Add and edit assets, lend items, log maintenance and download reports." },
+  viewer: { label: "Viewer", icon: "eye",          tone: "secondary", text: "Look at assets and reports only. Good for auditors and council members." }
+};
 
 const S = {
+  me: null, session: null, settings: {}, members: [],
   assets: [], categories: [], locations: [], ministries: [], borrowings: [], maintenance: [],
   photos: {}, view: "dashboard",
   filters: { q: "", category: "", location: "", ministry: "", status: "" },
-  loanTab: "out", report: "register"
+  loanTab: "out", report: "register", importPlan: null
 };
 
 const NAV = [
-  { id: "dashboard", label: "Dashboard", icon: "speedometer2" },
-  { id: "assets", label: "Assets", icon: "box-seam" },
+  { id: "dashboard", label: "Dashboard", icon: "layout-dashboard" },
+  { id: "assets", label: "Assets", icon: "package" },
   { id: "loans", label: "Borrowing", icon: "arrow-left-right" },
-  { id: "maintenance", label: "Maintenance", icon: "tools" },
-  { id: "reports", label: "Reports", icon: "file-earmark-bar-graph" },
-  { id: "lists", label: "Lists", icon: "card-checklist" }
+  { id: "maintenance", label: "Maintenance", icon: "wrench" },
+  { id: "reports", label: "Reports", icon: "chart-column" },
+  { id: "lists", label: "Lists", icon: "list-checks" },
+  { divider: true },
+  { id: "users", label: "Users", icon: "users", admin: true },
+  { id: "settings", label: "Settings", icon: "settings" }
 ];
 
 /* ---------- Helpers ---------- */
@@ -293,13 +437,19 @@ const esc = (v) => String(v ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "
 const today = () => { const d = new Date(); d.setMinutes(d.getMinutes() - d.getTimezoneOffset()); return d.toISOString().slice(0, 10); };
 const daysUntil = (d) => Math.round((new Date(d + "T00:00") - new Date(today() + "T00:00")) / 86400000);
 const fmtDate = (d) => d ? new Date(d + "T00:00").toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" }) : "—";
+const fmtWhen = (ts) => ts ? new Date(ts).toLocaleString(undefined, { day: "numeric", month: "short", year: "numeric", hour: "numeric", minute: "2-digit" }) : "Never";
 const plural = (n, w) => `${n} ${w}${n === 1 ? "" : "s"}`;
-let moneyFmt;
-try { moneyFmt = new Intl.NumberFormat(undefined, { style: "currency", currency: CFG.CURRENCY }); }
-catch { moneyFmt = { format: (n) => `${CFG.CURRENCY} ${Number(n).toFixed(2)}` }; }
-let wholeFmt;
-try { wholeFmt = new Intl.NumberFormat(undefined, { style: "currency", currency: CFG.CURRENCY, maximumFractionDigits: 0 }); }
-catch { wholeFmt = { format: (n) => `${CFG.CURRENCY} ${Math.round(n)}` }; }
+let moneyFmt, wholeFmt;
+function setupFormats() {
+  try {
+    moneyFmt = new Intl.NumberFormat(undefined, { style: "currency", currency: CFG.CURRENCY });
+    wholeFmt = new Intl.NumberFormat(undefined, { style: "currency", currency: CFG.CURRENCY, maximumFractionDigits: 0 });
+  } catch {
+    moneyFmt = { format: (n) => `${CFG.CURRENCY} ${Number(n).toFixed(2)}` };
+    wholeFmt = { format: (n) => `${CFG.CURRENCY} ${Math.round(n)}` };
+  }
+}
+setupFormats();
 const money = (n) => (n === null || n === undefined || n === "") ? "—" : moneyFmt.format(Number(n));
 const nameOf = (list, id) => list.find((x) => x.id === id)?.name || "—";
 const assetById = (id) => S.assets.find((a) => a.id === Number(id));
@@ -315,7 +465,27 @@ const options = (list, selected, blank = "— None —") =>
   `<option value="">${blank}</option>` + list.map((x) => `<option value="${x.id}" ${x.id === selected ? "selected" : ""}>${esc(x.name)}</option>`).join("");
 const plainOptions = (arr, selected) => arr.map((v) => `<option ${v === selected ? "selected" : ""}>${v}</option>`).join("");
 const badge = (tone, text, icon = "") =>
-  `<span class="badge rounded-pill bg-${tone}-subtle text-${tone}-emphasis border border-${tone}-subtle">${icon ? `<i class="bi bi-${icon} me-1"></i>` : ""}${text}</span>`;
+  `<span class="badge rounded-pill bg-${tone}-subtle text-${tone}-emphasis border border-${tone}-subtle">${icon ? ic(icon) : ""}${text}</span>`;
+const isAdmin = () => S.me?.role === "admin";
+const canEdit = () => ["admin", "editor"].includes(S.me?.role);
+const initials = (name, email) => (name || email || "?").split(/[\s@.]+/).filter(Boolean).slice(0, 2).map((w) => w[0].toUpperCase()).join("");
+
+/* ---------- Light / dark mode ---------- */
+const media = window.matchMedia ? matchMedia("(prefers-color-scheme: dark)") : null;
+const getThemePref = () => { try { return localStorage.getItem("theme") || "system"; } catch { return "system"; } };
+function applyTheme(pref = getThemePref()) {
+  const dark = pref === "dark" || (pref === "system" && media?.matches);
+  document.documentElement.setAttribute("data-bs-theme", dark ? "dark" : "light");
+  document.querySelector('meta[name="theme-color"]').content = dark ? "#0A2C5C" : "#0C4A9A";
+  const b = $("#theme-btn");
+  if (b) { b.innerHTML = ic(dark ? "sun" : "moon"); b.setAttribute("aria-label", dark ? "Switch to light mode" : "Switch to dark mode"); }
+}
+function setTheme(pref) { try { localStorage.setItem("theme", pref); } catch {} applyTheme(pref); }
+media?.addEventListener?.("change", () => { if (getThemePref() === "system") applyTheme(); });
+let themeBeforePrint = null;
+addEventListener("beforeprint", () => { themeBeforePrint = document.documentElement.getAttribute("data-bs-theme"); document.documentElement.setAttribute("data-bs-theme", "light"); });
+addEventListener("afterprint", () => { if (themeBeforePrint) document.documentElement.setAttribute("data-bs-theme", themeBeforePrint); });
+applyTheme();
 
 /* ---------- Bootstrap components ---------- */
 const modalEl = $("#modal");
@@ -329,15 +499,18 @@ const bsConfirm = new bootstrap.Modal($("#confirmModal"));
 function toast(msg) { $("#toast-body").textContent = msg; bsToast.show(); }
 function friendlyError(err) {
   const m = err?.message || String(err);
+  if (/members_email_key/i.test(m)) return "That email address has already been invited.";
   if (/duplicate key/i.test(m)) return "That name or asset tag is already in use. Choose a different one.";
-  if (/Failed to fetch/i.test(m)) return "Could not reach the database. Check your internet connection and try again.";
+  if (/Failed to fetch|NetworkError/i.test(m)) return "Could not reach the database. Check your internet connection and try again.";
+  if (/row-level security|permission denied/i.test(m)) return "Your role doesn't allow this. Ask an admin if you need it.";
+  if (/at least one active admin/i.test(m)) return "There must be at least one active admin. Make someone else an admin first.";
   return m;
 }
-function confirmDialog(title, bodyHtml, okLabel = "Delete") {
+function confirmDialog(title, bodyHtml, okLabel = "Delete", okClass = "btn-danger") {
   return new Promise((resolve) => {
     $("#confirm-title").textContent = title;
     $("#confirm-body").innerHTML = bodyHtml;
-    const ok = $("#confirm-ok"); ok.textContent = okLabel;
+    const ok = $("#confirm-ok"); ok.textContent = okLabel; ok.className = `btn ${okClass}`;
     let result = false;
     const onOk = () => { result = true; bsConfirm.hide(); };
     ok.addEventListener("click", onOk, { once: true });
@@ -346,17 +519,41 @@ function confirmDialog(title, bodyHtml, okLabel = "Delete") {
   });
 }
 function closeMenu() { const oc = bootstrap.Offcanvas.getInstance($("#sidenav")); if (oc) oc.hide(); }
+async function copyText(text) {
+  try { await navigator.clipboard.writeText(text); return true; }
+  catch {
+    const t = document.createElement("textarea"); t.value = text; t.style.position = "fixed"; t.style.opacity = "0";
+    document.body.appendChild(t); t.select(); let ok = false; try { ok = document.execCommand("copy"); } catch {} t.remove(); return ok;
+  }
+}
 
 /* ---------- Data ---------- */
+function applySettings() {
+  const st = S.settings || {};
+  if (st.church_name) CFG.CHURCH_NAME = st.church_name;
+  if (st.branch_name) CFG.BRANCH_NAME = st.branch_name;
+  if (st.currency) CFG.CURRENCY = st.currency;
+  if (st.reminder_days) CFG.REMINDER_DAYS = st.reminder_days;
+  setupFormats();
+  document.querySelectorAll(".js-church").forEach((el) => (el.textContent = CFG.CHURCH_NAME));
+  document.querySelectorAll(".js-branch").forEach((el) => (el.textContent = CFG.BRANCH_NAME));
+  document.title = `Assets · ${CFG.BRANCH_NAME}`;
+}
 async function loadAll() {
   const q = (t, col, asc) => sb.from(t).select("*").order(col, { ascending: asc });
-  const res = await Promise.all([
+  const jobs = [
     q("assets", "name", true), q("categories", "name", true), q("locations", "name", true),
-    q("ministries", "name", true), q("borrowings", "borrowed_on", false), q("maintenance", "service_date", false)
-  ]);
+    q("ministries", "name", true), q("borrowings", "borrowed_on", false), q("maintenance", "service_date", false),
+    sb.from("app_settings").select("*").eq("id", 1).maybeSingle()
+  ];
+  if (isAdmin()) jobs.push(sb.rpc("list_members"));
+  const res = await Promise.all(jobs);
   const bad = res.find((r) => r.error);
   if (bad) throw bad.error;
-  [S.assets, S.categories, S.locations, S.ministries, S.borrowings, S.maintenance] = res.map((r) => r.data || []);
+  [S.assets, S.categories, S.locations, S.ministries, S.borrowings, S.maintenance] = res.slice(0, 6).map((r) => r.data || []);
+  S.settings = res[6].data || {};
+  S.members = isAdmin() ? res[7].data || [] : [];
+  applySettings();
   S.photos = {};
   const paths = S.assets.map((a) => a.photo_path).filter(Boolean);
   if (paths.length) {
@@ -369,41 +566,92 @@ async function refresh() {
   catch (err) { toast(friendlyError(err)); }
 }
 
-/* ---------- Auth ---------- */
+/* ---------- Sign in, create account, access check ---------- */
 async function init() {
-  document.querySelectorAll(".js-church").forEach((el) => (el.textContent = CFG.CHURCH_NAME));
-  document.querySelectorAll(".js-branch").forEach((el) => (el.textContent = CFG.BRANCH_NAME));
-  document.title = `Assets · ${CFG.BRANCH_NAME}`;
-  if (!configured) { $("#setup-notice").hidden = false; $("#login-form").hidden = true; showLogin(); return; }
+  applySettings();
+  if (!configured) { $("#setup-notice").hidden = false; $("#auth-forms").hidden = true; showLogin(); return; }
   const { data: { session } } = await sb.auth.getSession();
   session ? startApp(session) : showLogin();
-  sb.auth.onAuthStateChange((event) => { if (event === "SIGNED_OUT") showLogin(); });
+  sb.auth.onAuthStateChange((event) => { if (event === "SIGNED_OUT") { S.me = null; showLogin(); } });
 }
-function showLogin() { $("#app").hidden = true; $("#login").hidden = false; }
+function showLogin(blockedMsg) {
+  $("#app").hidden = true; $("#login").hidden = false;
+  $("#blocked-notice").hidden = !blockedMsg; $("#blocked-notice").innerHTML = blockedMsg || "";
+  $("#auth-forms").hidden = !!blockedMsg || !configured;
+  $("#blocked-signout").hidden = !blockedMsg;
+}
+async function loadMe(session) {
+  const { data, error } = await sb.from("members").select("*");
+  if (error) {
+    if (/members|schema cache|does not exist/i.test(error.message))
+      return { blocked: "The database needs the users upgrade. An admin should run <b>upgrade-users.sql</b> in Supabase (see the README)." };
+    throw error;
+  }
+  const email = (session.user.email || "").toLowerCase();
+  const me = (data || []).find((m) => m.user_id === session.user.id) || (data || []).find((m) => m.email === email);
+  if (!me) return { blocked: `<b>${esc(email)}</b> has not been given access. Ask an admin to invite you.` };
+  if (!me.active) return { blocked: "Your access has been turned off. Contact an admin if this is a mistake." };
+  return { me };
+}
 async function startApp(session) {
+  S.session = session;
+  let res;
+  try { res = await loadMe(session); }
+  catch (err) { showLogin(`Could not check your access: ${esc(friendlyError(err))}`); return; }
+  if (res.blocked) { showLogin(res.blocked); return; }
+  S.me = res.me;
+  document.body.classList.remove("role-admin", "role-editor", "role-viewer");
+  document.body.classList.add(`role-${S.me.role}`);
+  if (S.view === "users" && !isAdmin()) S.view = "dashboard";
   $("#login").hidden = true; $("#app").hidden = false;
-  $("#user-email").textContent = session.user.email;
+  updateMeBox();
+  applyTheme();
   $("#view").innerHTML = `<div class="d-flex align-items-center gap-2 text-body-secondary"><div class="spinner-border spinner-border-sm text-primary"></div> Loading assets…</div>`;
   try { await loadAll(); }
   catch (err) {
-    $("#view").innerHTML = `<div class="alert alert-danger"><b>Could not load data.</b> ${esc(friendlyError(err))}<br>Check that you ran <b>setup.sql</b> in Supabase.</div>`;
+    $("#view").innerHTML = `<div class="alert alert-danger"><b>Could not load data.</b> ${esc(friendlyError(err))}<br>Check that <b>setup.sql</b> and <b>upgrade-users.sql</b> were run in Supabase.</div>`;
     return;
   }
   render();
 }
-$("#login-form").addEventListener("submit", async (e) => {
-  e.preventDefault();
+function updateMeBox() {
+  $("#me-name").textContent = S.me.full_name || S.me.email;
+  $("#me-role").textContent = ROLES[S.me.role].label;
+}
+
+document.addEventListener("submit", async (e) => {
   const form = e.target;
-  if (!form.checkValidity()) { form.classList.add("was-validated"); return; }
-  const fd = new FormData(form), btn = form.querySelector("button"), errBox = $("#login-error");
-  btn.disabled = true; btn.innerHTML = `<span class="spinner-border spinner-border-sm me-2"></span>Signing in`;
+  if (form.id !== "signin-form" && form.id !== "signup-form") return;
+  e.preventDefault();
+  const errBox = form.querySelector(".js-error"), btn = form.querySelector("button[type=submit]");
+  const showErr = (msg, tone = "danger") => { errBox.className = `alert alert-${tone} py-2 js-error`; errBox.innerHTML = msg; errBox.hidden = false; };
   errBox.hidden = true;
-  const { data, error } = await sb.auth.signInWithPassword({ email: fd.get("email"), password: fd.get("password") });
-  btn.disabled = false; btn.textContent = "Sign in";
-  if (error) { errBox.textContent = error.message === "Invalid login credentials" ? "Email or password is incorrect." : error.message; errBox.hidden = false; return; }
-  form.reset(); form.classList.remove("was-validated");
-  startApp(data.session);
-});
+  if (!form.checkValidity()) { form.classList.add("was-validated"); return; }
+  const fd = new FormData(form);
+  const email = String(fd.get("email")).trim().toLowerCase(), password = String(fd.get("password"));
+  const label = btn.textContent;
+  btn.disabled = true; btn.innerHTML = `<span class="spinner-border spinner-border-sm me-2"></span>${label}`;
+  try {
+    if (form.id === "signin-form") {
+      const { data, error } = await sb.auth.signInWithPassword({ email, password });
+      if (error) return showErr(/Invalid login/i.test(error.message) ? "Email or password is incorrect." : /not confirmed/i.test(error.message) ? "Confirm your email address first: open the link Supabase emailed you." : esc(error.message));
+      form.reset(); form.classList.remove("was-validated");
+      startApp(data.session);
+    } else {
+      if (password !== fd.get("confirm")) return showErr("The two passwords don't match.");
+      const { data, error } = await sb.auth.signUp({ email, password, options: { emailRedirectTo: APP_URL } });
+      if (error) {
+        if (/Database error|NOT_INVITED/i.test(error.message)) return showErr(`<b>${esc(email)}</b> hasn't been invited yet. Ask an admin to invite this exact email address.`);
+        if (/already registered|already exists/i.test(error.message)) return showErr("This email already has an account. Use the Sign in tab instead.");
+        if (/Signups not allowed|signup.*disabled/i.test(error.message)) return showErr("Account creation is switched off in Supabase. An admin needs to turn on “Allow new users to sign up” (see the README).");
+        return showErr(esc(error.message));
+      }
+      form.reset(); form.classList.remove("was-validated");
+      if (data.session) startApp(data.session);
+      else showErr("Account created. Check your email for a confirmation link, then come back and sign in.", "success");
+    }
+  } finally { btn.disabled = false; btn.textContent = label; }
+}, true);
 
 /* ---------- Alerts ---------- */
 function getAlerts() {
@@ -416,8 +664,8 @@ function getAlerts() {
   S.assets.filter((a) => a.status !== "Disposed" && a.status !== "Lost").forEach((a) => {
     const n = nextDue(a.id); if (!n) return;
     const d = daysUntil(n);
-    if (d < 0) alerts.push({ urgent: true, icon: "tools", when: d, asset: a.id, text: `${a.name} is overdue for servicing`, sub: `Was due ${fmtDate(n)}` });
-    else if (d <= CFG.REMINDER_DAYS) alerts.push({ urgent: false, icon: "tools", when: d, asset: a.id, text: `${a.name} needs servicing ${d === 0 ? "today" : `in ${plural(d, "day")}`}`, sub: `Due ${fmtDate(n)}` });
+    if (d < 0) alerts.push({ urgent: true, icon: "wrench", when: d, asset: a.id, text: `${a.name} is overdue for servicing`, sub: `Was due ${fmtDate(n)}` });
+    else if (d <= CFG.REMINDER_DAYS) alerts.push({ urgent: false, icon: "wrench", when: d, asset: a.id, text: `${a.name} needs servicing ${d === 0 ? "today" : `in ${plural(d, "day")}`}`, sub: `Due ${fmtDate(n)}` });
   });
   return alerts.sort((x, y) => x.when - y.when);
 }
@@ -425,14 +673,14 @@ function getAlerts() {
 /* ---------- Render ---------- */
 function render() {
   const urgent = getAlerts().filter((a) => a.urgent).length;
-  $("#nav").innerHTML = NAV.map((n) => `
+  $("#nav").innerHTML = NAV.filter((n) => !n.admin || isAdmin()).map((n) => n.divider ? "<hr>" : `
     <button class="nav-link ${S.view === n.id ? "active" : ""}" data-action="nav" data-view="${n.id}" ${S.view === n.id ? 'aria-current="page"' : ""}>
-      <i class="bi bi-${n.icon}"></i>${n.label}
+      ${ic(n.icon)}${n.label}
       ${n.id === "dashboard" && urgent ? `<span class="badge rounded-pill" aria-label="${urgent} urgent">${urgent}</span>` : ""}
     </button>`).join("");
   const mb = $("#menu-badge"); mb.hidden = !urgent; mb.textContent = urgent;
-  const views = { dashboard: viewDashboard, assets: viewAssets, loans: viewLoans, maintenance: viewMaintenance, reports: viewReports, lists: viewLists };
-  $("#view").innerHTML = views[S.view]();
+  const views = { dashboard: viewDashboard, assets: viewAssets, loans: viewLoans, maintenance: viewMaintenance, reports: viewReports, lists: viewLists, users: viewUsers, settings: viewSettings };
+  $("#view").innerHTML = (views[S.view] || viewDashboard)();
   if (S.view === "assets") renderAssetResults();
   if (S.view === "reports") renderReport();
 }
@@ -440,7 +688,7 @@ function render() {
 function pageHead(title, sub, actions = "") {
   return `<div class="d-flex flex-wrap gap-3 align-items-end justify-content-between mb-4 no-print">
     <div><h1 class="page-title">${title}</h1>${sub ? `<div class="text-body-secondary">${sub}</div>` : ""}</div>
-    <div class="d-flex flex-wrap gap-2">${actions}</div></div>`;
+    <div class="d-flex flex-wrap gap-2 page-actions">${actions}</div></div>`;
 }
 function statusBadge(a) {
   const loan = openLoan(a.id);
@@ -448,10 +696,12 @@ function statusBadge(a) {
 }
 function thumb(a) {
   const url = a.photo_path && S.photos[a.photo_path];
-  return url ? `<img class="thumb" src="${url}" alt="">` : `<div class="thumb"><i class="bi bi-image"></i></div>`;
+  return url ? `<img class="thumb" src="${url}" alt="">` : `<div class="thumb">${ic("image")}</div>`;
 }
-const emptyState = (icon, text, btn = "") => `<div class="empty"><i class="bi bi-${icon}"></i>${text}${btn ? `<div class="mt-3">${btn}</div>` : ""}</div>`;
-const addAssetBtn = (label = "Add asset") => `<button class="btn btn-primary" data-action="add-asset"><i class="bi bi-plus-lg me-1"></i>${label}</button>`;
+const emptyState = (icon, text, actions = "") =>
+  `<div class="empty"><div class="empty-icon">${ic(icon)}</div>${text}${actions ? `<div class="empty-actions">${actions}</div>` : ""}</div>`;
+const addAssetBtn = (label = "Add asset") => `<button class="btn btn-primary needs-edit" data-action="add-asset">${ic("plus")}${label}</button>`;
+const importBtn = () => `<button class="btn btn-outline-primary needs-edit" data-action="open-import">${ic("file-up")}Import from Excel</button>`;
 
 /* ----- Dashboard ----- */
 function viewDashboard() {
@@ -461,40 +711,41 @@ function viewDashboard() {
   const repair = active.filter((a) => a.status === "Under repair").length;
   const alerts = getAlerts();
   const recent = [...S.assets].sort((a, b) => b.created_at.localeCompare(a.created_at)).slice(0, 5);
+  const hello = `Welcome${S.me?.full_name ? `, ${esc(S.me.full_name.split(" ")[0])}` : ""}`;
 
   if (!S.assets.length) {
-    return pageHead("Welcome", esc(FULL_NAME)) + `<div class="card"><div class="card-body">
-      ${emptyState("box-seam", `<h2 class="h5 text-body">Start your asset register</h2>Add items one by one, or fill in the Excel template to add many at once.`, addAssetBtn("Add an asset") + " " + `<button class="btn btn-outline-primary" data-action="open-import"><i class="bi bi-file-earmark-arrow-up me-1"></i>Import from Excel</button>`)}
-    </div></div>`;
+    return pageHead(hello, esc(fullName())) + `<div class="card">
+      ${emptyState("package", `<h2 class="h5 text-body">Start your asset register</h2>${canEdit() ? "Add items one by one, or fill in the Excel template to add many at once." : "No assets have been recorded yet."}`, addAssetBtn("Add an asset") + importBtn())}
+    </div>`;
   }
   const stat = (icon, tone, val, label, view) => `
-    <div class="col-6 col-xl-3"><div class="card stat-card h-100 ${view ? "list-group-item-action" : ""}" ${view ? `data-action="nav" data-view="${view}" role="button" tabindex="0"` : ""}>
+    <div class="col-6 col-xl-3"><div class="card stat-card h-100" ${view ? `data-action="nav" data-view="${view}" role="button" tabindex="0"` : ""}>
       <div class="card-body d-flex gap-3 align-items-center">
-        <div class="icon ${tone}"><i class="bi bi-${icon}"></i></div>
+        <div class="icon ${tone}">${ic(icon)}</div>
         <div class="min-w-0"><div class="value">${val}</div><div class="text-body-secondary small">${label}</div></div>
       </div></div></div>`;
-  return pageHead("Dashboard", esc(FULL_NAME), addAssetBtn()) + `
+  return pageHead(hello, esc(fullName()), addAssetBtn()) + `
     <div class="row g-3 mb-4">
-      ${stat("box-seam", "", active.length, "Assets held", "assets")}
-      ${stat("cash-stack", "", wholeFmt.format(value), "Total recorded value")}
+      ${stat("package", "", active.length, "Assets held", "assets")}
+      ${stat("banknote", "", wholeFmt.format(value), "Total recorded value")}
       ${stat("arrow-left-right", "gold", out, "Out on loan", "loans")}
-      ${stat("tools", repair ? "red" : "", repair, "Under repair", "maintenance")}
+      ${stat("wrench", repair ? "red" : "", repair, "Under repair", "maintenance")}
     </div>
     <div class="row g-4">
       <div class="col-lg-7"><div class="card h-100">
-        <div class="card-header d-flex justify-content-between align-items-center"><span><i class="bi bi-bell me-2 text-primary"></i>Needs attention</span>
+        <div class="card-header">${ic("bell")}<span class="me-auto">Needs attention</span>
           ${alerts.length ? `<span class="badge text-bg-primary rounded-pill">${alerts.length}</span>` : ""}</div>
         ${alerts.length ? `<div class="list-group list-group-flush">${alerts.map((a) => `
           <button class="list-group-item list-group-item-action alert-item ${a.urgent ? "urgent" : ""} d-flex gap-3 align-items-start py-3" data-action="open-asset" data-id="${a.asset}">
-            <i class="bi bi-${a.icon} fs-5 ${a.urgent ? "text-danger" : "text-warning-emphasis"}"></i>
+            <span class="${a.urgent ? "text-danger" : "text-warning-emphasis"}">${ic(a.icon)}</span>
             <span><span class="fw-bold d-block">${esc(a.text)}</span><small class="text-body-secondary">${esc(a.sub)}</small></span>
             ${a.urgent ? `<span class="ms-auto">${badge("danger", "Overdue")}</span>` : ""}
           </button>`).join("")}</div>`
-        : `<div class="card-body"><div class="alert alert-success mb-0 d-flex gap-2"><i class="bi bi-check-circle-fill"></i>
+        : `<div class="card-body"><div class="alert alert-success mb-0 d-flex gap-2">${ic("circle-check")}
             <div><b>All clear.</b> No overdue loans or maintenance due in the next ${CFG.REMINDER_DAYS} days.</div></div></div>`}
       </div></div>
       <div class="col-lg-5"><div class="card h-100">
-        <div class="card-header d-flex justify-content-between align-items-center"><span><i class="bi bi-clock-history me-2 text-primary"></i>Recently added</span>
+        <div class="card-header">${ic("history")}<span class="me-auto">Recently added</span>
           <button class="btn btn-sm btn-outline-primary" data-action="nav" data-view="assets">See all</button></div>
         <div class="list-group list-group-flush">${recent.map((a) => `
           <button class="list-group-item list-group-item-action d-flex gap-3 align-items-center" data-action="open-asset" data-id="${a.id}">
@@ -508,10 +759,10 @@ function viewDashboard() {
 /* ----- Assets ----- */
 function viewAssets() {
   const f = S.filters;
-  return pageHead("Assets", plural(S.assets.length, "item") + " recorded", `<button class="btn btn-outline-primary" data-action="open-import"><i class="bi bi-file-earmark-arrow-up me-1"></i>Import from Excel</button>` + addAssetBtn()) + `
+  return pageHead("Assets", plural(S.assets.length, "item") + " recorded", importBtn() + addAssetBtn()) + `
     <div class="card mb-3"><div class="card-body"><div class="row g-2">
       <div class="col-12 col-lg-4"><div class="input-group">
-        <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+        <span class="input-group-text">${ic("search")}</span>
         <input type="search" class="form-control" id="f-q" placeholder="Search name, tag or serial number" value="${esc(f.q)}" aria-label="Search assets">
       </div></div>
       <div class="col-6 col-lg-2"><select class="form-select" id="f-category" aria-label="Category">${options(S.categories, Number(f.category) || null, "All categories")}</select></div>
@@ -533,8 +784,8 @@ function filteredAssets() {
 function renderAssetResults() {
   const el = $("#asset-results"); if (!el) return;
   const list = filteredAssets();
-  if (!S.assets.length) { el.innerHTML = `<div class="card">${emptyState("box-seam", "No assets yet.", addAssetBtn("Add your first asset") + " " + `<button class="btn btn-outline-primary" data-action="open-import"><i class="bi bi-file-earmark-arrow-up me-1"></i>Import from Excel</button>`)}</div>`; return; }
-  if (!list.length) { el.innerHTML = `<div class="card">${emptyState("funnel", "No assets match these filters. Clear the search or choose a different filter.")}</div>`; return; }
+  if (!S.assets.length) { el.innerHTML = `<div class="card">${emptyState("package", "No assets yet.", addAssetBtn("Add your first asset") + importBtn())}</div>`; return; }
+  if (!list.length) { el.innerHTML = `<div class="card">${emptyState("funnel", "No assets match these filters.", `<button class="btn btn-outline-primary" data-action="clear-filters">${ic("x")}Clear filters</button>`)}</div>`; return; }
   el.innerHTML = `<div class="card"><div class="table-responsive"><table class="table table-hover align-middle mb-0">
     <thead><tr><th></th><th>Name</th><th class="d-none d-md-table-cell">Category</th><th class="d-none d-lg-table-cell">Location</th><th class="d-none d-lg-table-cell">Ministry</th><th>Status</th><th class="text-end d-none d-md-table-cell">Value</th></tr></thead>
     <tbody>${list.map((a) => `
@@ -547,7 +798,7 @@ function renderAssetResults() {
         <td>${statusBadge(a)}</td>
         <td class="text-end text-nowrap d-none d-md-table-cell">${money(a.cost)}</td>
       </tr>`).join("")}</tbody></table></div>
-    <div class="card-footer bg-white text-body-secondary small">Showing ${list.length} of ${S.assets.length}</div></div>`;
+    <div class="card-footer bg-body text-body-secondary small">Showing ${list.length} of ${S.assets.length}</div></div>`;
 }
 
 /* ----- Borrowing ----- */
@@ -561,20 +812,20 @@ function viewLoans() {
     return `${fmtDate(b.due_on)} ${d < 0 ? badge("danger", "Overdue") : d <= 2 ? badge("warning", "Soon") : ""}`;
   };
   return pageHead("Borrowing", `${plural(out.length, "item")} currently out`,
-      `<button class="btn btn-primary" data-action="lend"><i class="bi bi-box-arrow-up-right me-1"></i>Lend an item</button>`) + `
+      `<button class="btn btn-primary needs-edit" data-action="lend">${ic("external-link")}Lend an item</button>`) + `
     <ul class="nav nav-pills mb-3" role="tablist">
-      <li class="nav-item"><button class="nav-link ${S.loanTab === "out" ? "active" : ""}" data-action="loan-tab" data-tab="out">Out now <span class="badge ${S.loanTab === "out" ? "bg-white text-primary" : "text-bg-primary"} ms-1">${out.length}</span></button></li>
+      <li class="nav-item"><button class="nav-link ${S.loanTab === "out" ? "active" : ""}" data-action="loan-tab" data-tab="out">Out now <span class="badge ${S.loanTab === "out" ? "bg-white text-dark" : "text-bg-primary"}">${out.length}</span></button></li>
       <li class="nav-item"><button class="nav-link ${S.loanTab === "all" ? "active" : ""}" data-action="loan-tab" data-tab="all">Full history</button></li>
     </ul>
     <div class="card">${rows.length ? `<div class="table-responsive"><table class="table align-middle mb-0">
       <thead><tr><th>Item</th><th>Borrower</th><th class="d-none d-md-table-cell">Purpose</th><th class="d-none d-md-table-cell">Borrowed</th><th>Due back</th><th>${S.loanTab === "out" ? "" : "Returned"}</th></tr></thead>
       <tbody>${rows.map((b) => `<tr>
         <td><a href="#" class="fw-bold text-decoration-none" data-action="open-asset" data-id="${b.asset_id}">${esc(assetName(b.asset_id))}</a></td>
-        <td>${esc(b.borrower_name)}${b.borrower_phone ? `<div class="small"><a href="tel:${esc(b.borrower_phone)}" class="text-body-secondary"><i class="bi bi-telephone me-1"></i>${esc(b.borrower_phone)}</a></div>` : ""}</td>
+        <td>${esc(b.borrower_name)}${b.borrower_phone ? `<div class="small"><a href="tel:${esc(b.borrower_phone)}" class="text-body-secondary text-decoration-none">${ic("phone")} ${esc(b.borrower_phone)}</a></div>` : ""}</td>
         <td class="d-none d-md-table-cell">${esc(b.purpose || "—")}</td>
         <td class="d-none d-md-table-cell text-nowrap">${fmtDate(b.borrowed_on)}</td>
         <td class="text-nowrap">${dueCell(b)}</td>
-        <td class="text-end">${b.returned_on ? `<span class="text-nowrap">${fmtDate(b.returned_on)}</span>` : `<button class="btn btn-sm btn-outline-primary text-nowrap" data-action="return-loan" data-id="${b.id}"><i class="bi bi-check2 me-1"></i>Mark returned</button>`}</td>
+        <td class="text-end">${b.returned_on ? `<span class="text-nowrap">${fmtDate(b.returned_on)}</span>` : `<button class="btn btn-sm btn-outline-primary needs-edit" data-action="return-loan" data-id="${b.id}">${ic("check")}Mark returned</button>`}</td>
       </tr>`).join("")}</tbody></table></div>`
     : emptyState("inbox", S.loanTab === "out" ? "Nothing is out on loan right now." : "No borrowing recorded yet.")}</div>`;
 }
@@ -584,9 +835,9 @@ function viewMaintenance() {
   const upcoming = S.assets.filter((a) => a.status !== "Disposed" && nextDue(a.id))
     .map((a) => ({ a, due: nextDue(a.id) })).sort((x, y) => x.due.localeCompare(y.due));
   return pageHead("Maintenance", "Servicing schedule and repair history",
-      `<button class="btn btn-primary" data-action="log-service"><i class="bi bi-plus-lg me-1"></i>Log maintenance</button>`) + `
+      `<button class="btn btn-primary needs-edit" data-action="log-service">${ic("plus")}Log maintenance</button>`) + `
     <div class="card mb-4">
-      <div class="card-header"><i class="bi bi-calendar-check me-2 text-primary"></i>Next services</div>
+      <div class="card-header">${ic("calendar-check")}Next services</div>
       ${upcoming.length ? `<div class="list-group list-group-flush">${upcoming.map(({ a, due }) => {
         const d = daysUntil(due);
         const b = d < 0 ? badge("danger", "Overdue") : d <= CFG.REMINDER_DAYS ? badge("warning", "Due soon") : badge("success", "Scheduled");
@@ -596,16 +847,16 @@ function viewMaintenance() {
       : `<div class="card-body text-body-secondary">No services scheduled. When you log maintenance, add a “next service” date to get reminders.</div>`}
     </div>
     <div class="card">
-      <div class="card-header"><i class="bi bi-journal-text me-2 text-primary"></i>History</div>
+      <div class="card-header">${ic("notebook-text")}History</div>
       ${S.maintenance.length ? `<div class="table-responsive"><table class="table align-middle mb-0">
-        <thead><tr><th>Date</th><th>Item</th><th>Work done</th><th class="d-none d-md-table-cell">Done by</th><th class="text-end">Cost</th><th></th></tr></thead>
+        <thead><tr><th>Date</th><th>Item</th><th>Work done</th><th class="d-none d-md-table-cell">Done by</th><th class="text-end">Cost</th><th class="needs-edit"></th></tr></thead>
         <tbody>${S.maintenance.map((m) => `<tr>
           <td class="text-nowrap">${fmtDate(m.service_date)}</td>
           <td><a href="#" class="fw-bold text-decoration-none" data-action="open-asset" data-id="${m.asset_id}">${esc(assetName(m.asset_id))}</a></td>
           <td>${esc(m.description)}</td>
           <td class="d-none d-md-table-cell">${esc(m.performed_by || "—")}</td>
           <td class="text-end text-nowrap">${money(m.cost)}</td>
-          <td class="text-end"><button class="btn btn-sm btn-outline-danger" data-action="delete-service" data-id="${m.id}" aria-label="Delete record"><i class="bi bi-trash"></i></button></td>
+          <td class="text-end needs-edit"><button class="btn btn-sm btn-outline-danger btn-icon" data-action="delete-service" data-id="${m.id}" aria-label="Delete record" title="Delete record">${ic("trash-2")}</button></td>
         </tr>`).join("")}</tbody></table></div>`
       : `<div class="card-body text-body-secondary">No maintenance logged yet.</div>`}
     </div>`;
@@ -640,19 +891,19 @@ function groupBy(field, list, label) {
 }
 function viewReports() {
   return pageHead("Reports", "Download for audits and council meetings",
-    `<button class="btn btn-outline-primary" data-action="export-xlsx"><i class="bi bi-file-earmark-excel me-1"></i>Download Excel</button>
-     <button class="btn btn-primary" data-action="print"><i class="bi bi-printer me-1"></i>Print or save PDF</button>`) + `
+    `<button class="btn btn-outline-primary" data-action="export-xlsx">${ic("file-spreadsheet")}Download Excel</button>
+     <button class="btn btn-primary" data-action="print">${ic("printer")}Print or save PDF</button>`) + `
     <ul class="nav nav-pills flex-wrap gap-1 mb-3 no-print">${Object.entries(REPORTS).map(([k, r]) =>
       `<li class="nav-item"><button class="nav-link ${S.report === k ? "active" : ""}" data-action="report" data-report="${k}">${r.title}</button></li>`).join("")}</ul>
     <div class="print-head"><img src="logo.png" alt=""><div>
-      <div class="fw-bold fs-5">${esc(CFG.CHURCH_NAME)}, ${esc(CFG.BRANCH_NAME)}</div>
+      <div class="fw-bold fs-5">${esc(fullName())}</div>
       <div class="fw-bold">${REPORTS[S.report].title}</div><div class="small">Printed ${fmtDate(today())}</div></div></div>
     <div id="report-out"></div>`;
 }
 function renderReport() {
   const rows = REPORTS[S.report].rows();
   const el = $("#report-out");
-  if (!rows.length) { el.innerHTML = `<div class="card">${emptyState("file-earmark", "No records for this report yet.")}</div>`; return; }
+  if (!rows.length) { el.innerHTML = `<div class="card">${emptyState("file-text", "No records for this report yet.")}</div>`; return; }
   const cols = Object.keys(rows[0]);
   const isMoney = (c) => c.startsWith("Cost") || c.startsWith("Total value");
   const isNum = (c) => isMoney(c) || c.startsWith("Number");
@@ -662,27 +913,213 @@ function renderReport() {
     <thead><tr>${cols.map((c) => `<th class="${isNum(c) ? "text-end" : ""}">${esc(c)}</th>`).join("")}</tr></thead>
     <tbody>${rows.map((r) => `<tr>${cols.map((c) => `<td class="${isNum(c) ? "text-end text-nowrap" : ""}">${isMoney(c) ? (r[c] === "" ? "—" : money(r[c])) : esc(r[c])}</td>`).join("")}</tr>`).join("")}</tbody>
     ${totalCol ? `<tfoot class="table-group-divider"><tr>${cols.map((c, i) => `<td class="fw-bold ${isMoney(c) ? "text-end text-nowrap" : ""}">${i === 0 ? "Total" : c === totalCol ? money(total) : ""}</td>`).join("")}</tr></tfoot>` : ""}
-  </table></div><div class="card-footer bg-white text-body-secondary small">${plural(rows.length, "row")}</div></div>`;
+  </table></div><div class="card-footer bg-body text-body-secondary small">${plural(rows.length, "row")}</div></div>`;
 }
 
 /* ----- Lists ----- */
 function viewLists() {
   const block = (table, title, icon, list) => `
     <div class="col-md-6 col-xl-4"><div class="card h-100">
-      <div class="card-header"><i class="bi bi-${icon} me-2 text-primary"></i>${title}</div>
-      <div class="card-body pb-2">
+      <div class="card-header">${ic(icon)}${title}<span class="ms-auto badge text-bg-secondary rounded-pill">${list.length}</span></div>
+      <div class="card-body pb-2 needs-edit">
         <form class="input-group" data-form="list" data-table="${table}">
           <input class="form-control" name="name" required placeholder="Add new…" aria-label="New ${title.toLowerCase()} name">
-          <button class="btn btn-primary" type="submit" aria-label="Add"><i class="bi bi-plus-lg"></i></button>
+          <button class="btn btn-primary btn-icon" style="height:auto;width:2.75rem" type="submit" aria-label="Add ${title.toLowerCase()}" title="Add">${ic("plus")}</button>
         </form>
       </div>
-      <ul class="list-group list-group-flush">${list.map((x) => `<li class="list-group-item d-flex justify-content-between align-items-center">
+      <ul class="list-group list-group-flush">${list.map((x) => `<li class="list-group-item d-flex justify-content-between align-items-center gap-2">
         <span>${esc(x.name)}</span>
-        <button class="btn btn-sm btn-link text-danger" data-action="delete-item" data-table="${table}" data-id="${x.id}" aria-label="Remove ${esc(x.name)}"><i class="bi bi-x-circle"></i></button></li>`).join("")
+        <button class="btn btn-sm btn-outline-danger btn-icon needs-edit" data-action="delete-item" data-table="${table}" data-id="${x.id}" aria-label="Remove ${esc(x.name)}" title="Remove">${ic("trash-2")}</button></li>`).join("")
         || '<li class="list-group-item text-body-secondary">None yet</li>'}</ul>
     </div></div>`;
   return pageHead("Lists", "The choices that appear when you add or edit an asset") + `
-    <div class="row g-4">${block("categories", "Categories", "tags", S.categories)}${block("locations", "Locations", "geo-alt", S.locations)}${block("ministries", "Ministries", "people", S.ministries)}</div>`;
+    <div class="row g-4">${block("categories", "Categories", "tag", S.categories)}${block("locations", "Locations", "map-pin", S.locations)}${block("ministries", "Ministries", "users", S.ministries)}</div>`;
+}
+
+/* ----- Users (admins only) ----- */
+function memberStatus(m) {
+  if (!m.active) return badge("secondary", "Turned off", "ban");
+  if (!m.signed_up) return badge("warning", "Invited", "mail");
+  return badge("success", "Active", "circle-check");
+}
+function viewUsers() {
+  if (!isAdmin()) return pageHead("Users") + `<div class="alert alert-warning">Only admins can manage users.</div>`;
+  const myEmail = S.me.email;
+  const pending = S.members.filter((m) => m.active && !m.signed_up).length;
+  return pageHead("Users", `${S.members.length} ${S.members.length === 1 ? "person" : "people"} with access${pending ? ` · ${pending} still to create their account` : ""}`,
+      `<button class="btn btn-primary" data-action="invite-user">${ic("user-plus")}Invite someone</button>`) + `
+    <div class="card mb-4"><div class="table-responsive"><table class="table align-middle mb-0">
+      <thead><tr><th>Person</th><th>Role</th><th>Status</th><th class="d-none d-md-table-cell">Last signed in</th><th></th></tr></thead>
+      <tbody>${S.members.map((m) => {
+        const self = m.email === myEmail;
+        return `<tr>
+          <td><div class="d-flex align-items-center gap-2"><span class="avatar">${esc(initials(m.full_name, m.email))}</span>
+            <div class="min-w-0"><div class="fw-bold text-truncate">${esc(m.full_name || m.email.split("@")[0])}${self ? ' <span class="text-body-secondary fw-normal">(you)</span>' : ""}</div>
+            <div class="small text-body-secondary text-truncate">${esc(m.email)}</div></div></div></td>
+          <td>${badge(ROLES[m.role].tone, ROLES[m.role].label, ROLES[m.role].icon)}</td>
+          <td>${memberStatus(m)}</td>
+          <td class="d-none d-md-table-cell small text-body-secondary text-nowrap">${m.signed_up ? fmtWhen(m.last_sign_in_at) : "—"}</td>
+          <td class="text-end">
+            <div class="dropdown">
+              <button class="btn btn-sm btn-outline-secondary btn-icon" data-bs-toggle="dropdown" data-bs-popper-config='{"strategy":"fixed"}' aria-expanded="false" aria-label="Actions for ${esc(m.email)}">${ic("ellipsis")}</button>
+              <ul class="dropdown-menu dropdown-menu-end shadow">
+                <li><button class="dropdown-item" data-action="edit-user" data-id="${m.id}">${ic("pencil")}Change name or role</button></li>
+                ${!m.signed_up && m.active ? `<li><button class="dropdown-item" data-action="share-invite" data-id="${m.id}">${ic("message-circle")}Send invitation again</button></li>` : ""}
+                ${m.signed_up ? `<li><button class="dropdown-item" data-action="set-password" data-id="${m.id}">${ic("key-round")}Set a temporary password</button></li>` : ""}
+                ${self ? "" : `<li><hr class="dropdown-divider"></li>
+                  <li><button class="dropdown-item" data-action="toggle-user" data-id="${m.id}">${ic(m.active ? "user-x" : "user-check")}${m.active ? "Turn off access" : "Turn access back on"}</button></li>
+                  <li><button class="dropdown-item text-danger" data-action="remove-user" data-id="${m.id}">${ic("trash-2")}Remove</button></li>`}
+              </ul>
+            </div>
+          </td></tr>`;
+      }).join("")}</tbody></table></div></div>
+    <div class="row g-3">${Object.values(ROLES).map((r) => `
+      <div class="col-md-4"><div class="card h-100"><div class="card-body">
+        <div class="fw-bold d-flex align-items-center gap-2 mb-1 text-brand">${ic(r.icon)}${r.label}</div>
+        <div class="small text-body-secondary">${r.text}</div></div></div></div>`).join("")}
+    </div>`;
+}
+function roleChooser(current = "editor") {
+  return `<div class="row g-2">${Object.entries(ROLES).map(([k, r]) => `
+    <div class="col-sm-4 role-option">
+      <input type="radio" class="btn-check" name="role" id="role-${k}" value="${k}" ${k === current ? "checked" : ""}>
+      <label class="btn btn-outline-primary w-100 p-3" for="role-${k}"><strong>${ic(r.icon)}${r.label}</strong><span class="small mt-1">${r.text}</span></label>
+    </div>`).join("")}</div>`;
+}
+function inviteMessage(m) {
+  return `Hello${m.full_name ? " " + m.full_name.split(" ")[0] : ""},\n\nYou've been invited to the ${fullName()} Asset Manager as ${/^[aeiou]/i.test(ROLES[m.role].label) ? "an" : "a"} ${ROLES[m.role].label}.\n\n1. Open ${APP_URL}\n2. Tap "Create account" and use this email: ${m.email}\n3. Choose your own password.\n\nOn a phone, use "Add to Home Screen" to keep it like an app.`;
+}
+function shareBlock(text, email, subject) {
+  return `<label class="form-label fw-bold" for="share-text">Message</label>
+    <textarea class="form-control mb-3" id="share-text" rows="8" readonly>${esc(text)}</textarea>
+    <div class="d-flex flex-wrap gap-2">
+      <button class="btn btn-primary" data-action="copy-share">${ic("copy")}Copy message</button>
+      <a class="btn btn-outline-primary" href="https://wa.me/?text=${encodeURIComponent(text)}" target="_blank" rel="noopener">${ic("message-circle")}Send on WhatsApp</a>
+      ${email ? `<a class="btn btn-outline-primary" href="mailto:${esc(email)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(text)}">${ic("mail")}Send by email</a>` : ""}
+    </div>`;
+}
+function inviteForm() {
+  openModal(`${ic("user-plus")}Invite someone`, `
+    <form data-form="invite" novalidate>
+      <div class="row g-3">
+        <div class="col-md-6"><label class="form-label fw-bold" for="i_email">Email address</label>
+          <input type="email" class="form-control" id="i_email" name="email" required placeholder="name@example.com">
+          <div class="invalid-feedback">Enter a valid email address.</div></div>
+        <div class="col-md-6"><label class="form-label fw-bold" for="i_name">Full name</label>
+          <input class="form-control" id="i_name" name="full_name" placeholder="e.g. Ama Owusu"></div>
+        <div class="col-12"><span class="form-label fw-bold d-block">Role</span>${roleChooser("editor")}</div>
+      </div>
+      <div class="alert alert-info small mt-3 mb-0 d-flex gap-2">${ic("info")}<div>The app doesn't send emails itself. After you invite someone, you'll get a message to send them on WhatsApp or by email, with the link and steps to create their account.</div></div>
+      ${formFoot("Invite")}
+    </form>`);
+}
+function shareInvite(m) {
+  openModal(`${ic("message-circle")}Send the invitation`, `
+    <div class="alert alert-success d-flex gap-2">${ic("circle-check")}<div><b>${esc(m.full_name || m.email)}</b> can now create an account with <b>${esc(m.email)}</b>.</div></div>
+    ${shareBlock(inviteMessage(m), m.email, `Your invitation to the ${CFG.BRANCH_NAME} Asset Manager`)}`);
+}
+function editUserForm(m) {
+  const self = m.email === S.me.email;
+  openModal(`${ic("pencil")}${esc(m.full_name || m.email)}`, `
+    <form data-form="edit-user" data-id="${m.id}" novalidate>
+      <div class="row g-3">
+        <div class="col-md-6"><label class="form-label fw-bold">Email address</label><input class="form-control" value="${esc(m.email)}" disabled></div>
+        <div class="col-md-6"><label class="form-label fw-bold" for="e_name">Full name</label>
+          <input class="form-control" id="e_name" name="full_name" value="${esc(m.full_name)}"></div>
+        <div class="col-12"><span class="form-label fw-bold d-block">Role</span>${roleChooser(m.role)}
+          ${self ? `<div class="form-text">If you change your own role away from Admin, you'll lose access to this page.</div>` : ""}</div>
+      </div>
+      ${formFoot("Save changes")}
+    </form>`);
+}
+function randomPassword() {
+  const abc = "abcdefghjkmnpqrstuvwxyz23456789", a = new Uint32Array(12); crypto.getRandomValues(a);
+  const s = [...a].map((n) => abc[n % abc.length]).join("");
+  return `${s.slice(0, 4)}-${s.slice(4, 8)}-${s.slice(8)}`;
+}
+function setPasswordForm(m) {
+  openModal(`${ic("key-round")}Temporary password`, `
+    <form data-form="set-password" data-id="${m.id}" novalidate>
+      <p>Set a temporary password for <b>${esc(m.full_name || m.email)}</b>. Give it to them privately, and ask them to change it in <b>Settings</b> after signing in.</p>
+      <label class="form-label fw-bold" for="p_new">New password</label>
+      <div class="input-group">
+        <input class="form-control font-monospace" id="p_new" name="password" required minlength="8" value="${randomPassword()}">
+        <button class="btn btn-outline-secondary" type="button" data-action="regen-password" title="Make another">${ic("refresh-cw")}New</button>
+      </div>
+      <div class="form-text">At least 8 characters.</div>
+      ${formFoot("Set password")}
+    </form>`);
+}
+
+/* ----- Settings ----- */
+function viewSettings() {
+  const pref = getThemePref();
+  const st = S.settings || {};
+  const themeOpt = (v, icon, label) => `
+    <input type="radio" class="btn-check" name="theme" id="theme-${v}" value="${v}" ${pref === v ? "checked" : ""} data-action="set-theme">
+    <label class="btn btn-outline-primary" for="theme-${v}">${ic(icon)}${label}</label>`;
+  return pageHead("Settings", "Your account, how the app looks, and church details") + `
+    <div class="settings-wrap d-grid gap-4">
+      <div class="card">
+        <div class="card-header">${ic("palette")}Appearance</div>
+        <div class="card-body">
+          <div class="btn-group flex-wrap" role="group" aria-label="Colour mode">
+            ${themeOpt("light", "sun", "Light")}${themeOpt("dark", "moon", "Dark")}${themeOpt("system", "monitor", "Match device")}
+          </div>
+          <div class="form-text mt-2">Saved on this device only. “Match device” follows your phone or computer setting.</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">${ic("circle-user")}My account</div>
+        <div class="card-body">
+          <form data-form="my-name" class="row g-3 align-items-end" novalidate>
+            <div class="col-md-6"><label class="form-label fw-bold" for="s_name">Your name</label>
+              <input class="form-control" id="s_name" name="full_name" value="${esc(S.me.full_name)}" placeholder="e.g. Ama Owusu"></div>
+            <div class="col-md-6"><label class="form-label fw-bold">Email and role</label>
+              <div class="form-control bg-body-tertiary d-flex align-items-center gap-2 flex-wrap"><span class="text-truncate">${esc(S.me.email)}</span>${badge(ROLES[S.me.role].tone, ROLES[S.me.role].label, ROLES[S.me.role].icon)}</div></div>
+            <div class="col-12"><button class="btn btn-primary" type="submit">Save name</button></div>
+          </form>
+          <hr class="my-4">
+          <form data-form="my-password" class="row g-3" novalidate>
+            <div class="col-12"><h3 class="h6 fw-bold mb-0 d-flex align-items-center gap-2">${ic("lock")}Change password</h3></div>
+            <div class="col-md-6"><label class="form-label" for="s_pw">New password</label>
+              <input type="password" class="form-control" id="s_pw" name="password" required minlength="8" autocomplete="new-password">
+              <div class="invalid-feedback">At least 8 characters.</div></div>
+            <div class="col-md-6"><label class="form-label" for="s_pw2">Type it again</label>
+              <input type="password" class="form-control" id="s_pw2" name="confirm" required minlength="8" autocomplete="new-password"></div>
+            <div class="col-12"><div class="alert alert-danger py-2 mb-0 js-error" hidden></div>
+              <button class="btn btn-primary mt-2" type="submit">Change password</button></div>
+          </form>
+        </div>
+      </div>
+
+      <div class="card needs-admin">
+        <div class="card-header">${ic("building-2")}Church details<span class="ms-auto">${badge("primary", "Admins", "shield-check")}</span></div>
+        <div class="card-body">
+          <form data-form="church" class="row g-3" novalidate>
+            <div class="col-md-6"><label class="form-label fw-bold" for="c_church">Church name</label>
+              <input class="form-control" id="c_church" name="church_name" required value="${esc(st.church_name || CFG.CHURCH_NAME)}"></div>
+            <div class="col-md-6"><label class="form-label fw-bold" for="c_branch">Assembly or branch</label>
+              <input class="form-control" id="c_branch" name="branch_name" required value="${esc(st.branch_name || CFG.BRANCH_NAME)}"></div>
+            <div class="col-md-6"><label class="form-label fw-bold" for="c_cur">Currency</label>
+              <select class="form-select" id="c_cur" name="currency">${["GHS", "NGN", "USD", "GBP", "EUR", "XOF", "KES", "ZAR"].map((c) => `<option ${c === CFG.CURRENCY ? "selected" : ""}>${c}</option>`).join("")}</select>
+              <div class="form-text">Used for costs, values and reports.</div></div>
+            <div class="col-md-6"><label class="form-label fw-bold" for="c_days">Maintenance reminder</label>
+              <div class="input-group"><input type="number" class="form-control" id="c_days" name="reminder_days" min="1" max="90" required value="${CFG.REMINDER_DAYS}"><span class="input-group-text">days before</span></div>
+              <div class="form-text">When “due soon” warnings start on the dashboard.</div></div>
+            <div class="col-12"><button class="btn btn-primary" type="submit">Save church details</button></div>
+          </form>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">${ic("info")}About</div>
+        <div class="card-body small text-body-secondary">
+          ${esc(fullName())} Asset Manager. Link to share: <a href="${esc(APP_URL)}">${esc(APP_URL)}</a>
+        </div>
+      </div>
+    </div>`;
 }
 
 /* ---------- Dialogs ---------- */
@@ -691,7 +1128,10 @@ function openModal(title, body) {
   $("#modal-body").innerHTML = body;
   $("#modal-body").scrollTop = 0;
   if (!modalOpen) bsModal.show();
-  setTimeout(() => $("#modal-body").querySelector("form .form-control, form .form-select")?.focus(), modalOpen ? 0 : 320);
+  setTimeout(() => {
+    const field = $("#modal-body").querySelector("form .form-control:not([disabled]):not([readonly]), form .form-select");
+    if (field) field.focus(); else if (!modalEl.contains(document.activeElement)) modalEl.focus();
+  }, modalOpen ? 0 : 320);
 }
 function closeModal() { bsModal.hide(); }
 
@@ -703,11 +1143,11 @@ function assetDetail(id) {
   const due = nextDue(a.id);
   const url = a.photo_path && S.photos[a.photo_path];
   openModal(esc(a.name), `
-    ${loan ? `<div class="alert alert-warning d-flex flex-wrap gap-2 align-items-center"><i class="bi bi-arrow-left-right"></i>
+    ${loan ? `<div class="alert alert-warning d-flex flex-wrap gap-2 align-items-center">${ic("arrow-left-right")}
       <span><b>On loan to ${esc(loan.borrower_name)}</b>${loan.due_on ? `, due back ${fmtDate(loan.due_on)}` : ""}.</span>
-      <button class="btn btn-sm btn-warning ms-auto" data-action="return-loan" data-id="${loan.id}">Mark returned</button></div>` : ""}
+      <button class="btn btn-sm btn-warning ms-auto needs-edit" data-action="return-loan" data-id="${loan.id}">${ic("check")}Mark returned</button></div>` : ""}
     <div class="row g-4 mb-3">
-      <div class="col-sm-4">${url ? `<img class="detail-photo" src="${url}" alt="Photo of ${esc(a.name)}">` : `<div class="detail-photo"><i class="bi bi-image"></i></div>`}</div>
+      <div class="col-sm-4">${url ? `<img class="detail-photo" src="${url}" alt="Photo of ${esc(a.name)}">` : `<div class="detail-photo">${ic("image")}</div>`}</div>
       <div class="col-sm-8"><dl class="row facts mb-0">
         <dt class="col-5">Status</dt><dd class="col-7">${statusBadge(a)}</dd>
         <dt class="col-5">Condition</dt><dd class="col-7">${esc(a.condition)}</dd>
@@ -722,23 +1162,23 @@ function assetDetail(id) {
       </dl></div>
     </div>
     ${a.notes ? `<p class="bg-body-tertiary rounded p-3" style="white-space:pre-wrap">${esc(a.notes)}</p>` : ""}
-    <div class="d-flex flex-wrap gap-2 mb-4">
-      <button class="btn btn-primary" data-action="edit-asset" data-id="${a.id}"><i class="bi bi-pencil me-1"></i>Edit</button>
-      ${loan ? "" : `<button class="btn btn-outline-primary" data-action="lend" data-id="${a.id}"><i class="bi bi-box-arrow-up-right me-1"></i>Lend out</button>`}
-      <button class="btn btn-outline-primary" data-action="log-service" data-id="${a.id}"><i class="bi bi-tools me-1"></i>Log maintenance</button>
-      <button class="btn btn-outline-danger ms-sm-auto" data-action="delete-asset" data-id="${a.id}"><i class="bi bi-trash me-1"></i>Delete</button>
+    <div class="d-flex flex-wrap gap-2 mb-4 needs-edit">
+      <button class="btn btn-primary" data-action="edit-asset" data-id="${a.id}">${ic("pencil")}Edit</button>
+      ${loan ? "" : `<button class="btn btn-outline-primary" data-action="lend" data-id="${a.id}">${ic("external-link")}Lend out</button>`}
+      <button class="btn btn-outline-primary" data-action="log-service" data-id="${a.id}">${ic("wrench")}Log maintenance</button>
+      <button class="btn btn-outline-danger ms-sm-auto" data-action="delete-asset" data-id="${a.id}">${ic("trash-2")}Delete</button>
     </div>
     <div class="accordion" id="history">
       <div class="accordion-item">
-        <h3 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#h-maint">
-          <i class="bi bi-tools me-2"></i>Maintenance history <span class="badge text-bg-primary rounded-pill ms-2">${services.length}</span></button></h3>
+        <h3 class="accordion-header"><button class="accordion-button collapsed gap-2" type="button" data-bs-toggle="collapse" data-bs-target="#h-maint">
+          ${ic("wrench")}Maintenance history <span class="badge text-bg-primary rounded-pill">${services.length}</span></button></h3>
         <div id="h-maint" class="accordion-collapse collapse" data-bs-parent="#history"><div class="accordion-body p-0">
           ${services.length ? `<ul class="list-group list-group-flush">${services.map((m) => `<li class="list-group-item d-flex justify-content-between gap-2"><span>${fmtDate(m.service_date)}: ${esc(m.description)}</span><span class="text-body-secondary text-nowrap">${money(m.cost)}</span></li>`).join("")}</ul>`
           : '<p class="text-body-secondary m-3">None logged.</p>'}</div></div>
       </div>
       <div class="accordion-item">
-        <h3 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#h-loans">
-          <i class="bi bi-arrow-left-right me-2"></i>Borrowing history <span class="badge text-bg-primary rounded-pill ms-2">${loans.length}</span></button></h3>
+        <h3 class="accordion-header"><button class="accordion-button collapsed gap-2" type="button" data-bs-toggle="collapse" data-bs-target="#h-loans">
+          ${ic("arrow-left-right")}Borrowing history <span class="badge text-bg-primary rounded-pill">${loans.length}</span></button></h3>
         <div id="h-loans" class="accordion-collapse collapse" data-bs-parent="#history"><div class="accordion-body p-0">
           ${loans.length ? `<ul class="list-group list-group-flush">${loans.map((b) => `<li class="list-group-item d-flex flex-wrap justify-content-between gap-2"><span>${esc(b.borrower_name)}${b.purpose ? ` · ${esc(b.purpose)}` : ""}</span><span class="text-body-secondary small">${fmtDate(b.borrowed_on)} → ${b.returned_on ? fmtDate(b.returned_on) : "not returned"}</span></li>`).join("")}</ul>`
           : '<p class="text-body-secondary m-3">Never borrowed.</p>'}</div></div>
@@ -750,11 +1190,11 @@ const formFoot = (label) => `<div class="alert alert-danger mt-3 mb-0 js-error" 
   <div class="d-flex justify-content-end gap-2 mt-4">
     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
     <button class="btn btn-primary" type="submit">${label}</button></div>`;
-const money_input = (name, value = "") => `<div class="input-group"><span class="input-group-text">${esc(CFG.CURRENCY)}</span>
+const moneyInput = (name, value = "") => `<div class="input-group"><span class="input-group-text">${esc(CFG.CURRENCY)}</span>
   <input type="number" class="form-control" id="f_${name}" name="${name}" min="0" step="0.01" value="${value ?? ""}"></div>`;
 
 function assetForm(a = {}) {
-  openModal(a.id ? `<i class="bi bi-pencil me-2"></i>Edit asset` : `<i class="bi bi-plus-circle me-2"></i>Add asset`, `
+  openModal(a.id ? `${ic("pencil")}Edit asset` : `${ic("plus")}Add asset`, `
     <form data-form="asset" data-id="${a.id || ""}" novalidate>
       <div class="row g-3">
         <div class="col-12"><label class="form-label fw-bold" for="f_name">Name</label>
@@ -778,7 +1218,7 @@ function assetForm(a = {}) {
           <select class="form-select" id="f_cond" name="condition">${plainOptions(CONDITIONS, a.condition || "Good")}</select></div>
         <div class="col-md-6"><label class="form-label fw-bold" for="f_pdate">Purchase date</label>
           <input type="date" class="form-control" id="f_pdate" name="purchase_date" value="${esc(a.purchase_date)}"></div>
-        <div class="col-md-6"><label class="form-label fw-bold" for="f_cost">Cost</label>${money_input("cost", a.cost)}</div>
+        <div class="col-md-6"><label class="form-label fw-bold" for="f_cost">Cost</label>${moneyInput("cost", a.cost)}</div>
         <div class="col-12"><label class="form-label fw-bold" for="f_photo">Photo</label>
           <input type="file" class="form-control" id="f_photo" name="photo" accept="image/*">
           <div class="form-text">${a.photo_path ? "Choose a file to replace the current photo." : "Optional, up to 5 MB. On a phone you can take a picture directly."}</div></div>
@@ -792,7 +1232,7 @@ function assetForm(a = {}) {
 function loanForm(assetId) {
   const available = S.assets.filter((a) => !openLoan(a.id) && !["Disposed", "Lost"].includes(a.status));
   if (!available.length) { toast("Every item is already out on loan or unavailable."); return; }
-  openModal(`<i class="bi bi-box-arrow-up-right me-2"></i>Lend an item`, `
+  openModal(`${ic("external-link")}Lend an item`, `
     <form data-form="loan" novalidate>
       <div class="row g-3">
         <div class="col-12"><label class="form-label fw-bold" for="l_item">Item</label>
@@ -801,7 +1241,7 @@ function loanForm(assetId) {
         <div class="col-md-6"><label class="form-label fw-bold" for="l_name">Borrower name</label>
           <input class="form-control" id="l_name" name="borrower_name" required><div class="invalid-feedback">Enter who is borrowing it.</div></div>
         <div class="col-md-6"><label class="form-label fw-bold" for="l_phone">Phone</label>
-          <div class="input-group"><span class="input-group-text"><i class="bi bi-telephone"></i></span><input class="form-control" id="l_phone" name="borrower_phone" type="tel"></div></div>
+          <div class="input-group"><span class="input-group-text">${ic("phone")}</span><input class="form-control" id="l_phone" name="borrower_phone" type="tel"></div></div>
         <div class="col-12"><label class="form-label fw-bold" for="l_purpose">Purpose</label>
           <input class="form-control" id="l_purpose" name="purpose" placeholder="e.g. Youth camp, funeral service"></div>
         <div class="col-md-6"><label class="form-label fw-bold" for="l_from">Date borrowed</label>
@@ -817,7 +1257,7 @@ function loanForm(assetId) {
 
 function serviceForm(assetId) {
   if (!S.assets.length) { toast("Add an asset first."); return; }
-  openModal(`<i class="bi bi-tools me-2"></i>Log maintenance`, `
+  openModal(`${ic("wrench")}Log maintenance`, `
     <form data-form="service" novalidate>
       <div class="row g-3">
         <div class="col-12"><label class="form-label fw-bold" for="m_item">Item</label>
@@ -825,7 +1265,7 @@ function serviceForm(assetId) {
           <div class="invalid-feedback">Choose the item that was serviced.</div></div>
         <div class="col-md-6"><label class="form-label fw-bold" for="m_date">Date done</label>
           <input type="date" class="form-control" id="m_date" name="service_date" required value="${today()}"></div>
-        <div class="col-md-6"><label class="form-label fw-bold" for="f_cost">Cost</label>${money_input("cost")}</div>
+        <div class="col-md-6"><label class="form-label fw-bold" for="f_cost">Cost</label>${moneyInput("cost")}</div>
         <div class="col-12"><label class="form-label fw-bold" for="m_desc">Work done</label>
           <input class="form-control" id="m_desc" name="description" required placeholder="e.g. Oil change and filter replacement">
           <div class="invalid-feedback">Describe the work done.</div></div>
@@ -852,9 +1292,10 @@ const IMPORT_COLS = [
   { key: "status", header: "Status", width: 14 },
   { key: "condition", header: "Condition", width: 12 },
   { key: "purchase_date", header: "Purchase date (YYYY-MM-DD)", width: 26 },
-  { key: "cost", header: `Cost (${CFG.CURRENCY})`, width: 14 },
+  { key: "cost", header: "Cost", width: 14 },
   { key: "notes", header: "Notes", width: 40 }
 ];
+const importHeader = (c) => c.key === "cost" ? `Cost (${CFG.CURRENCY})` : c.header;
 const LOOKUPS = { category: ["categories", "category_id", "Category"], location: ["locations", "location_id", "Location"], ministry: ["ministries", "ministry_id", "Ministry"] };
 const normHeader = (h) => String(h ?? "").toLowerCase().replace(/\(.*?\)|\*/g, "").replace(/[^a-z]/g, "");
 const HEADER_KEYS = Object.fromEntries(IMPORT_COLS.map((c) => [normHeader(c.header), c.key]));
@@ -875,7 +1316,7 @@ function parseDate(v) {
 }
 
 function downloadTemplate(withData) {
-  const head = IMPORT_COLS.map((c) => c.header);
+  const head = IMPORT_COLS.map(importHeader);
   const rows = withData ? S.assets.map((a) => [a.name, a.asset_tag || "", a.serial_number || "",
     S.categories.find((x) => x.id === a.category_id)?.name || "", S.locations.find((x) => x.id === a.location_id)?.name || "",
     S.ministries.find((x) => x.id === a.ministry_id)?.name || "", a.status, a.condition, a.purchase_date || "",
@@ -890,7 +1331,7 @@ function downloadTemplate(withData) {
   const wl = XLSX.utils.aoa_to_sheet(lists); wl["!cols"] = [24, 24, 24, 16, 12].map((w) => ({ wch: w }));
 
   const help = [
-    [`${CFG.CHURCH_NAME}, ${CFG.BRANCH_NAME}: asset import template`], [""],
+    [`${fullName()}: asset import template`], [""],
     ["How to use"],
     ["1. Fill in one asset per row on the Assets sheet. Do not rename or reorder the column headings."],
     ["2. Only Name is required. Leave any other cell empty if you don't know it."],
@@ -901,7 +1342,7 @@ function downloadTemplate(withData) {
     [`7. Cost: numbers only, in ${CFG.CURRENCY}, e.g. 8500 or 8500.50.`],
     ["8. Asset tags must be unique. If a tag already exists in the app, that asset is updated instead of added twice."],
     ["9. Save the file, then in the app go to Assets → Import from Excel and upload it. You'll see a check of every row before anything is saved."],
-    [""], ["Example row"], IMPORT_COLS.map((c) => c.header),
+    [""], ["Example row"], head,
     ["Yamaha MG16 mixer", "COP-AEC-0001", "YM123456", "Sound & media", "Main auditorium", "Media team", "In use", "Good", "2024-03-15", 8500, "Donated by the youth ministry"]
   ];
   const wh = XLSX.utils.aoa_to_sheet(help); wh["!cols"] = [{ wch: 110 }];
@@ -977,20 +1418,20 @@ async function parseImportFile(file) {
 
 function importDialog() {
   S.importPlan = null;
-  openModal(`<i class="bi bi-file-earmark-arrow-up me-2"></i>Import assets from Excel`, `
+  openModal(`${ic("file-up")}Import assets from Excel`, `
     <div class="d-flex gap-3 mb-4">
-      <span class="badge rounded-circle text-bg-primary d-grid flex-none" style="width:2rem;height:2rem;place-items:center">1</span>
+      <span class="step-num">1</span>
       <div class="flex-grow-1"><h3 class="h6 fw-bold mb-1">Download the template</h3>
         <p class="text-body-secondary small mb-2">It has the exact columns the app expects, a sheet of instructions, and your current lists of categories, locations and ministries.</p>
         <div class="d-flex flex-wrap gap-2">
-          <button class="btn btn-primary btn-sm" data-action="dl-template"><i class="bi bi-download me-1"></i>Blank template</button>
-          ${S.assets.length ? `<button class="btn btn-outline-primary btn-sm" data-action="dl-template" data-with="1"><i class="bi bi-download me-1"></i>Template with current assets</button>` : ""}
+          <button class="btn btn-primary btn-sm" data-action="dl-template">${ic("download")}Blank template</button>
+          ${S.assets.length ? `<button class="btn btn-outline-primary btn-sm" data-action="dl-template" data-with="1">${ic("download")}Template with current assets</button>` : ""}
         </div>
         ${S.assets.length ? `<div class="form-text">Use “with current assets” to correct many items at once: rows whose asset tag already exists are updated, not duplicated.</div>` : ""}
       </div>
     </div>
     <div class="d-flex gap-3">
-      <span class="badge rounded-circle text-bg-primary d-grid flex-none" style="width:2rem;height:2rem;place-items:center">2</span>
+      <span class="step-num">2</span>
       <div class="flex-grow-1 min-w-0"><h3 class="h6 fw-bold mb-1">Upload the filled-in file</h3>
         <p class="text-body-secondary small mb-2">Every row is checked first. Nothing is saved until you confirm.</p>
         <input type="file" class="form-control" id="import-file" accept=".xlsx,.xls,.csv" aria-label="Choose the filled-in Excel file">
@@ -1007,9 +1448,9 @@ function renderImportPreview() {
   const newOnes = Object.entries(plan.newLookups).flatMap(([k, m]) => [...m.values()].map((v) => `${LOOKUPS[k][2]}: ${esc(v)}`));
   el.innerHTML = `
     <div class="d-flex flex-wrap gap-2 mb-2">
-      ${adds ? badge("success", `${adds} to add`, "plus-circle") : ""}
-      ${ups ? badge("primary", `${ups} to update`, "arrow-repeat") : ""}
-      ${bad ? badge("danger", `${bad} with problems`, "exclamation-triangle") : ""}
+      ${adds ? badge("success", `${adds} to add`, "circle-plus") : ""}
+      ${ups ? badge("primary", `${ups} to update`, "refresh-cw") : ""}
+      ${bad ? badge("danger", `${bad} with problems`, "triangle-alert") : ""}
     </div>
     ${bad ? `<div class="alert alert-danger small py-2"><b>Rows with problems will be skipped.</b> Fix them in Excel and upload the file again, or import the good rows now and add the rest later.</div>` : ""}
     ${newOnes.length ? `<div class="alert alert-info small py-2"><b>These will be added to your lists:</b> ${newOnes.join(", ")}</div>` : ""}
@@ -1025,7 +1466,7 @@ function renderImportPreview() {
     <div class="d-flex justify-content-end gap-2 mt-3">
       <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
       <button class="btn btn-primary" data-action="run-import" ${ok.length ? "" : "disabled"}>
-        <i class="bi bi-check2-circle me-1"></i>${ok.length ? `Import ${plural(ok.length, "asset")}` : "Nothing to import"}</button>
+        ${ic("check")}${ok.length ? `Import ${plural(ok.length, "asset")}` : "Nothing to import"}</button>
     </div>`;
 }
 
@@ -1130,6 +1571,48 @@ const FORMS = {
     const name = textOrNull(new FormData(form).get("name")); if (!name) return {};
     const { error } = await sb.from(form.dataset.table).insert({ name }); if (error) throw error;
     return { msg: `“${name}” added` };
+  },
+  async invite(form) {
+    const fd = new FormData(form);
+    const rec = { email: String(fd.get("email")).trim().toLowerCase(), full_name: textOrNull(fd.get("full_name")), role: fd.get("role") };
+    const { error } = await sb.from("members").insert(rec); if (error) throw error;
+    return { msg: "Invitation created", after: () => shareInvite(rec) };
+  },
+  async "edit-user"(form) {
+    const fd = new FormData(form), id = Number(form.dataset.id);
+    const rec = { full_name: textOrNull(fd.get("full_name")), role: fd.get("role") };
+    const { error } = await sb.from("members").update(rec).eq("id", id); if (error) throw error;
+    const m = S.members.find((x) => x.id === id);
+    if (m?.email === S.me.email) { Object.assign(S.me, rec); return { msg: "Changes saved", reload: true }; }
+    return { msg: "Changes saved" };
+  },
+  async "set-password"(form) {
+    const pw = String(new FormData(form).get("password"));
+    const m = S.members.find((x) => x.id === Number(form.dataset.id));
+    const { error } = await sb.rpc("admin_set_password", { member_id: m.id, new_password: pw }); if (error) throw error;
+    return { msg: "Password set", after: () => openModal(`${ic("key-round")}Password set`, `
+      <div class="alert alert-success d-flex gap-2">${ic("circle-check")}<div>Send this to <b>${esc(m.full_name || m.email)}</b> privately, then ask them to change it in Settings.</div></div>
+      ${shareBlock(`Your temporary password for the ${CFG.BRANCH_NAME} Asset Manager:\n\n${pw}\n\nSign in at ${APP_URL} with ${m.email}, then change it under Settings.`, m.email, "Your temporary password")}`) };
+  },
+  async "my-name"(form) {
+    const name = textOrNull(new FormData(form).get("full_name"));
+    const { error } = await sb.rpc("update_my_name", { new_name: name || "" }); if (error) throw error;
+    S.me.full_name = name; updateMeBox();
+    return { msg: "Name saved" };
+  },
+  async "my-password"(form) {
+    const fd = new FormData(form);
+    if (fd.get("password") !== fd.get("confirm")) throw new Error("The two passwords don't match.");
+    const { error } = await sb.auth.updateUser({ password: String(fd.get("password")) }); if (error) throw error;
+    form.reset(); form.classList.remove("was-validated");
+    return { msg: "Password changed", stay: true };
+  },
+  async church(form) {
+    const fd = new FormData(form);
+    const rec = { church_name: textOrNull(fd.get("church_name")), branch_name: textOrNull(fd.get("branch_name")),
+      currency: fd.get("currency"), reminder_days: Number(fd.get("reminder_days")), updated_at: new Date().toISOString() };
+    const { error } = await sb.from("app_settings").update(rec).eq("id", 1); if (error) throw error;
+    return { msg: "Church details saved" };
   }
 };
 
@@ -1147,14 +1630,17 @@ document.addEventListener("submit", async (e) => {
   if (errBox) errBox.hidden = true;
   try {
     const res = await FORMS[form.dataset.form](form);
-    await refresh();
+    if (res.reload) { await startApp(S.session); }
+    else if (!res.stay) await refresh();
     if (res.msg) toast(res.msg);
-    if (res.reopen) assetDetail(res.reopen);
+    if (res.after) res.after();
+    else if (res.reopen) assetDetail(res.reopen);
     else if (form.closest("#modal")) closeModal();
   } catch (err) {
     const msg = friendlyError(err);
     if (errBox) { errBox.textContent = msg; errBox.hidden = false; } else toast(msg);
-    btn.disabled = false; btn.innerHTML = label;
+  } finally {
+    if (btn.isConnected) { btn.disabled = false; btn.innerHTML = label; }
   }
 });
 
@@ -1165,12 +1651,13 @@ document.addEventListener("input", (e) => {
 document.addEventListener("change", (e) => {
   const map = { "f-category": "category", "f-location": "location", "f-ministry": "ministry", "f-status": "status" };
   if (map[e.target.id]) { S.filters[map[e.target.id]] = e.target.value; renderAssetResults(); }
+  if (e.target.name === "theme" && e.target.dataset.action === "set-theme") setTheme(e.target.value);
   if (e.target.id === "import-file" && e.target.files[0]) {
     const el = $("#import-preview");
     el.innerHTML = `<div class="d-flex align-items-center gap-2 text-body-secondary small"><div class="spinner-border spinner-border-sm text-primary"></div>Checking the file…</div>`;
     parseImportFile(e.target.files[0])
       .then((plan) => { S.importPlan = plan; renderImportPreview(); })
-      .catch((err) => { S.importPlan = null; el.innerHTML = `<div class="alert alert-danger small mb-0"><i class="bi bi-exclamation-triangle me-1"></i>${esc(err.message || "This file could not be read. Save it as an Excel (.xlsx) file and try again.")}</div>`; e.target.value = ""; });
+      .catch((err) => { S.importPlan = null; el.innerHTML = `<div class="alert alert-danger small mb-0 d-flex gap-2">${ic("triangle-alert")}<div>${esc(err.message || "This file could not be read. Save it as an Excel (.xlsx) file and try again.")}</div></div>`; e.target.value = ""; });
   }
 });
 document.addEventListener("keydown", (e) => {
@@ -1182,14 +1669,24 @@ document.addEventListener("click", async (e) => {
   const el = e.target.closest("[data-action]"); if (!el) return;
   if (el.tagName === "A") e.preventDefault();
   const { action, id } = el.dataset;
+  const member = () => S.members.find((m) => m.id === Number(id));
   try {
     switch (action) {
       case "nav": S.view = el.dataset.view; closeMenu(); if (modalOpen) closeModal(); render(); window.scrollTo(0, 0); break;
+      case "auth-tab": {
+        document.querySelectorAll("[data-action=auth-tab]").forEach((b) => b.classList.toggle("active", b === el));
+        $("#signin-form").hidden = el.dataset.tab !== "signin"; $("#signup-form").hidden = el.dataset.tab !== "signup";
+        document.querySelectorAll("#auth-forms .js-error").forEach((x) => (x.hidden = true));
+        break;
+      }
+      case "toggle-theme": setTheme(document.documentElement.getAttribute("data-bs-theme") === "dark" ? "light" : "dark"); if (S.view === "settings") render(); break;
+      case "set-theme": break;
       case "add-asset": assetForm(); break;
       case "open-asset": assetDetail(id); break;
       case "edit-asset": assetForm(assetById(id)); break;
       case "lend": loanForm(id); break;
       case "log-service": serviceForm(id); break;
+      case "clear-filters": S.filters = { q: "", category: "", location: "", ministry: "", status: "" }; render(); break;
       case "open-import": importDialog(); break;
       case "dl-template": downloadTemplate(!!el.dataset.with); break;
       case "run-import": await runImport(el); break;
@@ -1222,7 +1719,7 @@ document.addEventListener("click", async (e) => {
         const a = assetById(id);
         const ok = await confirmDialog(`Delete “${a.name}”?`,
           `<p>This also deletes all its borrowing and maintenance records, and cannot be undone.</p>
-           <div class="alert alert-info mb-0 small"><i class="bi bi-lightbulb me-1"></i>To keep the history, edit the asset and set its status to “Disposed” instead.</div>`, "Delete asset");
+           <div class="alert alert-info mb-0 small d-flex gap-2">${ic("lightbulb")}<div>To keep the history, edit the asset and set its status to “Disposed” instead.</div></div>`, "Delete asset");
         if (!ok) break;
         const { error } = await sb.from("assets").delete().eq("id", a.id); if (error) throw error;
         if (a.photo_path) await sb.storage.from(BUCKET).remove([a.photo_path]);
@@ -1234,6 +1731,31 @@ document.addEventListener("click", async (e) => {
         if (!(await confirmDialog(`Remove “${item?.name ?? "this item"}”?`, "<p class='mb-0'>Assets using it will show “—” instead.</p>", "Remove"))) break;
         const { error } = await sb.from(table).delete().eq("id", Number(id)); if (error) throw error;
         await refresh(); toast("Removed"); break;
+      }
+      /* Users */
+      case "invite-user": inviteForm(); break;
+      case "share-invite": shareInvite(member()); break;
+      case "edit-user": editUserForm(member()); break;
+      case "set-password": setPasswordForm(member()); break;
+      case "regen-password": $("#p_new").value = randomPassword(); break;
+      case "copy-share": {
+        const ok = await copyText($("#share-text").value);
+        toast(ok ? "Message copied. Paste it into WhatsApp, SMS or email." : "Select the message and copy it yourself.");
+        break;
+      }
+      case "toggle-user": {
+        const m = member();
+        if (m.active && !(await confirmDialog(`Turn off access for ${m.full_name || m.email}?`,
+          "<p class='mb-0'>They won't be able to see or change anything until you turn it back on. Their past records stay.</p>", "Turn off", "btn-warning"))) break;
+        const { error } = await sb.from("members").update({ active: !m.active }).eq("id", m.id); if (error) throw error;
+        await refresh(); toast(m.active ? "Access turned off" : "Access turned back on"); break;
+      }
+      case "remove-user": {
+        const m = member();
+        if (!(await confirmDialog(`Remove ${m.full_name || m.email}?`,
+          "<p class='mb-0'>They lose access straight away. To let them back in later, invite the same email again; their old password will still work.</p>", "Remove"))) break;
+        const { error } = await sb.from("members").delete().eq("id", m.id); if (error) throw error;
+        await refresh(); toast("User removed"); break;
       }
       case "logout": closeMenu(); await sb.auth.signOut(); break;
     }
