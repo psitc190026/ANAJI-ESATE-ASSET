@@ -383,7 +383,7 @@ body.role-viewer .needs-edit, body:not(.role-admin) .needs-admin { display: none
    Church Asset Manager
    Icons: Lucide (https://lucide.dev), ISC licence
    ===================================================== */
-const ICONS = {"layout-dashboard":"<rect width=\"7\" height=\"9\" x=\"3\" y=\"3\" rx=\"1\"/><rect width=\"7\" height=\"5\" x=\"14\" y=\"3\" rx=\"1\"/><rect width=\"7\" height=\"9\" x=\"14\" y=\"12\" rx=\"1\"/><rect width=\"7\" height=\"5\" x=\"3\" y=\"16\" rx=\"1\"/>","package":"<path d=\"M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z\"/><path d=\"M12 22V12\"/><polyline points=\"3.29 7 12 12 20.71 7\"/><path d=\"m7.5 4.27 9 5.15\"/>","arrow-left-right":"<path d=\"M8 3 4 7l4 4\"/><path d=\"M4 7h16\"/><path d=\"m16 21 4-4-4-4\"/><path d=\"M20 17H4\"/>","wrench":"<path d=\"M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.106-3.105c.32-.322.863-.22.983.218a6 6 0 0 1-8.259 7.057l-7.91 7.91a1 1 0 0 1-2.999-3l7.91-7.91a6 6 0 0 1 7.057-8.259c.438.12.54.662.219.984z\"/>","chart-column":"<path d=\"M3 3v16a2 2 0 0 0 2 2h16\"/><path d=\"M18 17V9\"/><path d=\"M13 17V5\"/><path d=\"M8 17v-3\"/>","list-checks":"<path d=\"M13 5h8\"/><path d=\"M13 12h8\"/><path d=\"M13 19h8\"/><path d=\"m3 17 2 2 4-4\"/><path d=\"m3 7 2 2 4-4\"/>","users":"<path d=\"M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2\"/><path d=\"M16 3.128a4 4 0 0 1 0 7.744\"/><path d=\"M22 21v-2a4 4 0 0 0-3-3.87\"/><circle cx=\"9\" cy=\"7\" r=\"4\"/>","settings":"<path d=\"M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915\"/><circle cx=\"12\" cy=\"12\" r=\"3\"/>","sun":"<circle cx=\"12\" cy=\"12\" r=\"4\"/><path d=\"M12 2v2\"/><path d=\"M12 20v2\"/><path d=\"m4.93 4.93 1.41 1.41\"/><path d=\"m17.66 17.66 1.41 1.41\"/><path d=\"M2 12h2\"/><path d=\"M20 12h2\"/><path d=\"m6.34 17.66-1.41 1.41\"/><path d=\"m19.07 4.93-1.41 1.41\"/>","moon":"<path d=\"M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401\"/>","monitor":"<rect width=\"20\" height=\"14\" x=\"2\" y=\"3\" rx=\"2\"/><line x1=\"8\" x2=\"16\" y1=\"21\" y2=\"21\"/><line x1=\"12\" x2=\"12\" y1=\"17\" y2=\"21\"/>","log-out":"<path d=\"m16 17 5-5-5-5\"/><path d=\"M21 12H9\"/><path d=\"M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4\"/>","menu":"<path d=\"M4 5h16\"/><path d=\"M4 12h16\"/><path d=\"M4 19h16\"/>","plus":"<path d=\"M5 12h14\"/><path d=\"M12 5v14\"/>","search":"<path d=\"m21 21-4.34-4.34\"/><circle cx=\"11\" cy=\"11\" r=\"8\"/>","image":"<rect width=\"18\" height=\"18\" x=\"3\" y=\"3\" rx=\"2\" ry=\"2\"/><circle cx=\"9\" cy=\"9\" r=\"2\"/><path d=\"m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21\"/>","pencil":"<path d=\"M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z\"/><path d=\"m15 5 4 4\"/>","trash-2":"<path d=\"M10 11v6\"/><path d=\"M14 11v6\"/><path d=\"M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6\"/><path d=\"M3 6h18\"/><path d=\"M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2\"/>","external-link":"<path d=\"M15 3h6v6\"/><path d=\"M10 14 21 3\"/><path d=\"M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6\"/>","history":"<path d=\"M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8\"/><path d=\"M3 3v5h5\"/><path d=\"M12 7v5l4 2\"/>","bell":"<path d=\"M10.268 21a2 2 0 0 0 3.464 0\"/><path d=\"M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326\"/>","circle-check":"<circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"m16 9-5.5 5.5L8 12\"/>","triangle-alert":"<path d=\"m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3\"/><path d=\"M12 9v4\"/><path d=\"M12 17h.01\"/>","calendar-check":"<path d=\"M8 2v3\"/><path d=\"M16 2v3\"/><rect x=\"3\" y=\"3\" width=\"18\" height=\"18\" rx=\"2\"/><path d=\"M3 9h18\"/><path d=\"m9 15 2 2 4-4\"/>","notebook-text":"<path d=\"M2 6h4\"/><path d=\"M2 10h4\"/><path d=\"M2 14h4\"/><path d=\"M2 18h4\"/><rect width=\"16\" height=\"20\" x=\"4\" y=\"2\" rx=\"2\"/><path d=\"M9.5 8h5\"/><path d=\"M9.5 12H16\"/><path d=\"M9.5 16H14\"/>","download":"<path d=\"M12 15V3\"/><path d=\"M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4\"/><path d=\"m7 10 5 5 5-5\"/>","file-up":"<path d=\"M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z\"/><path d=\"M14 2v5a1 1 0 0 0 1 1h5\"/><path d=\"M12 12v6\"/><path d=\"m15 15-3-3-3 3\"/>","file-spreadsheet":"<path d=\"M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z\"/><path d=\"M14 2v5a1 1 0 0 0 1 1h5\"/><path d=\"M8 13h2\"/><path d=\"M14 13h2\"/><path d=\"M8 17h2\"/><path d=\"M14 17h2\"/>","printer":"<path d=\"M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2\"/><path d=\"M6 9V3a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v6\"/><rect x=\"6\" y=\"14\" width=\"12\" height=\"8\" rx=\"1\"/>","phone":"<path d=\"M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 14 14 0 0 0 6.392 6.384\"/>","check":"<path d=\"M20 6 9 17l-5-5\"/>","circle-x":"<circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"m15 9-6 6\"/><path d=\"m9 9 6 6\"/>","lightbulb":"<path d=\"M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5\"/><path d=\"M9 18h6\"/><path d=\"M10 22h4\"/>","banknote":"<rect width=\"20\" height=\"12\" x=\"2\" y=\"6\" rx=\"2\"/><circle cx=\"12\" cy=\"12\" r=\"2\"/><path d=\"M6 12h.01M18 12h.01\"/>","tag":"<path d=\"M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z\"/><circle cx=\"7.5\" cy=\"7.5\" r=\".5\" fill=\"currentColor\"/>","map-pin":"<path d=\"M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0\"/><circle cx=\"12\" cy=\"10\" r=\"3\"/>","user-plus":"<path d=\"M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2\"/><circle cx=\"9\" cy=\"7\" r=\"4\"/><line x1=\"19\" x2=\"19\" y1=\"8\" y2=\"14\"/><line x1=\"22\" x2=\"16\" y1=\"11\" y2=\"11\"/>","key-round":"<path d=\"M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z\"/><circle cx=\"16.5\" cy=\"7.5\" r=\".5\" fill=\"currentColor\"/>","shield-check":"<path d=\"M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z\"/><path d=\"m9 12 2 2 4-4\"/>","eye":"<path d=\"M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0\"/><circle cx=\"12\" cy=\"12\" r=\"3\"/>","copy":"<rect width=\"14\" height=\"14\" x=\"8\" y=\"8\" rx=\"2\" ry=\"2\"/><path d=\"M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2\"/>","message-circle":"<path d=\"M2.992 16.342a2 2 0 0 1 .094 1.167l-1.065 3.29a1 1 0 0 0 1.236 1.168l3.413-.998a2 2 0 0 1 1.099.092 10 10 0 1 0-4.777-4.719\"/>","mail":"<path d=\"m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7\"/><rect x=\"2\" y=\"4\" width=\"20\" height=\"16\" rx=\"2\"/>","user-x":"<path d=\"M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2\"/><circle cx=\"9\" cy=\"7\" r=\"4\"/><line x1=\"17\" x2=\"22\" y1=\"8\" y2=\"13\"/><line x1=\"22\" x2=\"17\" y1=\"8\" y2=\"13\"/>","user-check":"<path d=\"m16 11 2 2 4-4\"/><path d=\"M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2\"/><circle cx=\"9\" cy=\"7\" r=\"4\"/>","ellipsis":"<circle cx=\"12\" cy=\"12\" r=\"1\"/><circle cx=\"19\" cy=\"12\" r=\"1\"/><circle cx=\"5\" cy=\"12\" r=\"1\"/>","lock":"<rect width=\"18\" height=\"11\" x=\"3\" y=\"11\" rx=\"2\" ry=\"2\"/><path d=\"M7 11V7a5 5 0 0 1 10 0v4\"/>","building-2":"<path d=\"M10 12h4\"/><path d=\"M10 8h4\"/><path d=\"M14 21v-3a2 2 0 0 0-4 0v3\"/><path d=\"M6 10H4a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-2\"/><path d=\"M6 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16\"/>","palette":"<path d=\"M12 22a1 1 0 0 1 0-20 10 9 0 0 1 10 9 5 5 0 0 1-5 5h-2.25a1.75 1.75 0 0 0-1.4 2.8l.3.4a1.75 1.75 0 0 1-1.4 2.8z\"/><circle cx=\"13.5\" cy=\"6.5\" r=\".5\" fill=\"currentColor\"/><circle cx=\"17.5\" cy=\"10.5\" r=\".5\" fill=\"currentColor\"/><circle cx=\"6.5\" cy=\"12.5\" r=\".5\" fill=\"currentColor\"/><circle cx=\"8.5\" cy=\"7.5\" r=\".5\" fill=\"currentColor\"/>","info":"<circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"M12 16v-4\"/><path d=\"M12 8h.01\"/>","x":"<path d=\"M18 6 6 18\"/><path d=\"m6 6 12 12\"/>","circle-user":"<circle cx=\"12\" cy=\"12\" r=\"10\"/><circle cx=\"12\" cy=\"10\" r=\"3\"/><path d=\"M7 20.662V19a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v1.662\"/>","refresh-cw":"<path d=\"M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8\"/><path d=\"M21 3v5h-5\"/><path d=\"M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16\"/><path d=\"M8 16H3v5\"/>","inbox":"<polyline points=\"22 12 16 12 14 15 10 15 8 12 2 12\"/><path d=\"M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z\"/>","funnel":"<path d=\"M10 20a1 1 0 0 0 .553.895l2 1A1 1 0 0 0 14 21v-7a2 2 0 0 1 .517-1.341L21.74 4.67A1 1 0 0 0 21 3H3a1 1 0 0 0-.742 1.67l7.225 7.989A2 2 0 0 1 10 14z\"/>","file-text":"<path d=\"M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z\"/><path d=\"M14 2v5a1 1 0 0 0 1 1h5\"/><path d=\"M10 9H8\"/><path d=\"M16 13H8\"/><path d=\"M16 17H8\"/>","package-open":"<path d=\"M12 22v-9\"/><path d=\"M15.17 2.21a1.67 1.67 0 0 1 1.63 0L21 4.57a1.93 1.93 0 0 1 0 3.36L8.82 14.79a1.655 1.655 0 0 1-1.64 0L3 12.43a1.93 1.93 0 0 1 0-3.36z\"/><path d=\"M20 13v3.87a2.06 2.06 0 0 1-1.11 1.83l-6 3.08a1.93 1.93 0 0 1-1.78 0l-6-3.08A2.06 2.06 0 0 1 4 16.87V13\"/><path d=\"M21 12.43a1.93 1.93 0 0 0 0-3.36L8.83 2.2a1.64 1.64 0 0 0-1.63 0L3 4.57a1.93 1.93 0 0 0 0 3.36l12.18 6.86a1.636 1.636 0 0 0 1.63 0z\"/>","undo-2":"<path d=\"M9 14 4 9l5-5\"/><path d=\"M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5a5.5 5.5 0 0 1-5.5 5.5H11\"/>","ban":"<circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"M4.929 4.929 19.07 19.071\"/>","circle-plus":"<circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"M8 12h8\"/><path d=\"M12 8v8\"/>"};
+const ICONS = {"layout-dashboard":"<rect width=\"7\" height=\"9\" x=\"3\" y=\"3\" rx=\"1\"/><rect width=\"7\" height=\"5\" x=\"14\" y=\"3\" rx=\"1\"/><rect width=\"7\" height=\"9\" x=\"14\" y=\"12\" rx=\"1\"/><rect width=\"7\" height=\"5\" x=\"3\" y=\"16\" rx=\"1\"/>","package":"<path d=\"M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z\"/><path d=\"M12 22V12\"/><polyline points=\"3.29 7 12 12 20.71 7\"/><path d=\"m7.5 4.27 9 5.15\"/>","arrow-left-right":"<path d=\"M8 3 4 7l4 4\"/><path d=\"M4 7h16\"/><path d=\"m16 21 4-4-4-4\"/><path d=\"M20 17H4\"/>","wrench":"<path d=\"M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.106-3.105c.32-.322.863-.22.983.218a6 6 0 0 1-8.259 7.057l-7.91 7.91a1 1 0 0 1-2.999-3l7.91-7.91a6 6 0 0 1 7.057-8.259c.438.12.54.662.219.984z\"/>","chart-column":"<path d=\"M3 3v16a2 2 0 0 0 2 2h16\"/><path d=\"M18 17V9\"/><path d=\"M13 17V5\"/><path d=\"M8 17v-3\"/>","list-checks":"<path d=\"M13 5h8\"/><path d=\"M13 12h8\"/><path d=\"M13 19h8\"/><path d=\"m3 17 2 2 4-4\"/><path d=\"m3 7 2 2 4-4\"/>","users":"<path d=\"M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2\"/><path d=\"M16 3.128a4 4 0 0 1 0 7.744\"/><path d=\"M22 21v-2a4 4 0 0 0-3-3.87\"/><circle cx=\"9\" cy=\"7\" r=\"4\"/>","settings":"<path d=\"M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915\"/><circle cx=\"12\" cy=\"12\" r=\"3\"/>","sun":"<circle cx=\"12\" cy=\"12\" r=\"4\"/><path d=\"M12 2v2\"/><path d=\"M12 20v2\"/><path d=\"m4.93 4.93 1.41 1.41\"/><path d=\"m17.66 17.66 1.41 1.41\"/><path d=\"M2 12h2\"/><path d=\"M20 12h2\"/><path d=\"m6.34 17.66-1.41 1.41\"/><path d=\"m19.07 4.93-1.41 1.41\"/>","moon":"<path d=\"M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401\"/>","monitor":"<rect width=\"20\" height=\"14\" x=\"2\" y=\"3\" rx=\"2\"/><line x1=\"8\" x2=\"16\" y1=\"21\" y2=\"21\"/><line x1=\"12\" x2=\"12\" y1=\"17\" y2=\"21\"/>","log-out":"<path d=\"m16 17 5-5-5-5\"/><path d=\"M21 12H9\"/><path d=\"M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4\"/>","menu":"<path d=\"M4 5h16\"/><path d=\"M4 12h16\"/><path d=\"M4 19h16\"/>","plus":"<path d=\"M5 12h14\"/><path d=\"M12 5v14\"/>","search":"<path d=\"m21 21-4.34-4.34\"/><circle cx=\"11\" cy=\"11\" r=\"8\"/>","image":"<rect width=\"18\" height=\"18\" x=\"3\" y=\"3\" rx=\"2\" ry=\"2\"/><circle cx=\"9\" cy=\"9\" r=\"2\"/><path d=\"m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21\"/>","pencil":"<path d=\"M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z\"/><path d=\"m15 5 4 4\"/>","trash-2":"<path d=\"M10 11v6\"/><path d=\"M14 11v6\"/><path d=\"M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6\"/><path d=\"M3 6h18\"/><path d=\"M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2\"/>","external-link":"<path d=\"M15 3h6v6\"/><path d=\"M10 14 21 3\"/><path d=\"M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6\"/>","history":"<path d=\"M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8\"/><path d=\"M3 3v5h5\"/><path d=\"M12 7v5l4 2\"/>","bell":"<path d=\"M10.268 21a2 2 0 0 0 3.464 0\"/><path d=\"M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326\"/>","circle-check":"<circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"m16 9-5.5 5.5L8 12\"/>","triangle-alert":"<path d=\"m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3\"/><path d=\"M12 9v4\"/><path d=\"M12 17h.01\"/>","calendar-check":"<path d=\"M8 2v3\"/><path d=\"M16 2v3\"/><rect x=\"3\" y=\"3\" width=\"18\" height=\"18\" rx=\"2\"/><path d=\"M3 9h18\"/><path d=\"m9 15 2 2 4-4\"/>","notebook-text":"<path d=\"M2 6h4\"/><path d=\"M2 10h4\"/><path d=\"M2 14h4\"/><path d=\"M2 18h4\"/><rect width=\"16\" height=\"20\" x=\"4\" y=\"2\" rx=\"2\"/><path d=\"M9.5 8h5\"/><path d=\"M9.5 12H16\"/><path d=\"M9.5 16H14\"/>","download":"<path d=\"M12 15V3\"/><path d=\"M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4\"/><path d=\"m7 10 5 5 5-5\"/>","file-up":"<path d=\"M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z\"/><path d=\"M14 2v5a1 1 0 0 0 1 1h5\"/><path d=\"M12 12v6\"/><path d=\"m15 15-3-3-3 3\"/>","file-spreadsheet":"<path d=\"M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z\"/><path d=\"M14 2v5a1 1 0 0 0 1 1h5\"/><path d=\"M8 13h2\"/><path d=\"M14 13h2\"/><path d=\"M8 17h2\"/><path d=\"M14 17h2\"/>","printer":"<path d=\"M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2\"/><path d=\"M6 9V3a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v6\"/><rect x=\"6\" y=\"14\" width=\"12\" height=\"8\" rx=\"1\"/>","phone":"<path d=\"M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 14 14 0 0 0 6.392 6.384\"/>","check":"<path d=\"M20 6 9 17l-5-5\"/>","circle-x":"<circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"m15 9-6 6\"/><path d=\"m9 9 6 6\"/>","lightbulb":"<path d=\"M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5\"/><path d=\"M9 18h6\"/><path d=\"M10 22h4\"/>","banknote":"<rect width=\"20\" height=\"12\" x=\"2\" y=\"6\" rx=\"2\"/><circle cx=\"12\" cy=\"12\" r=\"2\"/><path d=\"M6 12h.01M18 12h.01\"/>","tag":"<path d=\"M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z\"/><circle cx=\"7.5\" cy=\"7.5\" r=\".5\" fill=\"currentColor\"/>","map-pin":"<path d=\"M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0\"/><circle cx=\"12\" cy=\"10\" r=\"3\"/>","user-plus":"<path d=\"M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2\"/><circle cx=\"9\" cy=\"7\" r=\"4\"/><line x1=\"19\" x2=\"19\" y1=\"8\" y2=\"14\"/><line x1=\"22\" x2=\"16\" y1=\"11\" y2=\"11\"/>","key-round":"<path d=\"M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z\"/><circle cx=\"16.5\" cy=\"7.5\" r=\".5\" fill=\"currentColor\"/>","shield-check":"<path d=\"M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z\"/><path d=\"m9 12 2 2 4-4\"/>","eye":"<path d=\"M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0\"/><circle cx=\"12\" cy=\"12\" r=\"3\"/>","copy":"<rect width=\"14\" height=\"14\" x=\"8\" y=\"8\" rx=\"2\" ry=\"2\"/><path d=\"M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2\"/>","message-circle":"<path d=\"M2.992 16.342a2 2 0 0 1 .094 1.167l-1.065 3.29a1 1 0 0 0 1.236 1.168l3.413-.998a2 2 0 0 1 1.099.092 10 10 0 1 0-4.777-4.719\"/>","mail":"<path d=\"m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7\"/><rect x=\"2\" y=\"4\" width=\"20\" height=\"16\" rx=\"2\"/>","user-x":"<path d=\"M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2\"/><circle cx=\"9\" cy=\"7\" r=\"4\"/><line x1=\"17\" x2=\"22\" y1=\"8\" y2=\"13\"/><line x1=\"22\" x2=\"17\" y1=\"8\" y2=\"13\"/>","user-check":"<path d=\"m16 11 2 2 4-4\"/><path d=\"M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2\"/><circle cx=\"9\" cy=\"7\" r=\"4\"/>","ellipsis":"<circle cx=\"12\" cy=\"12\" r=\"1\"/><circle cx=\"19\" cy=\"12\" r=\"1\"/><circle cx=\"5\" cy=\"12\" r=\"1\"/>","lock":"<rect width=\"18\" height=\"11\" x=\"3\" y=\"11\" rx=\"2\" ry=\"2\"/><path d=\"M7 11V7a5 5 0 0 1 10 0v4\"/>","building-2":"<path d=\"M10 12h4\"/><path d=\"M10 8h4\"/><path d=\"M14 21v-3a2 2 0 0 0-4 0v3\"/><path d=\"M6 10H4a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-2\"/><path d=\"M6 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16\"/>","palette":"<path d=\"M12 22a1 1 0 0 1 0-20 10 9 0 0 1 10 9 5 5 0 0 1-5 5h-2.25a1.75 1.75 0 0 0-1.4 2.8l.3.4a1.75 1.75 0 0 1-1.4 2.8z\"/><circle cx=\"13.5\" cy=\"6.5\" r=\".5\" fill=\"currentColor\"/><circle cx=\"17.5\" cy=\"10.5\" r=\".5\" fill=\"currentColor\"/><circle cx=\"6.5\" cy=\"12.5\" r=\".5\" fill=\"currentColor\"/><circle cx=\"8.5\" cy=\"7.5\" r=\".5\" fill=\"currentColor\"/>","info":"<circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"M12 16v-4\"/><path d=\"M12 8h.01\"/>","x":"<path d=\"M18 6 6 18\"/><path d=\"m6 6 12 12\"/>","circle-user":"<circle cx=\"12\" cy=\"12\" r=\"10\"/><circle cx=\"12\" cy=\"10\" r=\"3\"/><path d=\"M7 20.662V19a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v1.662\"/>","refresh-cw":"<path d=\"M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8\"/><path d=\"M21 3v5h-5\"/><path d=\"M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16\"/><path d=\"M8 16H3v5\"/>","inbox":"<polyline points=\"22 12 16 12 14 15 10 15 8 12 2 12\"/><path d=\"M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z\"/>","funnel":"<path d=\"M10 20a1 1 0 0 0 .553.895l2 1A1 1 0 0 0 14 21v-7a2 2 0 0 1 .517-1.341L21.74 4.67A1 1 0 0 0 21 3H3a1 1 0 0 0-.742 1.67l7.225 7.989A2 2 0 0 1 10 14z\"/>","file-text":"<path d=\"M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z\"/><path d=\"M14 2v5a1 1 0 0 0 1 1h5\"/><path d=\"M10 9H8\"/><path d=\"M16 13H8\"/><path d=\"M16 17H8\"/>","package-open":"<path d=\"M12 22v-9\"/><path d=\"M15.17 2.21a1.67 1.67 0 0 1 1.63 0L21 4.57a1.93 1.93 0 0 1 0 3.36L8.82 14.79a1.655 1.655 0 0 1-1.64 0L3 12.43a1.93 1.93 0 0 1 0-3.36z\"/><path d=\"M20 13v3.87a2.06 2.06 0 0 1-1.11 1.83l-6 3.08a1.93 1.93 0 0 1-1.78 0l-6-3.08A2.06 2.06 0 0 1 4 16.87V13\"/><path d=\"M21 12.43a1.93 1.93 0 0 0 0-3.36L8.83 2.2a1.64 1.64 0 0 0-1.63 0L3 4.57a1.93 1.93 0 0 0 0 3.36l12.18 6.86a1.636 1.636 0 0 0 1.63 0z\"/>","undo-2":"<path d=\"M9 14 4 9l5-5\"/><path d=\"M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5a5.5 5.5 0 0 1-5.5 5.5H11\"/>","ban":"<circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"M4.929 4.929 19.07 19.071\"/>","circle-plus":"<circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"M8 12h8\"/><path d=\"M12 8v8\"/>","split":"<path d=\"M16 3h5v5\"/><path d=\"M8 3H3v5\"/><path d=\"M12 22v-8.3a4 4 0 0 0-1.172-2.872L3 3\"/><path d=\"m15 9 6-6\"/>","layers":"<path d=\"M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z\"/><path d=\"M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12\"/><path d=\"M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17\"/>"};
 const ic = (name, cls = "") =>
   `<svg class="ic ${cls}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[name] || ""}</svg>`;
 document.querySelectorAll("[data-icon]").forEach((el) => {
@@ -416,7 +416,7 @@ const S = {
   assets: [], categories: [], locations: [], ministries: [], borrowings: [], maintenance: [],
   photos: {}, view: "dashboard",
   filters: { q: "", category: "", location: "", ministry: "", status: "" },
-  loanTab: "out", report: "register", importPlan: null
+  loanTab: "out", maintTab: "upcoming", report: "register", importPlan: null
 };
 
 const NAV = [
@@ -454,7 +454,16 @@ const money = (n) => (n === null || n === undefined || n === "") ? "—" : money
 const nameOf = (list, id) => list.find((x) => x.id === id)?.name || "—";
 const assetById = (id) => S.assets.find((a) => a.id === Number(id));
 const assetName = (id) => assetById(id)?.name || "(deleted item)";
-const openLoan = (assetId) => S.borrowings.find((b) => b.asset_id === assetId && !b.returned_on);
+const openLoans = (assetId) => S.borrowings.filter((b) => b.asset_id === assetId && !b.returned_on);
+const qty = (a) => Math.max(1, Number(a?.quantity ?? 1));
+const loanQty = (b) => Math.max(1, Number(b?.quantity ?? 1));
+const onLoanQty = (assetId) => openLoans(assetId).reduce((s, b) => s + loanQty(b), 0);
+const UNLENDABLE = ["Lost", "Disposed", "Under repair"];
+const availableQty = (a) => UNLENDABLE.includes(a.status) ? 0 : Math.max(0, qty(a) - onLoanQty(a.id));
+const totalValue = (a) => (a.cost === null || a.cost === undefined || a.cost === "") ? null : Number(a.cost) * qty(a);
+const photoShared = (a) => S.assets.some((x) => x.id !== a.id && x.photo_path === a.photo_path);
+const qtyBadge = (a) => qty(a) > 1 ? ` <span class="badge rounded-pill text-bg-secondary">×${qty(a)}</span>` : "";
+const loanLabel = (b) => `${loanQty(b) > 1 ? `${loanQty(b)} × ` : ""}${assetName(b.asset_id)}`;
 const nextDue = (assetId) => {
   const recs = S.maintenance.filter((m) => m.asset_id === assetId).sort((a, b) => b.service_date.localeCompare(a.service_date));
   return recs[0]?.next_due || null;
@@ -503,6 +512,10 @@ function friendlyError(err) {
   if (/duplicate key/i.test(m)) return "That name or asset tag is already in use. Choose a different one.";
   if (/Failed to fetch|NetworkError/i.test(m)) return "Could not reach the database. Check your internet connection and try again.";
   if (/row-level security|permission denied/i.test(m)) return "Your role doesn't allow this. Ask an admin if you need it.";
+  if (/quantity|split_asset|return_loan/i.test(m) && /does not exist|schema cache|Could not find/i.test(m))
+    return "The database needs the quantity upgrade. An admin should run upgrade-quantity.sql in Supabase.";
+  if (/APP:/.test(m)) return m.replace(/^[\s\S]*?APP:\s*/, "");
+  if (/assets_tag_ci_key/.test(m)) return "That asset tag is already used by another item.";
   if (/at least one active admin/i.test(m)) return "There must be at least one active admin. Make someone else an admin first.";
   return m;
 }
@@ -591,6 +604,9 @@ async function loadMe(session) {
   const me = (data || []).find((m) => m.user_id === session.user.id) || (data || []).find((m) => m.email === email);
   if (!me) return { blocked: `<b>${esc(email)}</b> has not been given access. Ask an admin to invite you.` };
   if (!me.active) return { blocked: "Your access has been turned off. Contact an admin if this is a mistake." };
+  const qc = await sb.from("borrowings").select("quantity").limit(1);
+  if (qc.error && /quantity|schema cache|does not exist/i.test(qc.error.message))
+    return { blocked: "The database needs the quantity upgrade. An admin should run <b>upgrade-quantity.sql</b> in Supabase (see the README)." };
   return { me };
 }
 async function startApp(session) {
@@ -658,8 +674,8 @@ function getAlerts() {
   const alerts = [];
   S.borrowings.filter((b) => !b.returned_on && b.due_on).forEach((b) => {
     const d = daysUntil(b.due_on);
-    if (d < 0) alerts.push({ urgent: true, icon: "arrow-left-right", when: d, asset: b.asset_id, text: `${assetName(b.asset_id)} is overdue`, sub: `${b.borrower_name} was due to return it ${plural(-d, "day")} ago` });
-    else if (d <= 2) alerts.push({ urgent: false, icon: "arrow-left-right", when: d, asset: b.asset_id, text: `${assetName(b.asset_id)} is due back ${d === 0 ? "today" : d === 1 ? "tomorrow" : "in 2 days"}`, sub: `Borrowed by ${b.borrower_name}` });
+    if (d < 0) alerts.push({ urgent: true, icon: "arrow-left-right", when: d, asset: b.asset_id, text: `${loanLabel(b)} ${loanQty(b) > 1 ? "are" : "is"} overdue`, sub: `${b.borrower_name} was due to return it ${plural(-d, "day")} ago` });
+    else if (d <= 2) alerts.push({ urgent: false, icon: "arrow-left-right", when: d, asset: b.asset_id, text: `${loanLabel(b)} ${loanQty(b) > 1 ? "are" : "is"} due back ${d === 0 ? "today" : d === 1 ? "tomorrow" : "in 2 days"}`, sub: `Borrowed by ${b.borrower_name}` });
   });
   S.assets.filter((a) => a.status !== "Disposed" && a.status !== "Lost").forEach((a) => {
     const n = nextDue(a.id); if (!n) return;
@@ -691,8 +707,9 @@ function pageHead(title, sub, actions = "") {
     <div class="d-flex flex-wrap gap-2 page-actions">${actions}</div></div>`;
 }
 function statusBadge(a) {
-  const loan = openLoan(a.id);
-  return `${badge(STATUS_TONE[a.status] || "secondary", esc(a.status))}${loan ? " " + badge("warning", "On loan", "arrow-left-right") : ""}`;
+  const out = onLoanQty(a.id);
+  const onLoan = !out ? "" : " " + badge("warning", qty(a) > 1 ? `${out} of ${qty(a)} on loan` : "On loan", "arrow-left-right");
+  return `${badge(STATUS_TONE[a.status] || "secondary", esc(a.status))}${onLoan}`;
 }
 function thumb(a) {
   const url = a.photo_path && S.photos[a.photo_path];
@@ -705,10 +722,12 @@ const importBtn = () => `<button class="btn btn-outline-primary needs-edit" data
 
 /* ----- Dashboard ----- */
 function viewDashboard() {
-  const active = S.assets.filter((a) => a.status !== "Disposed");
-  const value = active.reduce((s, a) => s + Number(a.cost || 0), 0);
-  const out = S.borrowings.filter((b) => !b.returned_on).length;
-  const repair = active.filter((a) => a.status === "Under repair").length;
+  const active = S.assets.filter((a) => !["Disposed", "Lost"].includes(a.status));
+  const units = active.reduce((s, a) => s + qty(a), 0);
+  const value = active.reduce((s, a) => s + (totalValue(a) || 0), 0);
+  const noValue = active.filter((a) => totalValue(a) === null).length;
+  const out = S.borrowings.filter((b) => !b.returned_on).reduce((s, b) => s + loanQty(b), 0);
+  const repair = active.filter((a) => a.status === "Under repair").reduce((s, a) => s + qty(a), 0);
   const alerts = getAlerts();
   const recent = [...S.assets].sort((a, b) => b.created_at.localeCompare(a.created_at)).slice(0, 5);
   const hello = `Welcome${S.me?.full_name ? `, ${esc(S.me.full_name.split(" ")[0])}` : ""}`;
@@ -726,8 +745,8 @@ function viewDashboard() {
       </div></div></div>`;
   return pageHead(hello, esc(fullName()), addAssetBtn()) + `
     <div class="row g-3 mb-4">
-      ${stat("package", "", active.length, "Assets held", "assets")}
-      ${stat("banknote", "", wholeFmt.format(value), "Total recorded value")}
+      ${stat("package", "", units, units === active.length ? "Items held" : `Items held, in ${plural(active.length, "record")}`, "assets")}
+      ${stat("banknote", "", wholeFmt.format(value), noValue ? `Recorded value · ${noValue} with no cost` : "Total recorded value")}
       ${stat("arrow-left-right", "gold", out, "Out on loan", "loans")}
       ${stat("wrench", repair ? "red" : "", repair, "Under repair", "maintenance")}
     </div>
@@ -749,7 +768,7 @@ function viewDashboard() {
           <button class="btn btn-sm btn-outline-primary" data-action="nav" data-view="assets">See all</button></div>
         <div class="list-group list-group-flush">${recent.map((a) => `
           <button class="list-group-item list-group-item-action d-flex gap-3 align-items-center" data-action="open-asset" data-id="${a.id}">
-            ${thumb(a)}<span class="min-w-0"><span class="fw-bold d-block text-truncate">${esc(a.name)}</span>
+            ${thumb(a)}<span class="min-w-0"><span class="fw-bold d-block text-truncate">${esc(a.name)}${qtyBadge(a)}</span>
             <small class="text-body-secondary">${esc(nameOf(S.locations, a.location_id))}</small></span>
           </button>`).join("")}</div>
       </div></div>
@@ -791,12 +810,12 @@ function renderAssetResults() {
     <tbody>${list.map((a) => `
       <tr data-action="open-asset" data-id="${a.id}">
         <td style="width:62px">${thumb(a)}</td>
-        <td><a href="#" class="fw-bold text-decoration-none" data-action="open-asset" data-id="${a.id}">${esc(a.name)}</a>${a.asset_tag ? `<div class="text-body-secondary small">${esc(a.asset_tag)}</div>` : ""}</td>
+        <td><a href="#" class="fw-bold text-decoration-none" data-action="open-asset" data-id="${a.id}">${esc(a.name)}</a>${qtyBadge(a)}${a.asset_tag ? `<div class="text-body-secondary small">${esc(a.asset_tag)}</div>` : ""}</td>
         <td class="d-none d-md-table-cell">${esc(nameOf(S.categories, a.category_id))}</td>
         <td class="d-none d-lg-table-cell">${esc(nameOf(S.locations, a.location_id))}</td>
         <td class="d-none d-lg-table-cell">${esc(nameOf(S.ministries, a.ministry_id))}</td>
         <td>${statusBadge(a)}</td>
-        <td class="text-end text-nowrap d-none d-md-table-cell">${money(a.cost)}</td>
+        <td class="text-end text-nowrap d-none d-md-table-cell">${money(totalValue(a))}${qty(a) > 1 && totalValue(a) !== null ? `<div class="small text-body-secondary">${money(a.cost)} each</div>` : ""}</td>
       </tr>`).join("")}</tbody></table></div>
     <div class="card-footer bg-body text-body-secondary small">Showing ${list.length} of ${S.assets.length}</div></div>`;
 }
@@ -811,7 +830,7 @@ function viewLoans() {
     const d = daysUntil(b.due_on);
     return `${fmtDate(b.due_on)} ${d < 0 ? badge("danger", "Overdue") : d <= 2 ? badge("warning", "Soon") : ""}`;
   };
-  return pageHead("Borrowing", `${plural(out.length, "item")} currently out`,
+  return pageHead("Borrowing", `${plural(out.reduce((s, b) => s + loanQty(b), 0), "item")} currently out`,
       `<button class="btn btn-primary needs-edit" data-action="lend">${ic("external-link")}Lend an item</button>`) + `
     <ul class="nav nav-pills mb-3" role="tablist">
       <li class="nav-item"><button class="nav-link ${S.loanTab === "out" ? "active" : ""}" data-action="loan-tab" data-tab="out">Out now <span class="badge ${S.loanTab === "out" ? "bg-white text-dark" : "text-bg-primary"}">${out.length}</span></button></li>
@@ -820,7 +839,7 @@ function viewLoans() {
     <div class="card">${rows.length ? `<div class="table-responsive"><table class="table align-middle mb-0">
       <thead><tr><th>Item</th><th>Borrower</th><th class="d-none d-md-table-cell">Purpose</th><th class="d-none d-md-table-cell">Borrowed</th><th>Due back</th><th>${S.loanTab === "out" ? "" : "Returned"}</th></tr></thead>
       <tbody>${rows.map((b) => `<tr>
-        <td><a href="#" class="fw-bold text-decoration-none" data-action="open-asset" data-id="${b.asset_id}">${esc(assetName(b.asset_id))}</a></td>
+        <td><a href="#" class="fw-bold text-decoration-none" data-action="open-asset" data-id="${b.asset_id}">${esc(assetName(b.asset_id))}</a>${loanQty(b) > 1 ? ` <span class="badge rounded-pill text-bg-secondary">×${loanQty(b)}</span>` : ""}${b.returned_on && b.returned_quantity !== null && b.returned_quantity !== undefined && b.returned_quantity < loanQty(b) ? `<div class="small text-danger">${loanQty(b) - b.returned_quantity} not returned</div>` : ""}</td>
         <td>${esc(b.borrower_name)}${b.borrower_phone ? `<div class="small"><a href="tel:${esc(b.borrower_phone)}" class="text-body-secondary text-decoration-none">${ic("phone")} ${esc(b.borrower_phone)}</a></div>` : ""}</td>
         <td class="d-none d-md-table-cell">${esc(b.purpose || "—")}</td>
         <td class="d-none d-md-table-cell text-nowrap">${fmtDate(b.borrowed_on)}</td>
@@ -832,49 +851,69 @@ function viewLoans() {
 
 /* ----- Maintenance ----- */
 function viewMaintenance() {
-  const upcoming = S.assets.filter((a) => a.status !== "Disposed" && nextDue(a.id))
+  const upcoming = S.assets.filter((a) => !["Disposed", "Lost"].includes(a.status) && nextDue(a.id))
     .map((a) => ({ a, due: nextDue(a.id) })).sort((x, y) => x.due.localeCompare(y.due));
-  return pageHead("Maintenance", "Servicing schedule and repair history",
-      `<button class="btn btn-primary needs-edit" data-action="log-service">${ic("plus")}Log maintenance</button>`) + `
-    <div class="card mb-4">
-      <div class="card-header">${ic("calendar-check")}Next services</div>
-      ${upcoming.length ? `<div class="list-group list-group-flush">${upcoming.map(({ a, due }) => {
+  const overdue = upcoming.filter((u) => daysUntil(u.due) < 0).length;
+  const spent = S.maintenance.reduce((s, m) => s + Number(m.cost || 0), 0);
+  const count = (id, n) => n ? `<span class="badge rounded-pill ${S.maintTab === id ? "bg-white text-dark" : "text-bg-primary"}">${n}</span>` : "";
+  const tab = (id, icon, label, extra) => `<li class="nav-item" role="presentation"><button class="nav-link ${S.maintTab === id ? "active" : ""}"
+      data-action="maint-tab" data-tab="${id}" role="tab" aria-selected="${S.maintTab === id}">${ic(icon)}${label} ${extra}</button></li>`;
+  const logBtn = `<button class="btn btn-primary needs-edit" data-action="log-service">${ic("plus")}Log maintenance</button>`;
+
+  const upcomingHtml = upcoming.length ? `<div class="table-responsive"><table class="table align-middle mb-0">
+      <thead><tr><th>Item</th><th>Due</th><th class="d-none d-md-table-cell">Last service</th><th class="needs-edit"></th></tr></thead>
+      <tbody>${upcoming.map(({ a, due }) => {
         const d = daysUntil(due);
         const b = d < 0 ? badge("danger", "Overdue") : d <= CFG.REMINDER_DAYS ? badge("warning", "Due soon") : badge("success", "Scheduled");
-        return `<button class="list-group-item list-group-item-action d-flex justify-content-between align-items-center gap-2" data-action="open-asset" data-id="${a.id}">
-          <span class="fw-bold">${esc(a.name)}</span><span class="text-nowrap">${fmtDate(due)} ${b}</span></button>`;
-      }).join("")}</div>`
-      : `<div class="card-body text-body-secondary">No services scheduled. When you log maintenance, add a “next service” date to get reminders.</div>`}
-    </div>
-    <div class="card">
-      <div class="card-header">${ic("notebook-text")}History</div>
-      ${S.maintenance.length ? `<div class="table-responsive"><table class="table align-middle mb-0">
-        <thead><tr><th>Date</th><th>Item</th><th>Work done</th><th class="d-none d-md-table-cell">Done by</th><th class="text-end">Cost</th><th class="needs-edit"></th></tr></thead>
-        <tbody>${S.maintenance.map((m) => `<tr>
-          <td class="text-nowrap">${fmtDate(m.service_date)}</td>
-          <td><a href="#" class="fw-bold text-decoration-none" data-action="open-asset" data-id="${m.asset_id}">${esc(assetName(m.asset_id))}</a></td>
-          <td>${esc(m.description)}</td>
-          <td class="d-none d-md-table-cell">${esc(m.performed_by || "—")}</td>
-          <td class="text-end text-nowrap">${money(m.cost)}</td>
-          <td class="text-end needs-edit"><button class="btn btn-sm btn-outline-danger btn-icon" data-action="delete-service" data-id="${m.id}" aria-label="Delete record" title="Delete record">${ic("trash-2")}</button></td>
-        </tr>`).join("")}</tbody></table></div>`
-      : `<div class="card-body text-body-secondary">No maintenance logged yet.</div>`}
-    </div>`;
+        const when = d < 0 ? `${plural(-d, "day")} overdue` : d === 0 ? "Today" : `In ${plural(d, "day")}`;
+        const last = S.maintenance.find((m) => m.asset_id === a.id);
+        return `<tr>
+          <td><a href="#" class="fw-bold text-decoration-none" data-action="open-asset" data-id="${a.id}">${esc(a.name)}</a>${qtyBadge(a)}
+            ${a.asset_tag ? `<div class="small text-body-secondary">${esc(a.asset_tag)}</div>` : ""}</td>
+          <td><span class="text-nowrap">${fmtDate(due)}</span> ${b}<div class="small text-body-secondary">${when}</div></td>
+          <td class="d-none d-md-table-cell small">${last ? `${fmtDate(last.service_date)}: ${esc(last.description)}${last.performed_by ? ` <span class="text-body-secondary">(${esc(last.performed_by)})</span>` : ""}` : "—"}</td>
+          <td class="text-end needs-edit"><button class="btn btn-sm btn-outline-primary" data-action="log-service" data-id="${a.id}" aria-label="Log service done for ${esc(a.name)}" title="Log service done">${ic("check")}<span class="d-none d-md-inline">Log done</span></button></td>
+        </tr>`;
+      }).join("")}</tbody></table></div>`
+    : emptyState("calendar-check", "No services scheduled.<br>When you log maintenance, add a “next service due” date to get reminders here.", logBtn);
+
+  const historyHtml = S.maintenance.length ? `<div class="table-responsive"><table class="table align-middle mb-0">
+      <thead><tr><th>Date</th><th>Item</th><th>Work done</th><th class="d-none d-md-table-cell">Done by</th><th class="text-end">Cost</th><th class="needs-edit"></th></tr></thead>
+      <tbody>${S.maintenance.map((m) => `<tr>
+        <td class="text-nowrap">${fmtDate(m.service_date)}</td>
+        <td><a href="#" class="fw-bold text-decoration-none" data-action="open-asset" data-id="${m.asset_id}">${esc(assetName(m.asset_id))}</a></td>
+        <td>${esc(m.description)}${m.next_due ? `<div class="small text-body-secondary">Next due ${fmtDate(m.next_due)}</div>` : ""}</td>
+        <td class="d-none d-md-table-cell">${esc(m.performed_by || "—")}</td>
+        <td class="text-end text-nowrap">${money(m.cost)}</td>
+        <td class="text-end needs-edit"><button class="btn btn-sm btn-outline-danger btn-icon" data-action="delete-service" data-id="${m.id}" aria-label="Delete record" title="Delete record">${ic("trash-2")}</button></td>
+      </tr>`).join("")}</tbody></table></div>
+      <div class="card-footer bg-body d-flex flex-wrap justify-content-between gap-2 small">
+        <span class="text-body-secondary">${plural(S.maintenance.length, "record")}</span><span class="fw-bold">Total spent: ${money(spent)}</span></div>`
+    : emptyState("notebook-text", "No maintenance logged yet.", logBtn);
+
+  return pageHead("Maintenance", "Servicing schedule and repair history", logBtn) + `
+    <ul class="nav nav-pills mb-3 gap-1" role="tablist">
+      ${tab("upcoming", "calendar-check", "Next services", count("upcoming", upcoming.length) + (overdue ? ` <span class="badge rounded-pill text-bg-danger">${overdue} overdue</span>` : ""))}
+      ${tab("history", "notebook-text", "History", count("history", S.maintenance.length))}
+    </ul>
+    <div class="card">${S.maintTab === "history" ? historyHtml : upcomingHtml}</div>`;
 }
 
 /* ----- Reports ----- */
 const REPORTS = {
   register: { title: "Asset register", rows: () => S.assets.map((a) => ({
-    "Asset tag": a.asset_tag || "", "Name": a.name, "Category": nameOf(S.categories, a.category_id),
+    "Asset tag": a.asset_tag || "", "Name": a.name, "Quantity": qty(a), "Category": nameOf(S.categories, a.category_id),
     "Location": nameOf(S.locations, a.location_id), "Ministry": nameOf(S.ministries, a.ministry_id),
     "Status": a.status, "Condition": a.condition, "Serial number": a.serial_number || "",
-    "Purchase date": a.purchase_date || "", [`Cost (${CFG.CURRENCY})`]: a.cost === null ? "" : Number(a.cost)
+    "Purchase date": a.purchase_date || "", [`Cost per item (${CFG.CURRENCY})`]: a.cost === null ? "" : Number(a.cost),
+    [`Total value (${CFG.CURRENCY})`]: totalValue(a) === null ? "" : totalValue(a)
   })) },
   ministry: { title: "Assets by ministry", rows: () => groupBy("ministry_id", S.ministries, "Ministry") },
   location: { title: "Assets by location", rows: () => groupBy("location_id", S.locations, "Location") },
   loans: { title: "Borrowing history", rows: () => S.borrowings.map((b) => ({
-    "Item": assetName(b.asset_id), "Borrower": b.borrower_name, "Phone": b.borrower_phone || "",
-    "Purpose": b.purpose || "", "Borrowed": b.borrowed_on, "Due back": b.due_on || "", "Returned": b.returned_on || "Not yet"
+    "Item": assetName(b.asset_id), "Quantity": loanQty(b), "Borrower": b.borrower_name, "Phone": b.borrower_phone || "",
+    "Purpose": b.purpose || "", "Borrowed": b.borrowed_on, "Due back": b.due_on || "", "Returned": b.returned_on || "Not yet",
+    "Came back": b.returned_on ? (b.returned_quantity ?? loanQty(b)) : ""
   })) },
   maintenance: { title: "Maintenance costs", rows: () => S.maintenance.map((m) => ({
     "Date": m.service_date, "Item": assetName(m.asset_id), "Work done": m.description,
@@ -886,8 +925,9 @@ function groupBy(field, list, label) {
   const groups = [...list.map((x) => ({ id: x.id, name: x.name })), { id: null, name: "Not assigned" }];
   return groups.map((g) => {
     const items = held.filter((a) => (a[field] ?? null) === g.id);
-    return { [label]: g.name, "Number of assets": items.length, [`Total value (${CFG.CURRENCY})`]: items.reduce((s, a) => s + Number(a.cost || 0), 0) };
-  }).filter((r) => r["Number of assets"] > 0);
+    return { [label]: g.name, "Records": items.length, "Items": items.reduce((s, a) => s + qty(a), 0),
+      [`Total value (${CFG.CURRENCY})`]: items.reduce((s, a) => s + (totalValue(a) || 0), 0) };
+  }).filter((r) => r["Records"] > 0);
 }
 function viewReports() {
   return pageHead("Reports", "Download for audits and council meetings",
@@ -906,8 +946,8 @@ function renderReport() {
   if (!rows.length) { el.innerHTML = `<div class="card">${emptyState("file-text", "No records for this report yet.")}</div>`; return; }
   const cols = Object.keys(rows[0]);
   const isMoney = (c) => c.startsWith("Cost") || c.startsWith("Total value");
-  const isNum = (c) => isMoney(c) || c.startsWith("Number");
-  const totalCol = cols.find(isMoney);
+  const isNum = (c) => isMoney(c) || ["Quantity", "Items", "Records", "Came back"].includes(c);
+  const totalCol = cols.find((c) => c.startsWith("Total value")) || cols.find(isMoney);
   const total = totalCol ? rows.reduce((s, r) => s + (Number(r[totalCol]) || 0), 0) : null;
   el.innerHTML = `<div class="card"><div class="table-responsive"><table class="table table-striped align-middle mb-0">
     <thead><tr>${cols.map((c) => `<th class="${isNum(c) ? "text-end" : ""}">${esc(c)}</th>`).join("")}</tr></thead>
@@ -1137,19 +1177,21 @@ function closeModal() { bsModal.hide(); }
 
 function assetDetail(id) {
   const a = assetById(id); if (!a) return;
-  const loan = openLoan(a.id);
+  const current = openLoans(a.id);
   const loans = S.borrowings.filter((b) => b.asset_id === a.id);
   const services = S.maintenance.filter((m) => m.asset_id === a.id);
   const due = nextDue(a.id);
+  const avail = availableQty(a);
   const url = a.photo_path && S.photos[a.photo_path];
-  openModal(esc(a.name), `
-    ${loan ? `<div class="alert alert-warning d-flex flex-wrap gap-2 align-items-center">${ic("arrow-left-right")}
-      <span><b>On loan to ${esc(loan.borrower_name)}</b>${loan.due_on ? `, due back ${fmtDate(loan.due_on)}` : ""}.</span>
-      <button class="btn btn-sm btn-warning ms-auto needs-edit" data-action="return-loan" data-id="${loan.id}">${ic("check")}Mark returned</button></div>` : ""}
+  openModal(`${esc(a.name)}${qty(a) > 1 ? ` <span class="badge rounded-pill bg-white text-dark">×${qty(a)}</span>` : ""}`, `
+    ${current.map((loan) => `<div class="alert alert-warning d-flex flex-wrap gap-2 align-items-center py-2">${ic("arrow-left-right")}
+      <span><b>${qty(a) > 1 ? `${loanQty(loan)} on loan` : "On loan"} to ${esc(loan.borrower_name)}</b>${loan.due_on ? `, due back ${fmtDate(loan.due_on)}` : ""}.</span>
+      <button class="btn btn-sm btn-warning ms-auto needs-edit" data-action="return-loan" data-id="${loan.id}">${ic("check")}Mark returned</button></div>`).join("")}
     <div class="row g-4 mb-3">
       <div class="col-sm-4">${url ? `<img class="detail-photo" src="${url}" alt="Photo of ${esc(a.name)}">` : `<div class="detail-photo">${ic("image")}</div>`}</div>
       <div class="col-sm-8"><dl class="row facts mb-0">
         <dt class="col-5">Status</dt><dd class="col-7">${statusBadge(a)}</dd>
+        ${qty(a) > 1 ? `<dt class="col-5">Quantity</dt><dd class="col-7">${qty(a)}<span class="text-body-secondary small"> · ${avail} available to lend</span></dd>` : ""}
         <dt class="col-5">Condition</dt><dd class="col-7">${esc(a.condition)}</dd>
         <dt class="col-5">Asset tag</dt><dd class="col-7">${esc(a.asset_tag || "—")}</dd>
         <dt class="col-5">Category</dt><dd class="col-7">${esc(nameOf(S.categories, a.category_id))}</dd>
@@ -1157,14 +1199,15 @@ function assetDetail(id) {
         <dt class="col-5">Ministry</dt><dd class="col-7">${esc(nameOf(S.ministries, a.ministry_id))}</dd>
         <dt class="col-5">Serial no.</dt><dd class="col-7">${esc(a.serial_number || "—")}</dd>
         <dt class="col-5">Purchased</dt><dd class="col-7">${fmtDate(a.purchase_date)}</dd>
-        <dt class="col-5">Cost</dt><dd class="col-7">${money(a.cost)}</dd>
+        <dt class="col-5">Cost</dt><dd class="col-7">${money(a.cost)}${qty(a) > 1 && totalValue(a) !== null ? `<span class="text-body-secondary small"> each · ${money(totalValue(a))} total</span>` : ""}</dd>
         <dt class="col-5">Next service</dt><dd class="col-7">${fmtDate(due)}</dd>
       </dl></div>
     </div>
     ${a.notes ? `<p class="bg-body-tertiary rounded p-3" style="white-space:pre-wrap">${esc(a.notes)}</p>` : ""}
     <div class="d-flex flex-wrap gap-2 mb-4 needs-edit">
       <button class="btn btn-primary" data-action="edit-asset" data-id="${a.id}">${ic("pencil")}Edit</button>
-      ${loan ? "" : `<button class="btn btn-outline-primary" data-action="lend" data-id="${a.id}">${ic("external-link")}Lend out</button>`}
+      ${avail ? `<button class="btn btn-outline-primary" data-action="lend" data-id="${a.id}">${ic("external-link")}Lend out</button>` : ""}
+      ${qty(a) > 1 ? `<button class="btn btn-outline-primary" data-action="split-asset" data-id="${a.id}">${ic("split")}Split group</button>` : ""}
       <button class="btn btn-outline-primary" data-action="log-service" data-id="${a.id}">${ic("wrench")}Log maintenance</button>
       <button class="btn btn-outline-danger ms-sm-auto" data-action="delete-asset" data-id="${a.id}">${ic("trash-2")}Delete</button>
     </div>
@@ -1180,7 +1223,7 @@ function assetDetail(id) {
         <h3 class="accordion-header"><button class="accordion-button collapsed gap-2" type="button" data-bs-toggle="collapse" data-bs-target="#h-loans">
           ${ic("arrow-left-right")}Borrowing history <span class="badge text-bg-primary rounded-pill">${loans.length}</span></button></h3>
         <div id="h-loans" class="accordion-collapse collapse" data-bs-parent="#history"><div class="accordion-body p-0">
-          ${loans.length ? `<ul class="list-group list-group-flush">${loans.map((b) => `<li class="list-group-item d-flex flex-wrap justify-content-between gap-2"><span>${esc(b.borrower_name)}${b.purpose ? ` · ${esc(b.purpose)}` : ""}</span><span class="text-body-secondary small">${fmtDate(b.borrowed_on)} → ${b.returned_on ? fmtDate(b.returned_on) : "not returned"}</span></li>`).join("")}</ul>`
+          ${loans.length ? `<ul class="list-group list-group-flush">${loans.map((b) => `<li class="list-group-item d-flex flex-wrap justify-content-between gap-2"><span>${esc(b.borrower_name)}${loanQty(b) > 1 ? ` ×${loanQty(b)}` : ""}${b.purpose ? ` · ${esc(b.purpose)}` : ""}${b.returned_on && b.returned_quantity !== null && b.returned_quantity !== undefined && b.returned_quantity < loanQty(b) ? ` <span class="text-danger small">(${loanQty(b) - b.returned_quantity} not returned)</span>` : ""}</span><span class="text-body-secondary small">${fmtDate(b.borrowed_on)} → ${b.returned_on ? fmtDate(b.returned_on) : "still out"}</span></li>`).join("")}</ul>`
           : '<p class="text-body-secondary m-3">Never borrowed.</p>'}</div></div>
       </div>
     </div>`);
@@ -1193,17 +1236,48 @@ const formFoot = (label) => `<div class="alert alert-danger mt-3 mb-0 js-error" 
 const moneyInput = (name, value = "") => `<div class="input-group"><span class="input-group-text">${esc(CFG.CURRENCY)}</span>
   <input type="number" class="form-control" id="f_${name}" name="${name}" min="0" step="0.01" value="${value ?? ""}"></div>`;
 
+/* Asset tags: suggest the next free number, and number a series (COP-0010, COP-0011, …) */
+const TAG_RE = /^(.*?)(\d+)(\D*)$/;
+function nextTagSuggestion() {
+  const tagged = S.assets.filter((a) => a.asset_tag && TAG_RE.test(a.asset_tag))
+    .sort((x, y) => (y.created_at || "").localeCompare(x.created_at || ""));
+  if (!tagged.length) return "";
+  const [, prefix, digits, suffix] = tagged[0].asset_tag.match(TAG_RE);
+  const nums = S.assets.map((a) => (a.asset_tag || "").match(TAG_RE))
+    .filter((m) => m && m[1].toLowerCase() === prefix.toLowerCase() && m[3].toLowerCase() === suffix.toLowerCase()).map((m) => Number(m[2]));
+  return prefix + String(Math.max(...nums) + 1).padStart(digits.length, "0") + suffix;
+}
+function tagSeries(first, n) {
+  const m = first.match(TAG_RE);
+  if (!m) return Array.from({ length: n }, (_, i) => (i ? `${first}-${i + 1}` : first));
+  return Array.from({ length: n }, (_, i) => m[1] + String(Number(m[2]) + i).padStart(m[2].length, "0") + m[3]);
+}
+const tagTaken = (tag, exceptId) => S.assets.some((x) => x.id !== exceptId && (x.asset_tag || "").trim().toLowerCase() === tag.trim().toLowerCase());
+
 function assetForm(a = {}) {
-  openModal(a.id ? `${ic("pencil")}Edit asset` : `${ic("plus")}Add asset`, `
+  const editing = !!a.id, out = editing ? onLoanQty(a.id) : 0, suggestion = editing ? "" : nextTagSuggestion();
+  openModal(editing ? `${ic("pencil")}Edit asset` : `${ic("plus")}Add asset`, `
     <form data-form="asset" data-id="${a.id || ""}" novalidate>
       <div class="row g-3">
-        <div class="col-12"><label class="form-label fw-bold" for="f_name">Name</label>
-          <input class="form-control" id="f_name" name="name" required value="${esc(a.name)}" placeholder="e.g. Yamaha MG16 mixer">
+        <div class="col-md-8"><label class="form-label fw-bold" for="f_name">Name</label>
+          <input class="form-control" id="f_name" name="name" required value="${esc(a.name)}" placeholder="e.g. Plastic chairs, or Yamaha MG16 mixer">
           <div class="invalid-feedback">Enter a name for this asset.</div></div>
-        <div class="col-md-6"><label class="form-label fw-bold" for="f_tag">Asset tag</label>
-          <input class="form-control" id="f_tag" name="asset_tag" value="${esc(a.asset_tag)}" placeholder="e.g. COP-AEC-0042">
-          <div class="form-text">Your own label number, optional</div></div>
-        <div class="col-md-6"><label class="form-label fw-bold" for="f_serial">Serial number</label>
+        <div class="col-md-4"><label class="form-label fw-bold" for="f_qty">Quantity</label>
+          <input type="number" class="form-control" id="f_qty" name="quantity" required min="${Math.max(1, out)}" max="100000" step="1" value="${editing ? qty(a) : 1}">
+          <div class="invalid-feedback">${out ? `At least ${out}, the number on loan.` : "Enter a whole number, 1 or more."}</div></div>
+        ${editing ? (qty(a) > 1 ? `<div class="col-12"><div class="alert alert-info small py-2 mb-0 d-flex gap-2">${ic("info")}<div>If some of these are broken, moved or given away, use <b>Split group</b> instead of lowering the number, so the history stays clear.</div></div></div>` : "") : `
+        <div class="col-12" id="f_mode_wrap" hidden>
+          <span class="form-label fw-bold d-block">How should these be recorded?</span>
+          <div class="row g-2">
+            <div class="col-sm-6 role-option"><input type="radio" class="btn-check" name="mode" id="mode-group" value="group" checked>
+              <label class="btn btn-outline-primary w-100 p-3" for="mode-group"><strong>${ic("layers")}One group record</strong><span class="small mt-1">For identical, everyday items like chairs, tables or cups. Lend out any number at a time.</span></label></div>
+            <div class="col-sm-6 role-option"><input type="radio" class="btn-check" name="mode" id="mode-each" value="each">
+              <label class="btn btn-outline-primary w-100 p-3" for="mode-each"><strong>${ic("copy")}Separate records</strong><span class="small mt-1">For valuable items like laptops or microphones. Each gets its own tag, serial number and history.</span></label></div>
+          </div></div>`}
+        <div class="col-md-6"><label class="form-label fw-bold" for="f_tag" id="f_tag_label">Asset tag</label>
+          <input class="form-control" id="f_tag" name="asset_tag" value="${esc(a.asset_tag)}" placeholder="${esc(suggestion || "e.g. COP-AEC-0042")}">
+          <div class="form-text" id="f_tag_help">${suggestion ? `Next free tag: <a href="#" data-action="use-tag" data-tag="${esc(suggestion)}">${esc(suggestion)}</a>` : "Your own label number, optional"}</div></div>
+        <div class="col-md-6" id="f_serial_wrap"><label class="form-label fw-bold" for="f_serial">Serial number</label>
           <input class="form-control" id="f_serial" name="serial_number" value="${esc(a.serial_number)}">
           <div class="form-text">From the manufacturer</div></div>
         <div class="col-md-4"><label class="form-label fw-bold" for="f_cat">Category</label>
@@ -1218,26 +1292,59 @@ function assetForm(a = {}) {
           <select class="form-select" id="f_cond" name="condition">${plainOptions(CONDITIONS, a.condition || "Good")}</select></div>
         <div class="col-md-6"><label class="form-label fw-bold" for="f_pdate">Purchase date</label>
           <input type="date" class="form-control" id="f_pdate" name="purchase_date" value="${esc(a.purchase_date)}"></div>
-        <div class="col-md-6"><label class="form-label fw-bold" for="f_cost">Cost</label>${moneyInput("cost", a.cost)}</div>
+        <div class="col-md-6"><label class="form-label fw-bold" for="f_cost" id="f_cost_label">Cost</label>${moneyInput("cost", a.cost)}
+          <div class="form-text" id="f_cost_help"></div></div>
         <div class="col-12"><label class="form-label fw-bold" for="f_photo">Photo</label>
           <input type="file" class="form-control" id="f_photo" name="photo" accept="image/*">
           <div class="form-text">${a.photo_path ? "Choose a file to replace the current photo." : "Optional, up to 5 MB. On a phone you can take a picture directly."}</div></div>
         <div class="col-12"><label class="form-label fw-bold" for="f_notes">Notes</label>
           <textarea class="form-control" id="f_notes" name="notes" rows="3" placeholder="Donor, warranty details, accessories included…">${esc(a.notes)}</textarea></div>
       </div>
-      ${formFoot(a.id ? "Save changes" : "Add asset")}
+      ${formFoot(editing ? "Save changes" : "Add asset")}
     </form>`);
+  syncAssetForm();
+}
+function syncAssetForm() {
+  const form = document.querySelector('#modal form[data-form="asset"]'); if (!form) return;
+  const n = Math.max(1, parseInt(form.elements.quantity.value, 10) || 1);
+  const each = !form.dataset.id && n > 1 && form.elements.mode?.value === "each";
+  const wrap = $("#f_mode_wrap"); if (wrap) wrap.hidden = n < 2;
+  $("#f_cost_label").textContent = n > 1 ? "Cost per item" : "Cost";
+  const cost = parseFloat(form.elements.cost.value);
+  $("#f_cost_help").textContent = n > 1 && cost >= 0 ? `${money(cost * n)} for all ${n}` : "";
+  if (form.dataset.id) return;
+  $("#f_serial_wrap").hidden = each;
+  $("#f_tag_label").textContent = each ? "First asset tag" : "Asset tag";
+  const help = $("#f_tag_help"); help.dataset.default ??= help.innerHTML;
+  const tag = form.elements.asset_tag.value.trim();
+  const name = form.elements.name.value.trim() || "Item";
+  if (each) {
+    const tags = tag ? tagSeries(tag, n) : [];
+    help.innerHTML = `Names: “${esc(name)} 1” to “${esc(name)} ${n}”. ` + (tag
+      ? `Tags: ${esc(tags[0])} to ${esc(tags[n - 1])}.`
+      : `Enter the first tag and the rest are numbered for you${help.dataset.default.includes("use-tag") ? ` (${help.dataset.default.replace("Next free tag: ", "next free: ")})` : ""}.`);
+  } else help.innerHTML = help.dataset.default;
 }
 
 function loanForm(assetId) {
-  const available = S.assets.filter((a) => !openLoan(a.id) && !["Disposed", "Lost"].includes(a.status));
-  if (!available.length) { toast("Every item is already out on loan or unavailable."); return; }
+  const available = S.assets.filter((a) => availableQty(a) > 0);
+  const pre = assetById(assetId);
+  if (pre && !availableQty(pre)) {
+    toast(UNLENDABLE.includes(pre.status) ? `${pre.name} is ${pre.status.toLowerCase()}, so it can't be lent.` : `All of ${pre.name} are already out on loan.`);
+    return;
+  }
+  if (!available.length) { toast("Nothing is available to lend: everything is out on loan, under repair, lost or disposed."); return; }
+  const opts = `<option value="">Choose an item</option>` + available.map((a) =>
+    `<option value="${a.id}" ${a.id === pre?.id ? "selected" : ""}>${esc(a.name)}${a.asset_tag ? ` · ${esc(a.asset_tag)}` : ""}${qty(a) > 1 ? ` (${availableQty(a)} of ${qty(a)} available)` : ""}</option>`).join("");
   openModal(`${ic("external-link")}Lend an item`, `
     <form data-form="loan" novalidate>
       <div class="row g-3">
-        <div class="col-12"><label class="form-label fw-bold" for="l_item">Item</label>
-          <select class="form-select" id="l_item" name="asset_id" required>${options(available, Number(assetId) || null, "Choose an item")}</select>
+        <div class="col-md-8"><label class="form-label fw-bold" for="l_item">Item</label>
+          <select class="form-select" id="l_item" name="asset_id" required>${opts}</select>
           <div class="invalid-feedback">Choose the item being lent.</div></div>
+        <div class="col-md-4" id="l_qty_wrap" hidden><label class="form-label fw-bold" for="l_qty">How many?</label>
+          <input type="number" class="form-control" id="l_qty" name="quantity" min="1" max="1" step="1" value="1" required>
+          <div class="form-text" id="l_qty_help"></div><div class="invalid-feedback">More than are available.</div></div>
         <div class="col-md-6"><label class="form-label fw-bold" for="l_name">Borrower name</label>
           <input class="form-control" id="l_name" name="borrower_name" required><div class="invalid-feedback">Enter who is borrowing it.</div></div>
         <div class="col-md-6"><label class="form-label fw-bold" for="l_phone">Phone</label>
@@ -1252,6 +1359,81 @@ function loanForm(assetId) {
           <textarea class="form-control" id="l_notes" name="notes" rows="2" placeholder="Condition when lent, accessories included…"></textarea></div>
       </div>
       ${formFoot("Record loan")}
+    </form>`);
+  syncLoanForm();
+}
+function syncLoanForm() {
+  const sel = $("#l_item"); if (!sel) return;
+  const a = assetById(sel.value), input = $("#l_qty");
+  const group = !!a && qty(a) > 1, avail = a ? availableQty(a) : 1;
+  $("#l_qty_wrap").hidden = !group;
+  input.max = group ? avail : 1;
+  if (!group) input.value = 1;
+  else if (Number(input.value) > avail) input.value = avail;
+  $("#l_qty_help").textContent = group ? `${avail} of ${qty(a)} available` : "";
+}
+
+function returnForm(b, fromDetail) {
+  const n = loanQty(b);
+  openModal(`${ic("check")}Return: ${esc(assetName(b.asset_id))}`, `
+    <form data-form="return" data-id="${b.id}" data-qty="${n}" data-from="${fromDetail ? "detail" : ""}" novalidate>
+      <p class="text-body-secondary">Borrowed by <b>${esc(b.borrower_name)}</b> on ${fmtDate(b.borrowed_on)}${n > 1 ? `: <b>${n}</b> items` : ""}.</p>
+      ${n > 1 ? `
+        <label class="form-label fw-bold" for="r_qty">How many came back?</label>
+        <div class="input-group has-validation" style="max-width:220px">
+          <input type="number" class="form-control" id="r_qty" name="returned" min="0" max="${n}" step="1" value="${n}" required>
+          <span class="input-group-text">of ${n}</span>
+          <div class="invalid-feedback">Enter 0 to ${n}.</div></div>
+        <div id="r_short" class="mt-3" hidden>
+          <span class="form-label fw-bold d-block">What about the <span id="r_missing"></span> that didn't come back?</span>
+          <div class="form-check"><input class="form-check-input" type="radio" name="mode" id="r_keep" value="keep" checked>
+            <label class="form-check-label" for="r_keep">They're still with ${esc(b.borrower_name)}. Keep them on loan.</label></div>
+          <div class="form-check"><input class="form-check-input" type="radio" name="mode" id="r_lost" value="lost">
+            <label class="form-check-label" for="r_lost">They're lost or beyond repair. Remove them from the count.</label></div>
+        </div>
+        <div class="form-text mt-3 d-flex gap-2">${ic("info")}<span>If some came back damaged, open the item afterwards and use <b>Split group</b> to record them as Under repair.</span></div>`
+      : `
+        <span class="form-label fw-bold d-block">How did it come back?</span>
+        <div class="form-check"><input class="form-check-input" type="radio" name="outcome" id="r_ok" value="ok" checked>
+          <label class="form-check-label" for="r_ok">Returned in good order</label></div>
+        <div class="form-check"><input class="form-check-input" type="radio" name="outcome" id="r_dmg" value="damaged">
+          <label class="form-check-label" for="r_dmg">Returned damaged. Set the item to “Under repair”.</label></div>
+        <div class="form-check"><input class="form-check-input" type="radio" name="outcome" id="r_lost1" value="lost">
+          <label class="form-check-label" for="r_lost1">Not returned. Mark the item as “Lost”.</label></div>`}
+      <label class="form-label fw-bold mt-3" for="r_note">Note <span class="fw-normal text-body-secondary">(optional)</span></label>
+      <input class="form-control" id="r_note" name="note" placeholder="e.g. two legs loose; borrower will replace">
+      ${formFoot("Save return")}
+    </form>`);
+}
+function syncReturnForm() {
+  const f = document.querySelector('#modal form[data-form="return"]'); if (!f || !$("#r_qty")) return;
+  const n = Number(f.dataset.qty), r = parseInt($("#r_qty").value, 10);
+  const short = Number.isInteger(r) && r >= 0 && r < n;
+  $("#r_short").hidden = !short;
+  if (short) $("#r_missing").textContent = n - r;
+}
+
+function splitForm(a) {
+  const out = onLoanQty(a.id), max = Math.min(qty(a) - out, qty(a) - 1);
+  if (max < 1) { toast("All of these are out on loan. Record the return first, then split."); return; }
+  openModal(`${ic("split")}Split: ${esc(a.name)}`, `
+    <form data-form="split" data-id="${a.id}" novalidate>
+      <p class="text-body-secondary">Use this when some of the ${qty(a)} are broken, moved somewhere else, or given away.
+        They become their own record you can track separately; the rest stay here.</p>
+      <div class="row g-3">
+        <div class="col-md-4"><label class="form-label fw-bold" for="s_qty">How many?</label>
+          <input type="number" class="form-control" id="s_qty" name="quantity" min="1" max="${max}" step="1" value="1" required>
+          <div class="form-text">Up to ${max}${out ? ` (${out} are on loan)` : ""}</div><div class="invalid-feedback">Enter 1 to ${max}.</div></div>
+        <div class="col-md-4"><label class="form-label fw-bold" for="s_status">Their status</label>
+          <select class="form-select" id="s_status" name="status">${plainOptions(STATUSES, a.status === "In use" ? "Under repair" : a.status)}</select></div>
+        <div class="col-md-4"><label class="form-label fw-bold" for="s_cond">Their condition</label>
+          <select class="form-select" id="s_cond" name="condition">${plainOptions(CONDITIONS, "Poor")}</select></div>
+        <div class="col-md-6"><label class="form-label fw-bold" for="s_loc">Their location</label>
+          <select class="form-select" id="s_loc" name="location_id">${options(S.locations, null, "Same as now")}</select></div>
+        <div class="col-md-6"><label class="form-label fw-bold" for="s_note">Reason</label>
+          <input class="form-control" id="s_note" name="note" placeholder="e.g. legs broken after harvest"></div>
+      </div>
+      ${formFoot("Split off")}
     </form>`);
 }
 
@@ -1284,6 +1466,7 @@ function serviceForm(assetId) {
 /* ---------- Excel import ---------- */
 const IMPORT_COLS = [
   { key: "name", header: "Name *", width: 30 },
+  { key: "quantity", header: "Quantity", width: 10 },
   { key: "asset_tag", header: "Asset tag", width: 16 },
   { key: "serial_number", header: "Serial number", width: 18 },
   { key: "category", header: "Category", width: 22 },
@@ -1295,11 +1478,11 @@ const IMPORT_COLS = [
   { key: "cost", header: "Cost", width: 14 },
   { key: "notes", header: "Notes", width: 40 }
 ];
-const importHeader = (c) => c.key === "cost" ? `Cost (${CFG.CURRENCY})` : c.header;
+const importHeader = (c) => c.key === "cost" ? `Cost per item (${CFG.CURRENCY})` : c.header;
 const LOOKUPS = { category: ["categories", "category_id", "Category"], location: ["locations", "location_id", "Location"], ministry: ["ministries", "ministry_id", "Ministry"] };
 const normHeader = (h) => String(h ?? "").toLowerCase().replace(/\(.*?\)|\*/g, "").replace(/[^a-z]/g, "");
 const HEADER_KEYS = Object.fromEntries(IMPORT_COLS.map((c) => [normHeader(c.header), c.key]));
-Object.assign(HEADER_KEYS, { tag: "asset_tag", serial: "serial_number", serialno: "serial_number", date: "purchase_date", purchased: "purchase_date", value: "cost", price: "cost", assetname: "name", item: "name", itemname: "name" });
+Object.assign(HEADER_KEYS, { tag: "asset_tag", serial: "serial_number", serialno: "serial_number", date: "purchase_date", purchased: "purchase_date", value: "cost", price: "cost", costperitem: "cost", unitcost: "cost", unitprice: "cost", qty: "quantity", count: "quantity", number: "quantity", assetname: "name", item: "name", itemname: "name" });
 const cellText = (v) => (v instanceof Date ? v : String(v ?? "").trim());
 const isoDate = (y, m, d) => {
   const dt = new Date(Date.UTC(y, m - 1, d));
@@ -1317,7 +1500,7 @@ function parseDate(v) {
 
 function downloadTemplate(withData) {
   const head = IMPORT_COLS.map(importHeader);
-  const rows = withData ? S.assets.map((a) => [a.name, a.asset_tag || "", a.serial_number || "",
+  const rows = withData ? S.assets.map((a) => [a.name, qty(a), a.asset_tag || "", a.serial_number || "",
     S.categories.find((x) => x.id === a.category_id)?.name || "", S.locations.find((x) => x.id === a.location_id)?.name || "",
     S.ministries.find((x) => x.id === a.ministry_id)?.name || "", a.status, a.condition, a.purchase_date || "",
     a.cost === null ? "" : Number(a.cost), a.notes || ""]) : [];
@@ -1335,15 +1518,18 @@ function downloadTemplate(withData) {
     ["How to use"],
     ["1. Fill in one asset per row on the Assets sheet. Do not rename or reorder the column headings."],
     ["2. Only Name is required. Leave any other cell empty if you don't know it."],
-    ["3. Category, Location and Ministry: use names from the Lists sheet. New names are added to the app's lists for you."],
-    [`4. Status must be one of: ${STATUSES.join(", ")}. Empty means "In use".`],
-    [`5. Condition must be one of: ${CONDITIONS.join(", ")}. Empty means "Good".`],
-    ["6. Purchase date: write it as 2024-03-15 (year-month-day). 15/03/2024 (day/month/year) also works."],
-    [`7. Cost: numbers only, in ${CFG.CURRENCY}, e.g. 8500 or 8500.50.`],
-    ["8. Asset tags must be unique. If a tag already exists in the app, that asset is updated instead of added twice."],
-    ["9. Save the file, then in the app go to Assets → Import from Excel and upload it. You'll see a check of every row before anything is saved."],
-    [""], ["Example row"], head,
-    ["Yamaha MG16 mixer", "COP-AEC-0001", "YM123456", "Sound & media", "Main auditorium", "Media team", "In use", "Good", "2024-03-15", 8500, "Donated by the youth ministry"]
+    ["3. Quantity: how many identical items the row covers, e.g. 100 for 100 plastic chairs. Empty means 1."],
+    ["   For valuable items you want to track one by one (laptops, microphones), use one row each with its own tag."],
+    ["4. Category, Location and Ministry: use names from the Lists sheet. New names are added to the app's lists for you."],
+    [`5. Status must be one of: ${STATUSES.join(", ")}. Empty means "In use".`],
+    [`6. Condition must be one of: ${CONDITIONS.join(", ")}. Empty means "Good".`],
+    ["7. Purchase date: write it as 2024-03-15 (year-month-day). 15/03/2024 (day/month/year) also works."],
+    [`8. Cost per item: numbers only, in ${CFG.CURRENCY}, e.g. 8500 or 45.50. The app multiplies it by the quantity for the total value.`],
+    ["9. Asset tags must be unique. If a tag already exists in the app, that asset is updated instead of added twice."],
+    ["10. Save the file, then in the app go to Assets → Import from Excel and upload it. You'll see a check of every row before anything is saved."],
+    [""], ["Example rows"], head,
+    ["Yamaha MG16 mixer", 1, "COP-AEC-0001", "YM123456", "Sound & media", "Main auditorium", "Media team", "In use", "Good", "2024-03-15", 8500, "Donated by the youth ministry"],
+    ["Plastic chairs", 100, "COP-AEC-0002", "", "Furniture", "Main auditorium", "Ushering", "In use", "Good", "2023-11-01", 45, "White, stackable"]
   ];
   const wh = XLSX.utils.aoa_to_sheet(help); wh["!cols"] = [{ wch: 110 }];
 
@@ -1395,6 +1581,13 @@ async function parseImportFile(file) {
     const rawDate = get("purchase_date");
     if (rawDate !== "") { const d = parseDate(rawDate); d ? (rec.purchase_date = d) : errors.push(`Purchase date “${rawDate}” isn't a date. Use 2024-03-15`); }
 
+    const rawQty = get("quantity");
+    if (rawQty !== "") {
+      const n = typeof rawQty === "number" ? rawQty : Number(String(rawQty).replace(/[,\s]/g, ""));
+      if (!Number.isInteger(n) || n < 1 || n > 100000) errors.push(`Quantity “${rawQty}” must be a whole number, 1 or more`);
+      else rec.quantity = n;
+    }
+
     const rawCost = get("cost");
     if (rawCost !== "") {
       const n = typeof rawCost === "number" ? rawCost : Number(String(rawCost).replace(/[^0-9.\-]/g, ""));
@@ -1409,6 +1602,8 @@ async function parseImportFile(file) {
       else seenTags[t] = line;
       existing = byTag[t];
       if (existing) action = "update";
+      if (existing && rec.quantity && rec.quantity < onLoanQty(existing.id))
+        errors.push(`Quantity ${rec.quantity} is less than the ${onLoanQty(existing.id)} currently on loan`);
     }
     rows.push({ line, rec, action, id: existing?.id, errors, notes });
   });
@@ -1458,7 +1653,7 @@ function renderImportPreview() {
       <table class="table table-sm align-middle mb-0 small">
         <thead class="sticky-top"><tr><th>Row</th><th>Name</th><th>Tag</th><th>Result</th></tr></thead>
         <tbody>${plan.rows.map((r) => `<tr class="${r.errors.length ? "table-danger" : ""}">
-          <td>${r.line}</td><td>${esc(r.rec.name || "—")}</td><td class="text-nowrap">${esc(r.rec.asset_tag || "")}</td>
+          <td>${r.line}</td><td>${esc(r.rec.name || "—")}${r.rec.quantity > 1 ? ` <span class="text-body-secondary">×${r.rec.quantity}</span>` : ""}</td><td class="text-nowrap">${esc(r.rec.asset_tag || "")}</td>
           <td>${r.errors.length ? r.errors.map(esc).join("<br>") : r.action === "update" ? badge("primary", "Update") : badge("success", "Add")}</td>
         </tr>`).join("")}</tbody>
       </table>
@@ -1521,10 +1716,28 @@ const FORMS = {
     const old = id ? assetById(id) : null;
     const rec = {
       name: textOrNull(fd.get("name")), asset_tag: textOrNull(fd.get("asset_tag")), serial_number: textOrNull(fd.get("serial_number")),
+      quantity: Math.max(1, parseInt(fd.get("quantity"), 10) || 1),
       category_id: numOrNull(fd.get("category_id")), location_id: numOrNull(fd.get("location_id")), ministry_id: numOrNull(fd.get("ministry_id")),
       status: fd.get("status"), condition: fd.get("condition"), purchase_date: fd.get("purchase_date") || null,
       cost: numOrNull(fd.get("cost")), notes: textOrNull(fd.get("notes"))
     };
+    const each = !id && rec.quantity > 1 && fd.get("mode") === "each";
+    const out = id ? onLoanQty(id) : 0;
+
+    // Check everything before uploading a photo, so a failed save doesn't leave a stray file
+    if (id && out && ["Lost", "Disposed"].includes(rec.status))
+      throw new Error(`${qty(old) > 1 ? `${out} of these are` : "This item is"} still on loan. Use “Mark returned” on the loan first (you can record any that didn't come back), then change the status.`);
+    if (id && rec.quantity < out) throw new Error(`${out} are on loan, so the quantity can't be lower than ${out}.`);
+    let tags = [];
+    if (each) {
+      if (rec.quantity > 200) throw new Error("Separate records can be made for up to 200 items at a time. For more, record them as one group or use the Excel import.");
+      tags = rec.asset_tag ? tagSeries(rec.asset_tag, rec.quantity) : [];
+      const taken = tags.filter((t) => tagTaken(t));
+      if (taken.length) throw new Error(`These tags are already used: ${taken.slice(0, 4).join(", ")}${taken.length > 4 ? ` and ${taken.length - 4} more` : ""}. Choose a different first tag.`);
+    } else if (rec.asset_tag && tagTaken(rec.asset_tag, id)) {
+      throw new Error(`The tag ${rec.asset_tag} is already used by another item.`);
+    }
+
     const file = fd.get("photo");
     if (file && file.size) {
       if (file.size > 5 * 1024 * 1024) throw new Error("The photo is larger than 5 MB. Choose a smaller photo.");
@@ -1533,12 +1746,19 @@ const FORMS = {
       const { error } = await sb.storage.from(BUCKET).upload(path, file, { contentType: file.type });
       if (error) throw error;
       rec.photo_path = path;
-      if (old?.photo_path) await sb.storage.from(BUCKET).remove([old.photo_path]);
+      if (old?.photo_path && !photoShared(old)) await sb.storage.from(BUCKET).remove([old.photo_path]);
     }
     if (id) {
       rec.updated_at = new Date().toISOString();
       const { error } = await sb.from("assets").update(rec).eq("id", id); if (error) throw error;
       return { msg: "Changes saved", reopen: id };
+    }
+    if (each) {
+      const rows = Array.from({ length: rec.quantity }, (_, i) =>
+        ({ ...rec, quantity: 1, serial_number: null, asset_tag: tags[i] || null, name: `${rec.name} ${i + 1}` }));
+      const { error } = await sb.from("assets").insert(rows); if (error) throw error;
+      S.view = "assets"; S.filters = { q: rec.name, category: "", location: "", ministry: "", status: "" };
+      return { msg: `${rows.length} separate records added. Add each serial number by opening the item.` };
     }
     const { data, error } = await sb.from("assets").insert(rec).select().single(); if (error) throw error;
     return { msg: "Asset added", reopen: data.id };
@@ -1547,12 +1767,45 @@ const FORMS = {
     const fd = new FormData(form);
     const due = fd.get("due_on") || null, borrowed = fd.get("borrowed_on");
     if (due && due < borrowed) throw new Error("The due-back date is before the borrowed date.");
+    const a = assetById(fd.get("asset_id")), n = Math.max(1, parseInt(fd.get("quantity"), 10) || 1);
+    if (!a) throw new Error("Choose the item being lent.");
+    if (n > availableQty(a)) throw new Error(`Only ${availableQty(a)} of ${a.name} are available to lend.`);
     const { error } = await sb.from("borrowings").insert({
-      asset_id: Number(fd.get("asset_id")), borrower_name: textOrNull(fd.get("borrower_name")), borrower_phone: textOrNull(fd.get("borrower_phone")),
+      asset_id: a.id, quantity: n, borrower_name: textOrNull(fd.get("borrower_name")), borrower_phone: textOrNull(fd.get("borrower_phone")),
       purpose: textOrNull(fd.get("purpose")), borrowed_on: borrowed, due_on: due, notes: textOrNull(fd.get("notes"))
     });
     if (error) throw error;
-    return { msg: "Loan recorded" };
+    return { msg: n > 1 ? `${n} lent to ${textOrNull(fd.get("borrower_name"))}` : "Loan recorded" };
+  },
+  async return(form) {
+    const fd = new FormData(form), id = Number(form.dataset.id), n = Number(form.dataset.qty);
+    const b = S.borrowings.find((x) => x.id === id);
+    let returned = n, mode = "keep", damaged = false;
+    if (n > 1) {
+      returned = parseInt(fd.get("returned"), 10);
+      if (!(returned >= 0 && returned <= n)) throw new Error(`Enter a number from 0 to ${n}.`);
+      mode = fd.get("mode") || "keep";
+      if (returned === 0 && mode === "keep") throw new Error("Nothing came back yet, so there's nothing to record. If they won't come back, choose “lost”.");
+    } else {
+      const o = fd.get("outcome");
+      if (o === "lost") { returned = 0; mode = "lost"; }
+      damaged = o === "damaged";
+    }
+    const { error } = await sb.rpc("return_loan", { p_loan_id: id, p_returned: returned, p_mode: mode, p_note: textOrNull(fd.get("note")), p_damaged: damaged });
+    if (error) throw error;
+    const msg = returned === n ? (damaged ? "Returned and set to Under repair" : "Marked as returned")
+      : mode === "keep" ? `${returned} returned, ${n - returned} still on loan`
+      : returned ? `${returned} returned, ${n - returned} recorded as lost` : "Recorded as lost";
+    return { msg, reopen: form.dataset.from === "detail" ? b?.asset_id : null };
+  },
+  async split(form) {
+    const fd = new FormData(form), a = assetById(form.dataset.id), n = parseInt(fd.get("quantity"), 10);
+    const { data, error } = await sb.rpc("split_asset", {
+      p_asset_id: a.id, p_qty: n, p_status: fd.get("status"), p_condition: fd.get("condition"),
+      p_location_id: numOrNull(fd.get("location_id")), p_note: textOrNull(fd.get("note"))
+    });
+    if (error) throw error;
+    return { msg: `${n} split off into their own record`, reopen: data };
   },
   async service(form) {
     const fd = new FormData(form), assetId = Number(fd.get("asset_id"));
@@ -1647,11 +1900,16 @@ document.addEventListener("submit", async (e) => {
 /* ---------- Filters ---------- */
 document.addEventListener("input", (e) => {
   if (e.target.id === "f-q") { S.filters.q = e.target.value; renderAssetResults(); }
+  if (e.target.closest?.('form[data-form="asset"]')) syncAssetForm();
+  if (e.target.id === "r_qty") syncReturnForm();
 });
 document.addEventListener("change", (e) => {
   const map = { "f-category": "category", "f-location": "location", "f-ministry": "ministry", "f-status": "status" };
   if (map[e.target.id]) { S.filters[map[e.target.id]] = e.target.value; renderAssetResults(); }
   if (e.target.name === "theme" && e.target.dataset.action === "set-theme") setTheme(e.target.value);
+  if (e.target.id === "l_item") syncLoanForm();
+  if (e.target.closest?.('form[data-form="asset"]')) syncAssetForm();
+  if (e.target.id === "r_qty") syncReturnForm();
   if (e.target.id === "import-file" && e.target.files[0]) {
     const el = $("#import-preview");
     el.innerHTML = `<div class="d-flex align-items-center gap-2 text-body-secondary small"><div class="spinner-border spinner-border-sm text-primary"></div>Checking the file…</div>`;
@@ -1702,14 +1960,13 @@ document.addEventListener("click", async (e) => {
         break;
       }
       case "return-loan": {
-        el.disabled = true;
         const b = S.borrowings.find((x) => x.id === Number(id));
-        const { error } = await sb.from("borrowings").update({ returned_on: today() }).eq("id", Number(id));
-        if (error) throw error;
-        await refresh(); toast("Marked as returned");
-        if (modalOpen && b) assetDetail(b.asset_id);
+        if (b) returnForm(b, modalOpen);
         break;
       }
+      case "split-asset": splitForm(assetById(id)); break;
+      case "maint-tab": S.maintTab = el.dataset.tab; render(); break;
+      case "use-tag": $("#f_tag").value = el.dataset.tag; syncAssetForm(); $("#f_tag").focus(); break;
       case "delete-service": {
         if (!(await confirmDialog("Delete this maintenance record?", "<p class='mb-0'>This cannot be undone.</p>"))) break;
         const { error } = await sb.from("maintenance").delete().eq("id", Number(id)); if (error) throw error;
@@ -1717,12 +1974,14 @@ document.addEventListener("click", async (e) => {
       }
       case "delete-asset": {
         const a = assetById(id);
+        const out = onLoanQty(a.id);
         const ok = await confirmDialog(`Delete “${a.name}”?`,
-          `<p>This also deletes all its borrowing and maintenance records, and cannot be undone.</p>
+          `${out ? `<div class="alert alert-warning small d-flex gap-2">${ic("triangle-alert")}<div>${qty(a) > 1 ? `${out} of these are` : "This item is"} still on loan. Deleting it also deletes that loan record.</div></div>` : ""}
+           <p>This also deletes all its borrowing and maintenance records, and cannot be undone.</p>
            <div class="alert alert-info mb-0 small d-flex gap-2">${ic("lightbulb")}<div>To keep the history, edit the asset and set its status to “Disposed” instead.</div></div>`, "Delete asset");
         if (!ok) break;
         const { error } = await sb.from("assets").delete().eq("id", a.id); if (error) throw error;
-        if (a.photo_path) await sb.storage.from(BUCKET).remove([a.photo_path]);
+        if (a.photo_path && !photoShared(a)) await sb.storage.from(BUCKET).remove([a.photo_path]);
         closeModal(); await refresh(); toast("Asset deleted"); break;
       }
       case "delete-item": {
