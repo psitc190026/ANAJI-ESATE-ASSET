@@ -2,7 +2,7 @@
    The app's own files: network first (so updates arrive), saved copy when offline.
    Libraries and fonts: saved copy first. Item photos: saved after first view.
    Database requests are never cached here; the app keeps its own saved copy of the data. */
-const VERSION = "cam-v7";
+const VERSION = "cam-v8";
 const APP_FILES = ["./", "./index.html", "./config.js", "./logo.png", "./apple-touch-icon.png",
   "./icon-192.png", "./icon-512.png", "./icon-maskable-512.png", "./badge-96.png", "./manifest.webmanifest"];
 const LIBS = [
@@ -12,6 +12,8 @@ const LIBS = [
   "https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js",
   "https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js",
   "https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js",
+  "https://cdn.jsdelivr.net/npm/jspdf@4.2.1/dist/jspdf.umd.min.js",
+  "https://cdn.jsdelivr.net/npm/jspdf-autotable@5.0.7/dist/jspdf.plugin.autotable.min.js",
   "https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap"
 ];
 const LIB_HOSTS = ["cdn.jsdelivr.net", "cdnjs.cloudflare.com", "fonts.googleapis.com", "fonts.gstatic.com"];

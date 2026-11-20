@@ -224,7 +224,26 @@ dl.facts dd { margin-bottom: .45rem; }
 [data-bs-theme="dark"] .app-toast .btn-close { filter: none; }
 
 /* Role-based visibility (the database enforces the same rules) */
-body.role-viewer .needs-edit, body:not(.role-admin) .needs-admin { display: none !important; }
+body:not(.role-admin) .needs-admin, body:not(.can-change) .needs-edit,
+body:not(.perm-assets) .needs-assets, body:not(.perm-dispose) .needs-dispose, body:not(.perm-delete) .needs-delete,
+body:not(.perm-loans) .needs-loans, body:not(.perm-maintenance) .needs-maint, body:not(.perm-import) .needs-import,
+body:not(.perm-labels) .needs-labels, body:not(.perm-lists) .needs-lists,
+body:not(.perm-assets):not(.perm-dispose) .needs-edit-item { display: none !important; }
+.perm-box { border: 1px solid var(--bs-border-color); border-radius: .75rem; padding: 1rem; background: var(--bs-tertiary-bg); }
+.perm-item { display: flex; align-items: flex-start; gap: .65rem; width: 100%; height: 100%; padding: .65rem .75rem; border: 1px solid var(--bs-border-color);
+  border-radius: .6rem; background: var(--bs-body-bg); cursor: pointer; line-height: 1.3; }
+.perm-item .form-check-input { margin-top: .15rem; flex: none; width: 1.15rem; height: 1.15rem; }
+.perm-item:has(.form-check-input:checked) { border-color: var(--brand-text); box-shadow: inset 0 0 0 1px var(--brand-text); }
+.perm-item:has(.form-check-input:disabled) { cursor: default; opacity: .85; }
+.perm-ic { color: var(--brand-text); flex: none; }
+.perm-chips { display: flex; flex-wrap: wrap; gap: .3rem; }
+.col-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: .45rem; }
+.col-chip { display: flex; align-items: center; gap: .55rem; padding: .55rem .75rem; border: 1px solid var(--bs-border-color); border-radius: .55rem;
+  background: var(--bs-body-bg); cursor: pointer; font-size: .92rem; line-height: 1.25; }
+.col-chip:has(input:checked) { border-color: var(--brand-text); background: var(--brand-tint); }
+.report-table th, .report-table td { white-space: nowrap; }
+.report-table td.long { white-space: normal; min-width: 16rem; }
+.perm-chips .badge { font-weight: 600; }
 
 .net-wrap { max-width: 1240px; padding: 1rem clamp(1rem, 3vw, 2.25rem) 0; }
 .net-wrap .alert .ic { margin-top: .15rem; }
@@ -438,13 +457,13 @@ body.role-viewer .needs-edit, body:not(.role-admin) .needs-admin { display: none
   </div>
   <div class="offcanvas-body pt-2"><div class="quick-grid">
     <button type="button" data-action="scan"><span data-icon="scan-line"></span>Scan a label</button>
-    <button type="button" data-action="print-labels"><span data-icon="qr-code"></span>Print labels</button>
-    <button type="button" data-action="add-asset"><span data-icon="plus"></span>Add an item</button>
-    <button type="button" data-action="lend"><span data-icon="external-link"></span>Lend an item</button>
-    <button type="button" data-action="quick-return"><span data-icon="check"></span>Record a return</button>
-    <button type="button" data-action="log-service"><span data-icon="wrench"></span>Log maintenance</button>
-    <button type="button" data-action="add-plan"><span data-icon="repeat"></span>New schedule</button>
-    <button type="button" data-action="open-import"><span data-icon="file-up"></span>Import from Excel</button>
+    <button type="button" class="needs-labels" data-action="print-labels"><span data-icon="qr-code"></span>Print labels</button>
+    <button type="button" class="needs-assets" data-action="add-asset"><span data-icon="plus"></span>Add an item</button>
+    <button type="button" class="needs-loans" data-action="lend"><span data-icon="external-link"></span>Lend an item</button>
+    <button type="button" class="needs-loans" data-action="quick-return"><span data-icon="check"></span>Record a return</button>
+    <button type="button" class="needs-maint" data-action="log-service"><span data-icon="wrench"></span>Log maintenance</button>
+    <button type="button" class="needs-maint" data-action="add-plan"><span data-icon="repeat"></span>New schedule</button>
+    <button type="button" class="needs-import" data-action="open-import"><span data-icon="file-up"></span>Import from Excel</button>
   </div></div>
 </div>
 
@@ -492,7 +511,7 @@ body.role-viewer .needs-edit, body:not(.role-admin) .needs-admin { display: none
    Church Asset Manager
    Icons: Lucide (https://lucide.dev), ISC licence
    ===================================================== */
-const ICONS = {"layout-dashboard":"<rect width=\"7\" height=\"9\" x=\"3\" y=\"3\" rx=\"1\"/><rect width=\"7\" height=\"5\" x=\"14\" y=\"3\" rx=\"1\"/><rect width=\"7\" height=\"9\" x=\"14\" y=\"12\" rx=\"1\"/><rect width=\"7\" height=\"5\" x=\"3\" y=\"16\" rx=\"1\"/>","package":"<path d=\"M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z\"/><path d=\"M12 22V12\"/><polyline points=\"3.29 7 12 12 20.71 7\"/><path d=\"m7.5 4.27 9 5.15\"/>","arrow-left-right":"<path d=\"M8 3 4 7l4 4\"/><path d=\"M4 7h16\"/><path d=\"m16 21 4-4-4-4\"/><path d=\"M20 17H4\"/>","wrench":"<path d=\"M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.106-3.105c.32-.322.863-.22.983.218a6 6 0 0 1-8.259 7.057l-7.91 7.91a1 1 0 0 1-2.999-3l7.91-7.91a6 6 0 0 1 7.057-8.259c.438.12.54.662.219.984z\"/>","chart-column":"<path d=\"M3 3v16a2 2 0 0 0 2 2h16\"/><path d=\"M18 17V9\"/><path d=\"M13 17V5\"/><path d=\"M8 17v-3\"/>","list-checks":"<path d=\"M13 5h8\"/><path d=\"M13 12h8\"/><path d=\"M13 19h8\"/><path d=\"m3 17 2 2 4-4\"/><path d=\"m3 7 2 2 4-4\"/>","users":"<path d=\"M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2\"/><path d=\"M16 3.128a4 4 0 0 1 0 7.744\"/><path d=\"M22 21v-2a4 4 0 0 0-3-3.87\"/><circle cx=\"9\" cy=\"7\" r=\"4\"/>","settings":"<path d=\"M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915\"/><circle cx=\"12\" cy=\"12\" r=\"3\"/>","sun":"<circle cx=\"12\" cy=\"12\" r=\"4\"/><path d=\"M12 2v2\"/><path d=\"M12 20v2\"/><path d=\"m4.93 4.93 1.41 1.41\"/><path d=\"m17.66 17.66 1.41 1.41\"/><path d=\"M2 12h2\"/><path d=\"M20 12h2\"/><path d=\"m6.34 17.66-1.41 1.41\"/><path d=\"m19.07 4.93-1.41 1.41\"/>","moon":"<path d=\"M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401\"/>","monitor":"<rect width=\"20\" height=\"14\" x=\"2\" y=\"3\" rx=\"2\"/><line x1=\"8\" x2=\"16\" y1=\"21\" y2=\"21\"/><line x1=\"12\" x2=\"12\" y1=\"17\" y2=\"21\"/>","log-out":"<path d=\"m16 17 5-5-5-5\"/><path d=\"M21 12H9\"/><path d=\"M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4\"/>","menu":"<path d=\"M4 5h16\"/><path d=\"M4 12h16\"/><path d=\"M4 19h16\"/>","plus":"<path d=\"M5 12h14\"/><path d=\"M12 5v14\"/>","search":"<path d=\"m21 21-4.34-4.34\"/><circle cx=\"11\" cy=\"11\" r=\"8\"/>","image":"<rect width=\"18\" height=\"18\" x=\"3\" y=\"3\" rx=\"2\" ry=\"2\"/><circle cx=\"9\" cy=\"9\" r=\"2\"/><path d=\"m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21\"/>","pencil":"<path d=\"M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z\"/><path d=\"m15 5 4 4\"/>","trash-2":"<path d=\"M10 11v6\"/><path d=\"M14 11v6\"/><path d=\"M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6\"/><path d=\"M3 6h18\"/><path d=\"M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2\"/>","external-link":"<path d=\"M15 3h6v6\"/><path d=\"M10 14 21 3\"/><path d=\"M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6\"/>","history":"<path d=\"M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8\"/><path d=\"M3 3v5h5\"/><path d=\"M12 7v5l4 2\"/>","bell":"<path d=\"M10.268 21a2 2 0 0 0 3.464 0\"/><path d=\"M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326\"/>","circle-check":"<circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"m16 9-5.5 5.5L8 12\"/>","triangle-alert":"<path d=\"m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3\"/><path d=\"M12 9v4\"/><path d=\"M12 17h.01\"/>","calendar-check":"<path d=\"M8 2v3\"/><path d=\"M16 2v3\"/><rect x=\"3\" y=\"3\" width=\"18\" height=\"18\" rx=\"2\"/><path d=\"M3 9h18\"/><path d=\"m9 15 2 2 4-4\"/>","notebook-text":"<path d=\"M2 6h4\"/><path d=\"M2 10h4\"/><path d=\"M2 14h4\"/><path d=\"M2 18h4\"/><rect width=\"16\" height=\"20\" x=\"4\" y=\"2\" rx=\"2\"/><path d=\"M9.5 8h5\"/><path d=\"M9.5 12H16\"/><path d=\"M9.5 16H14\"/>","download":"<path d=\"M12 15V3\"/><path d=\"M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4\"/><path d=\"m7 10 5 5 5-5\"/>","file-up":"<path d=\"M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z\"/><path d=\"M14 2v5a1 1 0 0 0 1 1h5\"/><path d=\"M12 12v6\"/><path d=\"m15 15-3-3-3 3\"/>","file-spreadsheet":"<path d=\"M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z\"/><path d=\"M14 2v5a1 1 0 0 0 1 1h5\"/><path d=\"M8 13h2\"/><path d=\"M14 13h2\"/><path d=\"M8 17h2\"/><path d=\"M14 17h2\"/>","printer":"<path d=\"M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2\"/><path d=\"M6 9V3a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v6\"/><rect x=\"6\" y=\"14\" width=\"12\" height=\"8\" rx=\"1\"/>","phone":"<path d=\"M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 14 14 0 0 0 6.392 6.384\"/>","check":"<path d=\"M20 6 9 17l-5-5\"/>","circle-x":"<circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"m15 9-6 6\"/><path d=\"m9 9 6 6\"/>","lightbulb":"<path d=\"M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5\"/><path d=\"M9 18h6\"/><path d=\"M10 22h4\"/>","banknote":"<rect width=\"20\" height=\"12\" x=\"2\" y=\"6\" rx=\"2\"/><circle cx=\"12\" cy=\"12\" r=\"2\"/><path d=\"M6 12h.01M18 12h.01\"/>","tag":"<path d=\"M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z\"/><circle cx=\"7.5\" cy=\"7.5\" r=\".5\" fill=\"currentColor\"/>","map-pin":"<path d=\"M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0\"/><circle cx=\"12\" cy=\"10\" r=\"3\"/>","user-plus":"<path d=\"M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2\"/><circle cx=\"9\" cy=\"7\" r=\"4\"/><line x1=\"19\" x2=\"19\" y1=\"8\" y2=\"14\"/><line x1=\"22\" x2=\"16\" y1=\"11\" y2=\"11\"/>","key-round":"<path d=\"M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z\"/><circle cx=\"16.5\" cy=\"7.5\" r=\".5\" fill=\"currentColor\"/>","shield-check":"<path d=\"M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z\"/><path d=\"m9 12 2 2 4-4\"/>","eye":"<path d=\"M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0\"/><circle cx=\"12\" cy=\"12\" r=\"3\"/>","copy":"<rect width=\"14\" height=\"14\" x=\"8\" y=\"8\" rx=\"2\" ry=\"2\"/><path d=\"M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2\"/>","message-circle":"<path d=\"M2.992 16.342a2 2 0 0 1 .094 1.167l-1.065 3.29a1 1 0 0 0 1.236 1.168l3.413-.998a2 2 0 0 1 1.099.092 10 10 0 1 0-4.777-4.719\"/>","mail":"<path d=\"m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7\"/><rect x=\"2\" y=\"4\" width=\"20\" height=\"16\" rx=\"2\"/>","user-x":"<path d=\"M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2\"/><circle cx=\"9\" cy=\"7\" r=\"4\"/><line x1=\"17\" x2=\"22\" y1=\"8\" y2=\"13\"/><line x1=\"22\" x2=\"17\" y1=\"8\" y2=\"13\"/>","user-check":"<path d=\"m16 11 2 2 4-4\"/><path d=\"M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2\"/><circle cx=\"9\" cy=\"7\" r=\"4\"/>","ellipsis":"<circle cx=\"12\" cy=\"12\" r=\"1\"/><circle cx=\"19\" cy=\"12\" r=\"1\"/><circle cx=\"5\" cy=\"12\" r=\"1\"/>","lock":"<rect width=\"18\" height=\"11\" x=\"3\" y=\"11\" rx=\"2\" ry=\"2\"/><path d=\"M7 11V7a5 5 0 0 1 10 0v4\"/>","building-2":"<path d=\"M10 12h4\"/><path d=\"M10 8h4\"/><path d=\"M14 21v-3a2 2 0 0 0-4 0v3\"/><path d=\"M6 10H4a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-2\"/><path d=\"M6 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16\"/>","palette":"<path d=\"M12 22a1 1 0 0 1 0-20 10 9 0 0 1 10 9 5 5 0 0 1-5 5h-2.25a1.75 1.75 0 0 0-1.4 2.8l.3.4a1.75 1.75 0 0 1-1.4 2.8z\"/><circle cx=\"13.5\" cy=\"6.5\" r=\".5\" fill=\"currentColor\"/><circle cx=\"17.5\" cy=\"10.5\" r=\".5\" fill=\"currentColor\"/><circle cx=\"6.5\" cy=\"12.5\" r=\".5\" fill=\"currentColor\"/><circle cx=\"8.5\" cy=\"7.5\" r=\".5\" fill=\"currentColor\"/>","info":"<circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"M12 16v-4\"/><path d=\"M12 8h.01\"/>","x":"<path d=\"M18 6 6 18\"/><path d=\"m6 6 12 12\"/>","circle-user":"<circle cx=\"12\" cy=\"12\" r=\"10\"/><circle cx=\"12\" cy=\"10\" r=\"3\"/><path d=\"M7 20.662V19a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v1.662\"/>","refresh-cw":"<path d=\"M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8\"/><path d=\"M21 3v5h-5\"/><path d=\"M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16\"/><path d=\"M8 16H3v5\"/>","inbox":"<polyline points=\"22 12 16 12 14 15 10 15 8 12 2 12\"/><path d=\"M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z\"/>","funnel":"<path d=\"M10 20a1 1 0 0 0 .553.895l2 1A1 1 0 0 0 14 21v-7a2 2 0 0 1 .517-1.341L21.74 4.67A1 1 0 0 0 21 3H3a1 1 0 0 0-.742 1.67l7.225 7.989A2 2 0 0 1 10 14z\"/>","file-text":"<path d=\"M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z\"/><path d=\"M14 2v5a1 1 0 0 0 1 1h5\"/><path d=\"M10 9H8\"/><path d=\"M16 13H8\"/><path d=\"M16 17H8\"/>","package-open":"<path d=\"M12 22v-9\"/><path d=\"M15.17 2.21a1.67 1.67 0 0 1 1.63 0L21 4.57a1.93 1.93 0 0 1 0 3.36L8.82 14.79a1.655 1.655 0 0 1-1.64 0L3 12.43a1.93 1.93 0 0 1 0-3.36z\"/><path d=\"M20 13v3.87a2.06 2.06 0 0 1-1.11 1.83l-6 3.08a1.93 1.93 0 0 1-1.78 0l-6-3.08A2.06 2.06 0 0 1 4 16.87V13\"/><path d=\"M21 12.43a1.93 1.93 0 0 0 0-3.36L8.83 2.2a1.64 1.64 0 0 0-1.63 0L3 4.57a1.93 1.93 0 0 0 0 3.36l12.18 6.86a1.636 1.636 0 0 0 1.63 0z\"/>","undo-2":"<path d=\"M9 14 4 9l5-5\"/><path d=\"M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5a5.5 5.5 0 0 1-5.5 5.5H11\"/>","ban":"<circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"M4.929 4.929 19.07 19.071\"/>","circle-plus":"<circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"M8 12h8\"/><path d=\"M12 8v8\"/>","split":"<path d=\"M16 3h5v5\"/><path d=\"M8 3H3v5\"/><path d=\"M12 22v-8.3a4 4 0 0 0-1.172-2.872L3 3\"/><path d=\"m15 9 6-6\"/>","layers":"<path d=\"M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z\"/><path d=\"M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12\"/><path d=\"M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17\"/>","activity":"<path d=\"M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2\"/>","repeat":"<path d=\"m17 2 4 4-4 4\"/><path d=\"M3 11v-1a4 4 0 0 1 4-4h14\"/><path d=\"m7 22-4-4 4-4\"/><path d=\"M21 13v1a4 4 0 0 1-4 4H3\"/>","archive":"<rect width=\"20\" height=\"5\" x=\"2\" y=\"3\" rx=\"1\"/><path d=\"M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8\"/><path d=\"M10 12h4\"/>","wifi-off":"<path d=\"M12 20h.01\"/><path d=\"M8.5 16.429a5 5 0 0 1 7 0\"/><path d=\"M5 12.859a10 10 0 0 1 5.17-2.69\"/><path d=\"M19 12.859a10 10 0 0 0-2.007-1.523\"/><path d=\"M2 8.82a15 15 0 0 1 4.177-2.643\"/><path d=\"M22 8.82a15 15 0 0 0-11.288-3.764\"/><path d=\"m2 2 20 20\"/>","cloud-off":"<path d=\"M10.94 5.274A7 7 0 0 1 15.71 10h1.79a4.5 4.5 0 0 1 4.222 6.057\"/><path d=\"M18.796 18.81A4.5 4.5 0 0 1 17.5 19H9A7 7 0 0 1 5.79 5.78\"/><path d=\"m2 2 20 20\"/>","cloud-upload":"<path d=\"M12 13v8\"/><path d=\"M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242\"/><path d=\"m8 17 4-4 4 4\"/>","calendar":"<path d=\"M8 2v3\"/><path d=\"M16 2v3\"/><rect x=\"3\" y=\"3\" width=\"18\" height=\"18\" rx=\"2\"/><path d=\"M3 9h18\"/>","pause":"<rect x=\"14\" y=\"3\" width=\"5\" height=\"18\" rx=\"1\"/><rect x=\"5\" y=\"3\" width=\"5\" height=\"18\" rx=\"1\"/>","play":"<path d=\"M5 5a2 2 0 0 1 3.008-1.728l11.997 6.998a2 2 0 0 1 .003 3.458l-12 7A2 2 0 0 1 5 19z\"/>","send":"<path d=\"M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z\"/><path d=\"m21.854 2.147-10.94 10.939\"/>","chevron-right":"<path d=\"m9 18 6-6-6-6\"/>","qr-code":"<rect width=\"5\" height=\"5\" x=\"3\" y=\"3\" rx=\"1\"/><rect width=\"5\" height=\"5\" x=\"16\" y=\"3\" rx=\"1\"/><rect width=\"5\" height=\"5\" x=\"3\" y=\"16\" rx=\"1\"/><path d=\"M21 16h-3a2 2 0 0 0-2 2v3\"/><path d=\"M21 21v.01\"/><path d=\"M12 7v3a2 2 0 0 1-2 2H7\"/><path d=\"M3 12h.01\"/><path d=\"M12 3h.01\"/><path d=\"M12 16v.01\"/><path d=\"M16 12h1\"/><path d=\"M21 12v.01\"/><path d=\"M12 21v-1\"/>","scan-line":"<path d=\"M3 7V5a2 2 0 0 1 2-2h2\"/><path d=\"M17 3h2a2 2 0 0 1 2 2v2\"/><path d=\"M21 17v2a2 2 0 0 1-2 2h-2\"/><path d=\"M7 21H5a2 2 0 0 1-2-2v-2\"/><path d=\"M7 12h10\"/>"};
+const ICONS = {"layout-dashboard":"<rect width=\"7\" height=\"9\" x=\"3\" y=\"3\" rx=\"1\"/><rect width=\"7\" height=\"5\" x=\"14\" y=\"3\" rx=\"1\"/><rect width=\"7\" height=\"9\" x=\"14\" y=\"12\" rx=\"1\"/><rect width=\"7\" height=\"5\" x=\"3\" y=\"16\" rx=\"1\"/>","package":"<path d=\"M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z\"/><path d=\"M12 22V12\"/><polyline points=\"3.29 7 12 12 20.71 7\"/><path d=\"m7.5 4.27 9 5.15\"/>","arrow-left-right":"<path d=\"M8 3 4 7l4 4\"/><path d=\"M4 7h16\"/><path d=\"m16 21 4-4-4-4\"/><path d=\"M20 17H4\"/>","wrench":"<path d=\"M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.106-3.105c.32-.322.863-.22.983.218a6 6 0 0 1-8.259 7.057l-7.91 7.91a1 1 0 0 1-2.999-3l7.91-7.91a6 6 0 0 1 7.057-8.259c.438.12.54.662.219.984z\"/>","chart-column":"<path d=\"M3 3v16a2 2 0 0 0 2 2h16\"/><path d=\"M18 17V9\"/><path d=\"M13 17V5\"/><path d=\"M8 17v-3\"/>","list-checks":"<path d=\"M13 5h8\"/><path d=\"M13 12h8\"/><path d=\"M13 19h8\"/><path d=\"m3 17 2 2 4-4\"/><path d=\"m3 7 2 2 4-4\"/>","users":"<path d=\"M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2\"/><path d=\"M16 3.128a4 4 0 0 1 0 7.744\"/><path d=\"M22 21v-2a4 4 0 0 0-3-3.87\"/><circle cx=\"9\" cy=\"7\" r=\"4\"/>","settings":"<path d=\"M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915\"/><circle cx=\"12\" cy=\"12\" r=\"3\"/>","sun":"<circle cx=\"12\" cy=\"12\" r=\"4\"/><path d=\"M12 2v2\"/><path d=\"M12 20v2\"/><path d=\"m4.93 4.93 1.41 1.41\"/><path d=\"m17.66 17.66 1.41 1.41\"/><path d=\"M2 12h2\"/><path d=\"M20 12h2\"/><path d=\"m6.34 17.66-1.41 1.41\"/><path d=\"m19.07 4.93-1.41 1.41\"/>","moon":"<path d=\"M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401\"/>","monitor":"<rect width=\"20\" height=\"14\" x=\"2\" y=\"3\" rx=\"2\"/><line x1=\"8\" x2=\"16\" y1=\"21\" y2=\"21\"/><line x1=\"12\" x2=\"12\" y1=\"17\" y2=\"21\"/>","log-out":"<path d=\"m16 17 5-5-5-5\"/><path d=\"M21 12H9\"/><path d=\"M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4\"/>","menu":"<path d=\"M4 5h16\"/><path d=\"M4 12h16\"/><path d=\"M4 19h16\"/>","plus":"<path d=\"M5 12h14\"/><path d=\"M12 5v14\"/>","search":"<path d=\"m21 21-4.34-4.34\"/><circle cx=\"11\" cy=\"11\" r=\"8\"/>","image":"<rect width=\"18\" height=\"18\" x=\"3\" y=\"3\" rx=\"2\" ry=\"2\"/><circle cx=\"9\" cy=\"9\" r=\"2\"/><path d=\"m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21\"/>","pencil":"<path d=\"M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z\"/><path d=\"m15 5 4 4\"/>","trash-2":"<path d=\"M10 11v6\"/><path d=\"M14 11v6\"/><path d=\"M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6\"/><path d=\"M3 6h18\"/><path d=\"M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2\"/>","external-link":"<path d=\"M15 3h6v6\"/><path d=\"M10 14 21 3\"/><path d=\"M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6\"/>","history":"<path d=\"M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8\"/><path d=\"M3 3v5h5\"/><path d=\"M12 7v5l4 2\"/>","bell":"<path d=\"M10.268 21a2 2 0 0 0 3.464 0\"/><path d=\"M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326\"/>","circle-check":"<circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"m16 9-5.5 5.5L8 12\"/>","triangle-alert":"<path d=\"m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3\"/><path d=\"M12 9v4\"/><path d=\"M12 17h.01\"/>","calendar-check":"<path d=\"M8 2v3\"/><path d=\"M16 2v3\"/><rect x=\"3\" y=\"3\" width=\"18\" height=\"18\" rx=\"2\"/><path d=\"M3 9h18\"/><path d=\"m9 15 2 2 4-4\"/>","notebook-text":"<path d=\"M2 6h4\"/><path d=\"M2 10h4\"/><path d=\"M2 14h4\"/><path d=\"M2 18h4\"/><rect width=\"16\" height=\"20\" x=\"4\" y=\"2\" rx=\"2\"/><path d=\"M9.5 8h5\"/><path d=\"M9.5 12H16\"/><path d=\"M9.5 16H14\"/>","download":"<path d=\"M12 15V3\"/><path d=\"M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4\"/><path d=\"m7 10 5 5 5-5\"/>","file-up":"<path d=\"M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z\"/><path d=\"M14 2v5a1 1 0 0 0 1 1h5\"/><path d=\"M12 12v6\"/><path d=\"m15 15-3-3-3 3\"/>","file-spreadsheet":"<path d=\"M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z\"/><path d=\"M14 2v5a1 1 0 0 0 1 1h5\"/><path d=\"M8 13h2\"/><path d=\"M14 13h2\"/><path d=\"M8 17h2\"/><path d=\"M14 17h2\"/>","printer":"<path d=\"M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2\"/><path d=\"M6 9V3a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v6\"/><rect x=\"6\" y=\"14\" width=\"12\" height=\"8\" rx=\"1\"/>","phone":"<path d=\"M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 14 14 0 0 0 6.392 6.384\"/>","check":"<path d=\"M20 6 9 17l-5-5\"/>","circle-x":"<circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"m15 9-6 6\"/><path d=\"m9 9 6 6\"/>","lightbulb":"<path d=\"M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5\"/><path d=\"M9 18h6\"/><path d=\"M10 22h4\"/>","banknote":"<rect width=\"20\" height=\"12\" x=\"2\" y=\"6\" rx=\"2\"/><circle cx=\"12\" cy=\"12\" r=\"2\"/><path d=\"M6 12h.01M18 12h.01\"/>","tag":"<path d=\"M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z\"/><circle cx=\"7.5\" cy=\"7.5\" r=\".5\" fill=\"currentColor\"/>","map-pin":"<path d=\"M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0\"/><circle cx=\"12\" cy=\"10\" r=\"3\"/>","user-plus":"<path d=\"M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2\"/><circle cx=\"9\" cy=\"7\" r=\"4\"/><line x1=\"19\" x2=\"19\" y1=\"8\" y2=\"14\"/><line x1=\"22\" x2=\"16\" y1=\"11\" y2=\"11\"/>","key-round":"<path d=\"M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z\"/><circle cx=\"16.5\" cy=\"7.5\" r=\".5\" fill=\"currentColor\"/>","shield-check":"<path d=\"M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z\"/><path d=\"m9 12 2 2 4-4\"/>","eye":"<path d=\"M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0\"/><circle cx=\"12\" cy=\"12\" r=\"3\"/>","copy":"<rect width=\"14\" height=\"14\" x=\"8\" y=\"8\" rx=\"2\" ry=\"2\"/><path d=\"M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2\"/>","message-circle":"<path d=\"M2.992 16.342a2 2 0 0 1 .094 1.167l-1.065 3.29a1 1 0 0 0 1.236 1.168l3.413-.998a2 2 0 0 1 1.099.092 10 10 0 1 0-4.777-4.719\"/>","mail":"<path d=\"m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7\"/><rect x=\"2\" y=\"4\" width=\"20\" height=\"16\" rx=\"2\"/>","user-x":"<path d=\"M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2\"/><circle cx=\"9\" cy=\"7\" r=\"4\"/><line x1=\"17\" x2=\"22\" y1=\"8\" y2=\"13\"/><line x1=\"22\" x2=\"17\" y1=\"8\" y2=\"13\"/>","user-check":"<path d=\"m16 11 2 2 4-4\"/><path d=\"M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2\"/><circle cx=\"9\" cy=\"7\" r=\"4\"/>","ellipsis":"<circle cx=\"12\" cy=\"12\" r=\"1\"/><circle cx=\"19\" cy=\"12\" r=\"1\"/><circle cx=\"5\" cy=\"12\" r=\"1\"/>","lock":"<rect width=\"18\" height=\"11\" x=\"3\" y=\"11\" rx=\"2\" ry=\"2\"/><path d=\"M7 11V7a5 5 0 0 1 10 0v4\"/>","building-2":"<path d=\"M10 12h4\"/><path d=\"M10 8h4\"/><path d=\"M14 21v-3a2 2 0 0 0-4 0v3\"/><path d=\"M6 10H4a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-2\"/><path d=\"M6 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16\"/>","palette":"<path d=\"M12 22a1 1 0 0 1 0-20 10 9 0 0 1 10 9 5 5 0 0 1-5 5h-2.25a1.75 1.75 0 0 0-1.4 2.8l.3.4a1.75 1.75 0 0 1-1.4 2.8z\"/><circle cx=\"13.5\" cy=\"6.5\" r=\".5\" fill=\"currentColor\"/><circle cx=\"17.5\" cy=\"10.5\" r=\".5\" fill=\"currentColor\"/><circle cx=\"6.5\" cy=\"12.5\" r=\".5\" fill=\"currentColor\"/><circle cx=\"8.5\" cy=\"7.5\" r=\".5\" fill=\"currentColor\"/>","info":"<circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"M12 16v-4\"/><path d=\"M12 8h.01\"/>","x":"<path d=\"M18 6 6 18\"/><path d=\"m6 6 12 12\"/>","circle-user":"<circle cx=\"12\" cy=\"12\" r=\"10\"/><circle cx=\"12\" cy=\"10\" r=\"3\"/><path d=\"M7 20.662V19a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v1.662\"/>","refresh-cw":"<path d=\"M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8\"/><path d=\"M21 3v5h-5\"/><path d=\"M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16\"/><path d=\"M8 16H3v5\"/>","inbox":"<polyline points=\"22 12 16 12 14 15 10 15 8 12 2 12\"/><path d=\"M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z\"/>","funnel":"<path d=\"M10 20a1 1 0 0 0 .553.895l2 1A1 1 0 0 0 14 21v-7a2 2 0 0 1 .517-1.341L21.74 4.67A1 1 0 0 0 21 3H3a1 1 0 0 0-.742 1.67l7.225 7.989A2 2 0 0 1 10 14z\"/>","file-text":"<path d=\"M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z\"/><path d=\"M14 2v5a1 1 0 0 0 1 1h5\"/><path d=\"M10 9H8\"/><path d=\"M16 13H8\"/><path d=\"M16 17H8\"/>","package-open":"<path d=\"M12 22v-9\"/><path d=\"M15.17 2.21a1.67 1.67 0 0 1 1.63 0L21 4.57a1.93 1.93 0 0 1 0 3.36L8.82 14.79a1.655 1.655 0 0 1-1.64 0L3 12.43a1.93 1.93 0 0 1 0-3.36z\"/><path d=\"M20 13v3.87a2.06 2.06 0 0 1-1.11 1.83l-6 3.08a1.93 1.93 0 0 1-1.78 0l-6-3.08A2.06 2.06 0 0 1 4 16.87V13\"/><path d=\"M21 12.43a1.93 1.93 0 0 0 0-3.36L8.83 2.2a1.64 1.64 0 0 0-1.63 0L3 4.57a1.93 1.93 0 0 0 0 3.36l12.18 6.86a1.636 1.636 0 0 0 1.63 0z\"/>","undo-2":"<path d=\"M9 14 4 9l5-5\"/><path d=\"M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5a5.5 5.5 0 0 1-5.5 5.5H11\"/>","ban":"<circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"M4.929 4.929 19.07 19.071\"/>","circle-plus":"<circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"M8 12h8\"/><path d=\"M12 8v8\"/>","split":"<path d=\"M16 3h5v5\"/><path d=\"M8 3H3v5\"/><path d=\"M12 22v-8.3a4 4 0 0 0-1.172-2.872L3 3\"/><path d=\"m15 9 6-6\"/>","layers":"<path d=\"M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z\"/><path d=\"M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12\"/><path d=\"M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17\"/>","activity":"<path d=\"M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2\"/>","repeat":"<path d=\"m17 2 4 4-4 4\"/><path d=\"M3 11v-1a4 4 0 0 1 4-4h14\"/><path d=\"m7 22-4-4 4-4\"/><path d=\"M21 13v1a4 4 0 0 1-4 4H3\"/>","archive":"<rect width=\"20\" height=\"5\" x=\"2\" y=\"3\" rx=\"1\"/><path d=\"M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8\"/><path d=\"M10 12h4\"/>","wifi-off":"<path d=\"M12 20h.01\"/><path d=\"M8.5 16.429a5 5 0 0 1 7 0\"/><path d=\"M5 12.859a10 10 0 0 1 5.17-2.69\"/><path d=\"M19 12.859a10 10 0 0 0-2.007-1.523\"/><path d=\"M2 8.82a15 15 0 0 1 4.177-2.643\"/><path d=\"M22 8.82a15 15 0 0 0-11.288-3.764\"/><path d=\"m2 2 20 20\"/>","cloud-off":"<path d=\"M10.94 5.274A7 7 0 0 1 15.71 10h1.79a4.5 4.5 0 0 1 4.222 6.057\"/><path d=\"M18.796 18.81A4.5 4.5 0 0 1 17.5 19H9A7 7 0 0 1 5.79 5.78\"/><path d=\"m2 2 20 20\"/>","cloud-upload":"<path d=\"M12 13v8\"/><path d=\"M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242\"/><path d=\"m8 17 4-4 4 4\"/>","calendar":"<path d=\"M8 2v3\"/><path d=\"M16 2v3\"/><rect x=\"3\" y=\"3\" width=\"18\" height=\"18\" rx=\"2\"/><path d=\"M3 9h18\"/>","pause":"<rect x=\"14\" y=\"3\" width=\"5\" height=\"18\" rx=\"1\"/><rect x=\"5\" y=\"3\" width=\"5\" height=\"18\" rx=\"1\"/>","play":"<path d=\"M5 5a2 2 0 0 1 3.008-1.728l11.997 6.998a2 2 0 0 1 .003 3.458l-12 7A2 2 0 0 1 5 19z\"/>","send":"<path d=\"M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z\"/><path d=\"m21.854 2.147-10.94 10.939\"/>","chevron-right":"<path d=\"m9 18 6-6-6-6\"/>","qr-code":"<rect width=\"5\" height=\"5\" x=\"3\" y=\"3\" rx=\"1\"/><rect width=\"5\" height=\"5\" x=\"16\" y=\"3\" rx=\"1\"/><rect width=\"5\" height=\"5\" x=\"3\" y=\"16\" rx=\"1\"/><path d=\"M21 16h-3a2 2 0 0 0-2 2v3\"/><path d=\"M21 21v.01\"/><path d=\"M12 7v3a2 2 0 0 1-2 2H7\"/><path d=\"M3 12h.01\"/><path d=\"M12 3h.01\"/><path d=\"M12 16v.01\"/><path d=\"M16 12h1\"/><path d=\"M21 12v.01\"/><path d=\"M12 21v-1\"/>","scan-line":"<path d=\"M3 7V5a2 2 0 0 1 2-2h2\"/><path d=\"M17 3h2a2 2 0 0 1 2 2v2\"/><path d=\"M21 17v2a2 2 0 0 1-2 2h-2\"/><path d=\"M7 21H5a2 2 0 0 1-2-2v-2\"/><path d=\"M7 12h10\"/>","sliders-horizontal":"<path d=\"M10 5H3\"/><path d=\"M12 19H3\"/><path d=\"M14 3v4\"/><path d=\"M16 17v4\"/><path d=\"M21 12h-9\"/><path d=\"M21 19h-5\"/><path d=\"M21 5h-7\"/><path d=\"M8 10v4\"/><path d=\"M8 12H3\"/>","columns-3":"<rect width=\"18\" height=\"18\" x=\"3\" y=\"3\" rx=\"2\"/><path d=\"M9 3v18\"/><path d=\"M15 3v18\"/>","file-down":"<path d=\"M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z\"/><path d=\"M14 2v5a1 1 0 0 0 1 1h5\"/><path d=\"M12 18v-6\"/><path d=\"m9 15 3 3 3-3\"/>","rotate-ccw":"<path d=\"M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8\"/><path d=\"M3 3v5h5\"/>"};
 const ic = (name, cls = "") =>
   `<svg class="ic ${cls}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[name] || ""}</svg>`;
 document.querySelectorAll("[data-icon]").forEach((el) => {
@@ -515,10 +534,29 @@ const STATUSES = ["In use", "In storage", "Under repair", "Lost", "Disposed"];
 const CONDITIONS = ["New", "Good", "Fair", "Poor"];
 const STATUS_TONE = { "In use": "success", "In storage": "primary", "Under repair": "warning", "Lost": "danger", "Disposed": "secondary" };
 const ROLES = {
-  admin:  { label: "Admin",  icon: "shield-check", tone: "primary",   text: "Everything, including inviting people and changing church settings." },
-  editor: { label: "Editor", icon: "pencil",       tone: "success",   text: "Add and edit assets, lend items, log maintenance and download reports." },
-  viewer: { label: "Viewer", icon: "eye",          tone: "secondary", text: "Look at assets and reports only. Good for auditors and council members." }
+  admin:  { label: "Admin",  icon: "shield-check", tone: "primary",   text: "Everything below, plus inviting people, church details and daily reminders." },
+  editor: { label: "Editor", icon: "pencil",       tone: "success",   text: "All the day-to-day work: items, lending, maintenance, disposals, Excel import, QR labels, reports and history." },
+  viewer: { label: "Viewer", icon: "eye",          tone: "secondary", text: "Looks only: items, reports and the change history. Good for auditors and council members." },
+  custom: { label: "Custom", icon: "sliders-horizontal", tone: "info", text: "You tick exactly what they can do, e.g. a viewer who can also lend items." }
 };
+/* What each person may do. The database checks the same list (upgrade-permissions.sql). */
+const PERMS = [
+  { key: "assets", icon: "package", label: "Add and edit items", hint: "Details, photos, asset tags, splitting groups", short: "Edit items" },
+  { key: "dispose", icon: "archive", label: "Dispose of or write off items", hint: "Mark items Disposed or Lost, with who approved it", short: "Disposals" },
+  { key: "delete", icon: "trash-2", label: "Delete items", hint: "Remove an item and its history for good", short: "Delete items" },
+  { key: "loans", icon: "arrow-left-right", label: "Lend items and record returns", hint: "Including part returns and items not returned", short: "Lending" },
+  { key: "maintenance", icon: "wrench", label: "Log maintenance and schedules", hint: "Record work done and set repeating reminders", short: "Maintenance" },
+  { key: "import", icon: "file-up", label: "Import from Excel", hint: "Add many items at once (includes adding items)", short: "Excel import" },
+  { key: "labels", icon: "qr-code", label: "Print QR labels", hint: "Everyone can scan labels", short: "QR labels" },
+  { key: "lists", icon: "list-checks", label: "Manage lists", hint: "Categories, locations and ministries", short: "Lists" },
+  { key: "reports", icon: "chart-column", label: "See and download reports", hint: "Choose columns; Excel or PDF", short: "Reports" },
+  { key: "activity", icon: "activity", label: "See the change history", hint: "Who changed what, and when", short: "History" }
+];
+const ALL_PERMS = PERMS.map((p) => p.key);
+const ROLE_PERMS = { admin: ALL_PERMS, editor: ALL_PERMS, viewer: ["reports", "activity"] };
+const CHANGE_PERMS = ["assets", "dispose", "delete", "loans", "maintenance", "import", "labels", "lists"];
+const permsOf = (m) => !m ? [] : m.role === "custom" ? ALL_PERMS.filter((k) => (m.perms || []).includes(k)) : (ROLE_PERMS[m.role] || []);
+const roleOf = (m) => ROLES[m?.role] || ROLES.viewer;
 
 const S = {
   me: null, session: null, settings: {}, members: [],
@@ -534,9 +572,9 @@ const NAV = [
   { id: "assets", label: "Assets", icon: "package" },
   { id: "loans", label: "Borrowing", icon: "arrow-left-right" },
   { id: "maintenance", label: "Maintenance", icon: "wrench" },
-  { id: "reports", label: "Reports", icon: "chart-column" },
+  { id: "reports", label: "Reports", icon: "chart-column", perm: "reports" },
   { id: "lists", label: "Lists", icon: "list-checks" },
-  { id: "activity", label: "Activity", icon: "activity" },
+  { id: "activity", label: "Activity", icon: "activity", perm: "activity" },
   { divider: true },
   { id: "users", label: "Users", icon: "users", admin: true },
   { id: "settings", label: "Settings", icon: "settings" }
@@ -606,7 +644,9 @@ const plainOptions = (arr, selected) => arr.map((v) => `<option ${v === selected
 const badge = (tone, text, icon = "") =>
   `<span class="badge rounded-pill bg-${tone}-subtle text-${tone}-emphasis border border-${tone}-subtle">${icon ? ic(icon) : ""}${text}</span>`;
 const isAdmin = () => S.me?.role === "admin";
-const canEdit = () => ["admin", "editor"].includes(S.me?.role);
+const can = (p) => permsOf(S.me).includes(p);
+const canEdit = () => CHANGE_PERMS.some(can);
+const NO_ACCESS = "Your access doesn't include this. Ask an admin if you need it.";
 const initials = (name, email) => (name || email || "?").split(/[\s@.]+/).filter(Boolean).slice(0, 2).map((w) => w[0].toUpperCase()).join("");
 
 /* ---------- Light / dark mode ---------- */
@@ -642,7 +682,9 @@ function friendlyError(err) {
   if (/members_email_key/i.test(m)) return "That email address has already been invited.";
   if (/duplicate key/i.test(m)) return "That name or asset tag is already in use. Choose a different one.";
   if (/Failed to fetch|NetworkError/i.test(m)) return "Could not reach the database. Check your internet connection and try again.";
-  if (/row-level security|permission denied/i.test(m)) return "Your role doesn't allow this. Ask an admin if you need it.";
+  if (/perms|members_role_check/i.test(m) && /column|schema cache|does not exist|check constraint/i.test(m))
+    return "The database needs the permissions upgrade. An admin should run upgrade-permissions.sql in Supabase (see the README).";
+  if (/row-level security|permission denied/i.test(m)) return NO_ACCESS;
   if (/quantity|split_asset|return_loan/i.test(m) && /does not exist|schema cache|Could not find/i.test(m))
     return "The database needs the quantity upgrade. An admin should run upgrade-quantity.sql in Supabase.";
   if (/APP:/.test(m)) return m.replace(/^[\s\S]*?APP:\s*/, "");
@@ -803,6 +845,13 @@ async function save(op, applyLocal) {
   return { queued: true };
 }
 const QUEUED_MSG = "Saved on this device. It will be sent when you're back online.";
+const ACTION_PERMS = {
+  "add-asset": ["assets"], "edit-asset": ["assets", "dispose"], "split-asset": ["assets"], "delete-asset": ["delete"], "lbl-tags": ["assets"],
+  "lend": ["loans"], "quick-return": ["loans"], "return-loan": ["loans"],
+  "log-service": ["maintenance"], "add-plan": ["maintenance"], "edit-plan": ["maintenance"], "toggle-plan": ["maintenance"], "delete-plan": ["maintenance"], "delete-service": ["maintenance"],
+  "open-import": ["import"], "print-labels": ["labels"], "delete-item": ["lists"],
+  "export-xlsx": ["reports"], "export-pdf": ["reports"], "report-cols": ["reports"], "export-activity": ["activity"]
+};
 const OFFLINE_FORMS = new Set(["asset", "loan", "return", "service", "find-tag"]);
 const ONLINE_ACTIONS = new Set(["lbl-tags", "push-on", "push-off", "push-test", "reminders-now", "split-asset", "delete-asset", "delete-service", "delete-item", "open-import", "run-import", "invite-user",
   "share-invite", "edit-user", "set-password", "toggle-user", "remove-user", "add-plan", "edit-plan", "toggle-plan", "delete-plan", "export-activity", "more-activity"]);
@@ -934,6 +983,7 @@ async function loadMe(session) {
   const me = (data || []).find((m) => m.user_id === session.user.id) || (data || []).find((m) => m.email === email);
   if (!me) return { blocked: `<b>${esc(email)}</b> has not been given access. Ask an admin to invite you.` };
   if (!me.active) return { blocked: "Your access has been turned off. Contact an admin if this is a mistake." };
+  S.permUpgrade = !("perms" in me);
   const [qc, pc] = await Promise.all([sb.from("borrowings").select("quantity").limit(1), sb.from("maintenance_plans").select("id").limit(1)]);
   if (qc.error && /quantity|schema cache|does not exist/i.test(qc.error.message))
     return { blocked: "The database needs the quantity upgrade. An admin should run <b>upgrade-quantity.sql</b> in Supabase (see the README)." };
@@ -942,9 +992,9 @@ async function loadMe(session) {
   return { me };
 }
 function enterApp() {
-  document.body.classList.remove("role-admin", "role-editor", "role-viewer");
-  document.body.classList.add(`role-${S.me.role}`);
-  if (S.view === "users" && !isAdmin()) S.view = "dashboard";
+  [...document.body.classList].filter((c) => /^(role|perm)-/.test(c)).forEach((c) => document.body.classList.remove(c));
+  document.body.classList.add(`role-${S.me.role}`, ...permsOf(S.me).map((p) => `perm-${p}`));
+  document.body.classList.toggle("can-change", canEdit());
   $("#login").hidden = true; $("#app").hidden = false;
   updateMeBox(); applyTheme(); updateNetBanner();
 }
@@ -982,7 +1032,7 @@ async function startApp(session) {
 }
 function updateMeBox() {
   $("#me-name").textContent = S.me.full_name || S.me.email;
-  $("#me-role").textContent = ROLES[S.me.role].label;
+  $("#me-role").textContent = roleOf(S.me).label;
 }
 
 document.addEventListener("submit", async (e) => {
@@ -1038,8 +1088,9 @@ function getAlerts() {
 
 /* ---------- Render ---------- */
 function render() {
+  if ((S.view === "users" && !isAdmin()) || (S.view === "reports" && !can("reports")) || (S.view === "activity" && !can("activity"))) S.view = "dashboard";
   const urgent = getAlerts().filter((a) => a.urgent).length;
-  $("#nav").innerHTML = NAV.filter((n) => !n.admin || isAdmin()).map((n) => n.divider ? "<hr>" : `
+  $("#nav").innerHTML = NAV.filter((n) => (!n.admin || isAdmin()) && (!n.perm || can(n.perm))).map((n) => n.divider ? "<hr>" : `
     <button class="nav-link ${S.view === n.id ? "active" : ""}" data-action="nav" data-view="${n.id}" ${S.view === n.id ? 'aria-current="page"' : ""}>
       ${ic(n.icon)}${n.label}
       ${n.id === "dashboard" && urgent ? `<span class="badge rounded-pill" aria-label="${urgent} urgent">${urgent}</span>` : ""}
@@ -1052,7 +1103,7 @@ function render() {
   const views = { dashboard: viewDashboard, assets: viewAssets, loans: viewLoans, maintenance: viewMaintenance, reports: viewReports, lists: viewLists, users: viewUsers, settings: viewSettings, activity: viewActivity };
   $("#view").innerHTML = (views[S.view] || viewDashboard)();
   if (S.view === "assets") renderAssetResults();
-  if (S.view === "reports") renderReport();
+  if (S.view === "reports") { renderColPanel(); renderReport(); }
   if (S.view === "activity") loadActivity(true);
   if (S.view === "settings") { renderPushCard(); renderRemindersCard(); renderInstallCard(); }
 }
@@ -1073,10 +1124,10 @@ function thumb(a) {
 }
 const emptyState = (icon, text, actions = "") =>
   `<div class="empty"><div class="empty-icon">${ic(icon)}</div>${text}${actions ? `<div class="empty-actions">${actions}</div>` : ""}</div>`;
-const addAssetBtn = (label = "Add asset") => `<button class="btn btn-primary needs-edit" data-action="add-asset">${ic("plus")}${label}</button>`;
+const addAssetBtn = (label = "Add asset") => `<button class="btn btn-primary needs-assets" data-action="add-asset">${ic("plus")}${label}</button>`;
 const scanBtn = () => `<button class="btn btn-outline-primary" data-action="scan">${ic("scan-line")}Scan</button>`;
-const labelsBtn = () => `<button class="btn btn-outline-primary needs-edit" data-action="print-labels">${ic("qr-code")}Print labels</button>`;
-const importBtn = () => `<button class="btn btn-outline-primary needs-edit" data-action="open-import">${ic("file-up")}Import from Excel</button>`;
+const labelsBtn = () => `<button class="btn btn-outline-primary needs-labels" data-action="print-labels">${ic("qr-code")}Print labels</button>`;
+const importBtn = () => `<button class="btn btn-outline-primary needs-import" data-action="open-import">${ic("file-up")}Import from Excel</button>`;
 
 /* ----- Dashboard ----- */
 function viewDashboard() {
@@ -1194,7 +1245,7 @@ function viewLoans() {
     return `${fmtDate(b.due_on)} ${d < 0 ? badge("danger", "Overdue") : d <= 2 ? badge("warning", "Soon") : ""}`;
   };
   return pageHead("Borrowing", `${plural(out.reduce((s, b) => s + loanQty(b), 0), "item")} currently out`,
-      `<button class="btn btn-primary needs-edit" data-action="lend">${ic("external-link")}Lend an item</button>`) + `
+      `<button class="btn btn-primary needs-loans" data-action="lend">${ic("external-link")}Lend an item</button>`) + `
     <ul class="nav nav-pills mb-3" role="tablist">
       <li class="nav-item"><button class="nav-link ${S.loanTab === "out" ? "active" : ""}" data-action="loan-tab" data-tab="out">Out now <span class="badge ${S.loanTab === "out" ? "bg-white text-dark" : "text-bg-primary"}">${out.length}</span></button></li>
       <li class="nav-item"><button class="nav-link ${S.loanTab === "all" ? "active" : ""}" data-action="loan-tab" data-tab="all">Full history</button></li>
@@ -1208,7 +1259,7 @@ function viewLoans() {
         <td class="d-none d-md-table-cell">${esc(b.purpose || "—")}</td>
         <td class="d-none d-md-table-cell text-nowrap">${fmtDate(b.borrowed_on)}</td>
         <td class="text-nowrap">${dueCell(b)}</td>
-        <td class="text-end">${b.returned_on ? `<span class="text-nowrap">${fmtDate(b.returned_on)}</span>` : `<div class="d-inline-flex gap-1">${waLink(b, "btn btn-sm btn-outline-success")}<button class="btn btn-sm btn-outline-primary needs-edit" data-action="return-loan" data-id="${b.id}">${ic("check")}Mark returned</button></div>`}</td>
+        <td class="text-end">${b.returned_on ? `<span class="text-nowrap">${fmtDate(b.returned_on)}</span>` : `<div class="d-inline-flex gap-1">${waLink(b, "btn btn-sm btn-outline-success")}<button class="btn btn-sm btn-outline-primary needs-loans" data-action="return-loan" data-id="${b.id}">${ic("check")}Mark returned</button></div>`}</td>
       </tr>`).join("")}</tbody></table></div>`
     : emptyState("inbox", S.loanTab === "out" ? "Nothing is out on loan right now." : "No borrowing recorded yet.")}</div>`;
 }
@@ -1221,13 +1272,13 @@ function viewMaintenance() {
   const count = (id, n) => n ? `<span class="badge rounded-pill ${S.maintTab === id ? "bg-white text-dark" : "text-bg-primary"}">${n}</span>` : "";
   const tab = (id, icon, label, extra) => `<li class="nav-item" role="presentation"><button class="nav-link ${S.maintTab === id ? "active" : ""}"
       data-action="maint-tab" data-tab="${id}" role="tab" aria-selected="${S.maintTab === id}">${ic(icon)}${label} ${extra}</button></li>`;
-  const logBtn = `<button class="btn btn-primary needs-edit" data-action="log-service">${ic("plus")}Log maintenance</button>`;
-  const planBtn = `<button class="btn btn-outline-primary needs-edit" data-action="add-plan">${ic("repeat")}New schedule</button>`;
+  const logBtn = `<button class="btn btn-primary needs-maint" data-action="log-service">${ic("plus")}Log maintenance</button>`;
+  const planBtn = `<button class="btn btn-outline-primary needs-maint" data-action="add-plan">${ic("repeat")}New schedule</button>`;
   const itemCell = (a) => `<a href="#" class="fw-bold text-decoration-none" data-action="open-asset" data-id="${a.id}">${esc(a.name)}</a>${qtyBadge(a)}
       ${a.asset_tag ? `<div class="small text-body-secondary">${esc(a.asset_tag)}</div>` : ""}`;
 
   const upcomingHtml = due.length ? `${mobileDue(due)}<div class="table-responsive d-none d-md-block"><table class="table align-middle mb-0">
-      <thead><tr><th>Item</th><th>Due</th><th class="d-none d-md-table-cell">Last done</th><th class="needs-edit"></th></tr></thead>
+      <thead><tr><th>Item</th><th>Due</th><th class="d-none d-md-table-cell">Last done</th><th class="needs-maint"></th></tr></thead>
       <tbody>${due.map(({ a, due: when, task, plan }) => {
         const d = daysUntil(when);
         const b = d < 0 ? badge("danger", "Overdue") : d <= CFG.REMINDER_DAYS ? badge("warning", "Due soon") : badge("success", "Scheduled");
@@ -1237,7 +1288,7 @@ function viewMaintenance() {
           <td>${itemCell(a)}${task ? `<div class="small">${ic("repeat")} ${esc(task)} <span class="text-body-secondary">· ${everyText(plan)}</span></div>` : ""}</td>
           <td><span class="text-nowrap">${fmtDate(when)}</span> ${b}<div class="small text-body-secondary">${rel}</div></td>
           <td class="d-none d-md-table-cell small">${last ? `${fmtDate(last.service_date)}: ${esc(last.description)}${last.performed_by ? ` <span class="text-body-secondary">(${esc(last.performed_by)})</span>` : ""}` : "—"}</td>
-          <td class="text-end needs-edit"><button class="btn btn-sm btn-outline-primary" data-action="log-service" data-id="${a.id}" ${plan ? `data-plan="${plan.id}"` : ""}
+          <td class="text-end needs-maint"><button class="btn btn-sm btn-outline-primary" data-action="log-service" data-id="${a.id}" ${plan ? `data-plan="${plan.id}"` : ""}
             aria-label="Log ${esc(task || "service")} done for ${esc(a.name)}" title="Log it as done">${ic("check")}<span class="d-none d-md-inline">Log done</span></button></td>
         </tr>`;
       }).join("")}</tbody></table></div>`
@@ -1245,7 +1296,7 @@ function viewMaintenance() {
 
   const plans = [...S.plans].sort((x, y) => (x.active === y.active ? x.next_due.localeCompare(y.next_due) : x.active ? -1 : 1));
   const plansHtml = plans.length ? `${mobilePlans(plans)}<div class="table-responsive d-none d-md-block"><table class="table align-middle mb-0">
-      <thead><tr><th>Item</th><th>Task</th><th>Repeats</th><th>Next due</th><th class="needs-edit"></th></tr></thead>
+      <thead><tr><th>Item</th><th>Task</th><th>Repeats</th><th>Next due</th><th class="needs-maint"></th></tr></thead>
       <tbody>${plans.map((p) => {
         const a = assetById(p.asset_id);
         return `<tr class="${p.active ? "" : "opacity-75"}">
@@ -1253,7 +1304,7 @@ function viewMaintenance() {
           <td>${esc(p.task)}${p.notes ? `<div class="small text-body-secondary">${esc(p.notes)}</div>` : ""}</td>
           <td class="text-nowrap">${everyText(p)}</td>
           <td class="text-nowrap">${p.active ? fmtDate(p.next_due) : badge("secondary", "Paused", "pause")}</td>
-          <td class="text-end text-nowrap needs-edit">
+          <td class="text-end text-nowrap needs-maint">
             <button class="btn btn-sm btn-outline-secondary btn-icon" data-action="edit-plan" data-id="${p.id}" aria-label="Edit schedule" title="Edit">${ic("pencil")}</button>
             <button class="btn btn-sm btn-outline-secondary btn-icon" data-action="toggle-plan" data-id="${p.id}" aria-label="${p.active ? "Pause" : "Resume"} schedule" title="${p.active ? "Pause" : "Resume"}">${ic(p.active ? "pause" : "play")}</button>
             <button class="btn btn-sm btn-outline-danger btn-icon" data-action="delete-plan" data-id="${p.id}" aria-label="Delete schedule" title="Delete">${ic("trash-2")}</button>
@@ -1262,14 +1313,14 @@ function viewMaintenance() {
     : emptyState("repeat", "No repeating schedules yet.<br>For example: generator oil change every 3 months, or fire extinguisher check every year.", planBtn);
 
   const historyHtml = S.maintenance.length ? `${mobileHistory(S.maintenance)}<div class="table-responsive d-none d-md-block"><table class="table align-middle mb-0">
-      <thead><tr><th>Date</th><th>Item</th><th>Work done</th><th class="d-none d-md-table-cell">Done by</th><th class="text-end">Cost</th><th class="needs-edit"></th></tr></thead>
+      <thead><tr><th>Date</th><th>Item</th><th>Work done</th><th class="d-none d-md-table-cell">Done by</th><th class="text-end">Cost</th><th class="needs-maint"></th></tr></thead>
       <tbody>${S.maintenance.map((m) => `<tr>
         <td class="text-nowrap">${fmtDate(m.service_date)}</td>
         <td><a href="#" class="fw-bold text-decoration-none" data-action="open-asset" data-id="${m.asset_id}">${esc(assetName(m.asset_id))}</a></td>
         <td>${esc(m.description)}${m.plan_id ? ` <span class="text-body-secondary" title="On a schedule">${ic("repeat")}</span>` : ""}${m.next_due ? `<div class="small text-body-secondary">Next due ${fmtDate(m.next_due)}</div>` : ""}</td>
         <td class="d-none d-md-table-cell">${esc(m.performed_by || "—")}</td>
         <td class="text-end text-nowrap">${money(m.cost)}</td>
-        <td class="text-end needs-edit"><button class="btn btn-sm btn-outline-danger btn-icon" data-action="delete-service" data-id="${m.id}" aria-label="Delete record" title="Delete record">${ic("trash-2")}</button></td>
+        <td class="text-end needs-maint"><button class="btn btn-sm btn-outline-danger btn-icon" data-action="delete-service" data-id="${m.id}" aria-label="Delete record" title="Delete record">${ic("trash-2")}</button></td>
       </tr>`).join("")}</tbody></table></div>
       <div class="card-footer bg-body d-flex flex-wrap justify-content-between gap-2 small">
         <span class="text-body-secondary">${plural(S.maintenance.length, "record")}</span><span class="fw-bold">Total spent: ${money(spent)}</span></div>`
@@ -1321,32 +1372,212 @@ function groupBy(field, list, label) {
       [`Total value (${CFG.CURRENCY})`]: items.reduce((s, a) => s + (totalValue(a) || 0), 0) };
   }).filter((r) => r["Records"] > 0);
 }
+/* Which columns each report shows: remembered on this device */
+const COLS_KEY = "cam-report-cols";
+S.repHidden = (() => { try { return JSON.parse(localStorage.getItem(COLS_KEY)) || {}; } catch { return {}; } })();
+S.repQ = ""; S.colsOpen = false;
+const saveHidden = () => { try { localStorage.setItem(COLS_KEY, JSON.stringify(S.repHidden)); } catch {} };
+const isMoneyCol = (c) => /^(Cost|Total value|Amount received)/.test(c);
+const isNumCol = (c) => isMoneyCol(c) || ["Quantity", "Items", "Records", "Came back"].includes(c);
+const isDateVal = (v) => typeof v === "string" && /^\d{4}-\d{2}-\d{2}$/.test(v);
+const num2 = (n) => Number(n).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const num0 = (n) => Number(n).toLocaleString(undefined, { maximumFractionDigits: 2 });
+function reportData() {
+  const r = REPORTS[S.report], all = r.rows();
+  const cols = all.length ? Object.keys(all[0]) : [];
+  const hidden = new Set(S.repHidden[S.report] || []);
+  const shown = cols.filter((c) => !hidden.has(c));
+  const q = S.repQ.trim().toLowerCase();
+  const rows = q ? all.filter((row) => shown.some((c) => {
+    const v = row[c]; return String(v ?? "").toLowerCase().includes(q) || (isDateVal(v) && fmtDate(v).toLowerCase().includes(q));
+  })) : all;
+  const totals = {};
+  shown.filter((c) => isNumCol(c) && !/^Cost per item/.test(c)).forEach((c) => (totals[c] = rows.reduce((sum, x) => sum + (Number(x[c]) || 0), 0)));
+  return { r, all, cols, shown, rows, totals };
+}
 function viewReports() {
-  return pageHead("Reports", "Download for audits and council meetings",
-    `<button class="btn btn-outline-primary" data-action="export-xlsx">${ic("file-spreadsheet")}Download Excel</button>
-     <button class="btn btn-primary" data-action="print">${ic("printer")}Print or save PDF</button>`) + `
+  return pageHead("Reports", "Choose the rows and columns you need, then download for audits and council meetings",
+    `<button class="btn btn-outline-primary" data-action="export-xlsx">${ic("file-spreadsheet")}Excel</button>
+     <button class="btn btn-primary" data-action="export-pdf">${ic("file-down")}PDF</button>
+     <button class="btn btn-outline-secondary" data-action="print" title="Print">${ic("printer")}<span class="d-none d-sm-inline">Print</span></button>`) + `
     <ul class="nav nav-pills flex-wrap gap-1 mb-3 no-print">${Object.entries(REPORTS).map(([k, r]) =>
       `<li class="nav-item"><button class="nav-link ${S.report === k ? "active" : ""}" data-action="report" data-report="${k}">${r.title}</button></li>`).join("")}</ul>
+    <div class="d-flex flex-wrap gap-2 mb-3 no-print report-tools">
+      <div class="input-group flex-grow-1" style="max-width:440px"><span class="input-group-text">${ic("search")}</span>
+        <input class="form-control" id="rep-q" type="search" placeholder="Filter rows: a name, place, status…" aria-label="Filter rows" value="${esc(S.repQ)}"></div>
+      <button class="btn btn-outline-primary ${S.colsOpen ? "active" : ""}" data-action="report-cols" aria-expanded="${S.colsOpen}" aria-controls="col-panel">
+        ${ic("columns-3")}Columns <span class="badge rounded-pill text-bg-primary" id="col-count"></span></button>
+    </div>
+    <div class="card mb-3 no-print" id="col-panel" ${S.colsOpen ? "" : "hidden"}><div class="card-body" id="col-panel-body"></div></div>
     <div class="print-head"><img src="logo.png" alt=""><div>
       <div class="fw-bold fs-5">${esc(fullName())}</div>
       <div class="fw-bold">${REPORTS[S.report].title}</div><div class="small">Printed ${fmtDate(today())}</div></div></div>
     <div id="report-out"></div>`;
 }
+function renderColPanel() {
+  const el = $("#col-panel-body"); if (!el) return;
+  const { cols, shown } = reportData();
+  if (!cols.length) { el.innerHTML = `<p class="text-body-secondary mb-0">This report has no rows yet, so there are no columns to choose.</p>`; return; }
+  el.innerHTML = `<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+      <div><div class="fw-bold">Columns to show and export</div><div class="small text-body-secondary">Used for the table, Excel, PDF and printing. Remembered on this device.</div></div>
+      <div class="d-flex gap-2"><button class="btn btn-sm btn-outline-secondary" data-action="cols-all">${ic("check")}All</button>
+        <button class="btn btn-sm btn-outline-secondary" data-action="cols-reset">${ic("rotate-ccw")}Reset</button></div></div>
+    <div class="col-grid">${cols.map((c) => `<label class="col-chip"><input type="checkbox" class="form-check-input m-0" data-col="${esc(c)}" ${shown.includes(c) ? "checked" : ""}><span>${esc(c)}</span></label>`).join("")}</div>`;
+}
+const reportCell = (c, v) => isMoneyCol(c) ? (v === "" || v === null || v === undefined ? "—" : money(v)) : isDateVal(v) ? fmtDate(v) : esc(v);
 function renderReport() {
-  const rows = REPORTS[S.report].rows();
+  const { all, cols, shown, rows, totals } = reportData();
   const el = $("#report-out");
-  if (!rows.length) { el.innerHTML = `<div class="card">${emptyState("file-text", "No records for this report yet.")}</div>`; return; }
-  const cols = Object.keys(rows[0]);
-  const isMoney = (c) => c.startsWith("Cost") || c.startsWith("Total value") || c.startsWith("Amount received");
-  const isNum = (c) => isMoney(c) || ["Quantity", "Items", "Records", "Came back"].includes(c);
-  const totalCol = cols.find((c) => c.startsWith("Total value")) || cols.find(isMoney);
-  const total = totalCol ? rows.reduce((s, r) => s + (Number(r[totalCol]) || 0), 0) : null;
-  el.innerHTML = `<p class="small text-body-secondary d-md-none no-print">${ic("arrow-left-right")} Swipe the table sideways to see every column, or download it to Excel.</p>
-    <div class="card"><div class="table-responsive"><table class="table table-striped align-middle mb-0">
-    <thead><tr>${cols.map((c) => `<th class="${isNum(c) ? "text-end" : ""}">${esc(c)}</th>`).join("")}</tr></thead>
-    <tbody>${rows.map((r) => `<tr>${cols.map((c) => `<td class="${isNum(c) ? "text-end text-nowrap" : ""}">${isMoney(c) ? (r[c] === "" ? "—" : money(r[c])) : esc(r[c])}</td>`).join("")}</tr>`).join("")}</tbody>
-    ${totalCol ? `<tfoot class="table-group-divider"><tr>${cols.map((c, i) => `<td class="fw-bold ${isMoney(c) ? "text-end text-nowrap" : ""}">${i === 0 ? "Total" : c === totalCol ? money(total) : ""}</td>`).join("")}</tr></tfoot>` : ""}
-  </table></div><div class="card-footer bg-body text-body-secondary small">${plural(rows.length, "row")}</div></div>`;
+  $("#col-count").textContent = cols.length ? `${shown.length}/${cols.length}` : "";
+  if (!all.length) { el.innerHTML = `<div class="card">${emptyState("file-text", "No records for this report yet.")}</div>`; return; }
+  if (!rows.length) { el.innerHTML = `<div class="card">${emptyState("search", `No rows match “${esc(S.repQ)}”.`)}</div>`; return; }
+  const hasTotals = Object.keys(totals).length > 0;
+  el.innerHTML = `<p class="small text-body-secondary d-md-none no-print">${ic("arrow-left-right")} Swipe the table sideways to see every column.</p>
+    <div class="card"><div class="table-responsive"><table class="table table-striped align-middle mb-0 report-table">
+    <thead><tr>${shown.map((c) => `<th class="${isNumCol(c) ? "text-end" : ""}">${esc(c)}</th>`).join("")}</tr></thead>
+    <tbody>${rows.map((r) => `<tr>${shown.map((c) => `<td class="${String(r[c] ?? "").length > 40 ? "long" : ""} ${isNumCol(c) ? "text-end" : ""}">${reportCell(c, r[c])}</td>`).join("")}</tr>`).join("")}</tbody>
+    ${hasTotals ? `<tfoot class="table-group-divider"><tr>${shown.map((c, i) => `<td class="fw-bold ${isNumCol(c) ? "text-end text-nowrap" : ""}">${c in totals ? (isMoneyCol(c) ? money(totals[c]) : num0(totals[c])) : i === 0 ? "Total" : ""}</td>`).join("")}</tr></tfoot>` : ""}
+  </table></div><div class="card-footer bg-body text-body-secondary small d-flex flex-wrap gap-3">
+    <span>${rows.length === all.length ? plural(rows.length, "row") : `${rows.length} of ${plural(all.length, "row")}`}</span>
+    <span>${shown.length} of ${plural(cols.length, "column")}</span></div></div>`;
+}
+function exportXlsx() {
+  const { r, shown, rows, totals } = reportData();
+  if (!rows.length) { toast("There are no rows to download."); return; }
+  const data = rows.map((x) => Object.fromEntries(shown.map((c) => [c, x[c]])));
+  const ws = XLSX.utils.json_to_sheet(data, { header: shown });
+  if (Object.keys(totals).length) {
+    const first = shown.find((c) => !(c in totals));
+    XLSX.utils.sheet_add_json(ws, [Object.fromEntries(shown.map((c) => [c, c in totals ? totals[c] : c === first ? "Total" : ""]))], { header: shown, skipHeader: true, origin: -1 });
+  }
+  ws["!cols"] = shown.map((c) => ({ wch: Math.min(45, Math.max(c.length, ...data.map((d) => String(d[c] ?? "").length)) + 2) }));
+  const range = XLSX.utils.decode_range(ws["!ref"]);
+  shown.forEach((c, ci) => { if (!isMoneyCol(c)) return;
+    for (let ri = 1; ri <= range.e.r; ri++) { const cell = ws[XLSX.utils.encode_cell({ r: ri, c: ci })]; if (cell && cell.t === "n") cell.z = "#,##0.00"; } });
+  ws["!autofilter"] = { ref: XLSX.utils.encode_range({ s: { r: 0, c: 0 }, e: { r: rows.length, c: shown.length - 1 } }) };
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, r.title.slice(0, 31));
+  XLSX.writeFile(wb, `${r.title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-${today()}.xlsx`);
+}
+
+/* ----- Designed PDF reports (jsPDF + AutoTable, loaded when first needed) ----- */
+const PDF_MAP = { "ɛ": "e", "Ɛ": "E", "ɔ": "o", "Ɔ": "O", "→": "->", "₵": "C", " ": " ", " ": " ", " ": " " };
+const WINANSI = "€‚ƒ„…†‡ˆ‰Š‹ŒŽ‘’“”•–—˜™š›œžŸ";
+const pdfText = (v) => String(v ?? "").normalize("NFC").replace(/[^\x20-\x7e\xa0-\xff]/g, (ch) =>
+  PDF_MAP[ch] ?? (WINANSI.includes(ch) ? ch : ch.normalize("NFD").replace(/[^\x20-\x7e\xa0-\xff]/g, "") || "?"));
+let logoCache;
+async function logoData() {
+  if (logoCache !== undefined) return logoCache;
+  try {
+    const blob = await (await fetch("logo.png")).blob();
+    const bmp = await createImageBitmap(blob);
+    const c = document.createElement("canvas"); c.width = c.height = 220;
+    const g = c.getContext("2d"); g.fillStyle = "#fff"; g.fillRect(0, 0, 220, 220); g.drawImage(bmp, 0, 0, 220, 220);
+    logoCache = c.toDataURL("image/jpeg", 0.9);
+  } catch { logoCache = null; }
+  return logoCache;
+}
+async function exportPdf(btn) {
+  const { r, all, cols, shown, rows, totals } = reportData();
+  if (!rows.length) { toast("There are no rows to download."); return; }
+  const label = btn.innerHTML; btn.disabled = true;
+  btn.innerHTML = `<span class="spinner-border spinner-border-sm me-2"></span>Making PDF`;
+  try {
+    await loadScript(LIBS.jspdf); await loadScript(LIBS.autotable);
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ orientation: shown.length > 6 ? "landscape" : "portrait", unit: "mm", format: "a4", compress: true });
+    const W = doc.internal.pageSize.getWidth(), H = doc.internal.pageSize.getHeight(), M = 14;
+    const BLUE = [12, 74, 154], NAVY = [10, 44, 92], YELLOW = [242, 183, 5], RED = [204, 31, 47], GREY = [96, 108, 122], INK = [30, 36, 44], TINT = [234, 241, 251];
+    const T = pdfText, logo = await logoData();
+    const who = S.me?.full_name || S.me?.email || "";
+    const stamp = new Date().toLocaleString(undefined, { day: "numeric", month: "short", year: "numeric", hour: "numeric", minute: "2-digit" });
+    const font = (size, style = "normal", color = INK) => { doc.setFont("helvetica", style); doc.setFontSize(size); doc.setTextColor(...color); };
+    const accent = (y) => { const w = W - 2 * M; doc.setFillColor(...BLUE); doc.rect(M, y, w - 34, 1.1, "F");
+      doc.setFillColor(...YELLOW); doc.rect(M + w - 33, y, 18, 1.1, "F"); doc.setFillColor(...RED); doc.rect(M + w - 14, y, 14, 1.1, "F"); };
+
+    // Page 1 header: logo, church, report title, when and by whom
+    let y = M;
+    if (logo) doc.addImage(logo, "JPEG", M, y - 1, 19, 19);
+    const tx = logo ? M + 23 : M;
+    font(13.5, "bold", NAVY); doc.text(T(CFG.CHURCH_NAME), tx, y + 5.5);
+    font(9.5, "normal", GREY); doc.text(T(`${CFG.BRANCH_NAME} · Asset Manager`), tx, y + 11);
+    font(16, "bold", BLUE); doc.text(T(r.title), W - M, y + 5.5, { align: "right" });
+    font(8.5, "normal", GREY); doc.text(T(`Generated ${stamp}`), W - M, y + 11, { align: "right" });
+    if (who) doc.text(T(`by ${who}`), W - M, y + 15.5, { align: "right" });
+    y += 21; accent(y); y += 6;
+
+    // Summary tiles
+    const tiles = [["Rows", rows.length === all.length ? String(rows.length) : `${rows.length} of ${all.length}`]];
+    for (const [c, v] of Object.entries(totals)) tiles.push([c.replace(/\s*\(.*\)$/, ""), isMoneyCol(c) ? `${CFG.CURRENCY} ${num2(v)}` : num0(v)]);
+    const shownTiles = tiles.slice(0, 5), gap = 4;
+    const tw = Math.min(52, (W - 2 * M - gap * (shownTiles.length - 1)) / shownTiles.length);
+    shownTiles.forEach(([k, v], i) => {
+      const x = M + i * (tw + gap);
+      doc.setFillColor(...TINT); doc.roundedRect(x, y, tw, 14, 2, 2, "F");
+      doc.setFillColor(...BLUE); doc.rect(x, y + 2, 0.9, 10, "F");
+      font(7, "bold", GREY); doc.text(T(k.toUpperCase()), x + 4, y + 5.2, { maxWidth: tw - 6 });
+      font(11, "bold", NAVY); doc.text(T(v), x + 4, y + 11.2, { maxWidth: tw - 6 });
+    });
+    y += 18;
+    const notes = [];
+    if (S.repQ.trim()) notes.push(`Rows matching “${S.repQ.trim()}”`);
+    if (shown.length < cols.length) notes.push(`${shown.length} of ${cols.length} columns`);
+    if (notes.length) { font(8, "italic", GREY); doc.text(T(notes.join(" · ")), M, y); y += 4; }
+
+    // The table
+    const cell = (c, v) => isMoneyCol(c) ? (v === "" || v === null || v === undefined ? "—" : num2(v)) : isNumCol(c) && v !== "" ? num0(v) : isDateVal(v) ? fmtDate(v) : v;
+    const first = shown.find((c) => !(c in totals));
+    const opts = {
+      startY: y + 1,
+      head: [shown.map(T)],
+      body: rows.map((x) => shown.map((c) => T(cell(c, x[c])))),
+      foot: Object.keys(totals).length ? [shown.map((c) => c in totals ? T(isMoneyCol(c) ? num2(totals[c]) : num0(totals[c])) : c === first ? "Total" : "")] : undefined,
+      showFoot: "lastPage", showHead: "everyPage",
+      margin: { left: M, right: M, top: 22, bottom: 17 },
+      theme: "grid",
+      styles: { font: "helvetica", fontSize: shown.length > 10 ? 7.5 : 8.5, cellPadding: { top: 2.1, bottom: 2.1, left: 2.2, right: 2.2 },
+        textColor: INK, lineColor: [221, 228, 238], lineWidth: 0.15, overflow: "linebreak", valign: "middle" },
+      headStyles: { fillColor: BLUE, textColor: 255, fontStyle: "bold", lineColor: BLUE },
+      footStyles: { fillColor: TINT, textColor: NAVY, fontStyle: "bold", lineColor: [200, 214, 235] },
+      alternateRowStyles: { fillColor: [247, 249, 253] },
+      columnStyles: Object.fromEntries(shown.map((c, i) => [i, isNumCol(c) ? { halign: "right", minCellWidth: 16 } : {}])),
+      didParseCell: (d) => { if (isNumCol(shown[d.column.index])) d.cell.styles.halign = "right"; }
+    };
+    if (typeof doc.autoTable === "function") doc.autoTable(opts); else window.autoTable(doc, opts);
+
+    // Sign-off space for audits, when it fits on the last page
+    let end = (doc.lastAutoTable?.finalY || y) + 14;
+    if (end + 16 > H - 18) { doc.addPage(); end = 30; }
+    font(8.5, "normal", GREY);
+    const half = (W - 2 * M - 10) / 2;
+    [["Prepared by", who], ["Checked and approved by", ""]].forEach(([k, v], i) => {
+      const x = M + i * (half + 10);
+      doc.setDrawColor(170, 180, 192); doc.setLineWidth(0.25); doc.line(x, end + 8, x + half - 30, end + 8); doc.line(x + half - 26, end + 8, x + half, end + 8);
+      font(9, "normal", INK); if (v) doc.text(T(v), x, end + 6.5);
+      font(7.5, "normal", GREY); doc.text(T(`${k} (name and signature)`), x, end + 12); doc.text("Date", x + half - 26, end + 12);
+    });
+
+    // Running header (page 2 onwards) and footer on every page
+    const pages = doc.internal.getNumberOfPages();
+    for (let p = 1; p <= pages; p++) {
+      doc.setPage(p);
+      if (p > 1) {
+        if (logo) doc.addImage(logo, "JPEG", M, 8, 9, 9);
+        font(9, "bold", NAVY); doc.text(T(fullName()), logo ? M + 12 : M, 13.8);
+        font(9, "bold", BLUE); doc.text(T(r.title), W - M, 13.8, { align: "right" });
+        accent(18.5);
+      }
+      doc.setDrawColor(221, 228, 238); doc.setLineWidth(0.2); doc.line(M, H - 12, W - M, H - 12);
+      font(7.5, "normal", GREY);
+      doc.text(T(`${fullName()} · ${r.title} · ${stamp}`), M, H - 7.5);
+      doc.text(`Page ${p} of ${pages}`, W - M, H - 7.5, { align: "right" });
+    }
+    doc.setProperties({ title: `${r.title} · ${fullName()}`, subject: "Asset report", author: who, creator: "Church Asset Manager" });
+    doc.save(`${r.title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-${today()}.pdf`);
+    toast("PDF downloaded");
+  } catch (err) {
+    toast(isNetErr(err) || /load|script/i.test(String(err?.message || err)) ? "The PDF maker couldn't load. Check your internet connection and try again." : friendlyError(err));
+  } finally { btn.disabled = false; btn.innerHTML = label; }
 }
 
 /* ----- Lists ----- */
@@ -1354,7 +1585,7 @@ function viewLists() {
   const block = (table, title, icon, list) => `
     <div class="col-md-6 col-xl-4"><div class="card h-100">
       <div class="card-header">${ic(icon)}${title}<span class="ms-auto badge text-bg-secondary rounded-pill">${list.length}</span></div>
-      <div class="card-body pb-2 needs-edit">
+      <div class="card-body pb-2 needs-lists">
         <form class="input-group" data-form="list" data-table="${table}">
           <input class="form-control" name="name" required placeholder="Add new…" aria-label="New ${title.toLowerCase()} name">
           <button class="btn btn-primary btn-icon" style="height:auto;width:2.75rem" type="submit" aria-label="Add ${title.toLowerCase()}" title="Add">${ic("plus")}</button>
@@ -1362,7 +1593,7 @@ function viewLists() {
       </div>
       <ul class="list-group list-group-flush">${list.map((x) => `<li class="list-group-item d-flex justify-content-between align-items-center gap-2">
         <span>${esc(x.name)}</span>
-        <button class="btn btn-sm btn-outline-danger btn-icon needs-edit" data-action="delete-item" data-table="${table}" data-id="${x.id}" aria-label="Remove ${esc(x.name)}" title="Remove">${ic("trash-2")}</button></li>`).join("")
+        <button class="btn btn-sm btn-outline-danger btn-icon needs-lists" data-action="delete-item" data-table="${table}" data-id="${x.id}" aria-label="Remove ${esc(x.name)}" title="Remove">${ic("trash-2")}</button></li>`).join("")
         || '<li class="list-group-item text-body-secondary">None yet</li>'}</ul>
     </div></div>`;
   return pageHead("Lists", "The choices that appear when you add or edit an asset") + `
@@ -1382,21 +1613,21 @@ function viewUsers() {
   return pageHead("Users", `${S.members.length} ${S.members.length === 1 ? "person" : "people"} with access${pending ? ` · ${pending} still to create their account` : ""}`,
       `<button class="btn btn-primary" data-action="invite-user">${ic("user-plus")}Invite someone</button>`) + `
     <div class="card mb-4"><div class="table-responsive"><table class="table align-middle mb-0">
-      <thead><tr><th>Person</th><th>Role</th><th>Status</th><th class="d-none d-md-table-cell">Last signed in</th><th></th></tr></thead>
+      <thead><tr><th>Person</th><th>Access</th><th>Status</th><th class="d-none d-md-table-cell">Last signed in</th><th></th></tr></thead>
       <tbody>${S.members.map((m) => {
         const self = m.email === myEmail;
         return `<tr>
           <td><div class="d-flex align-items-center gap-2"><span class="avatar">${esc(initials(m.full_name, m.email))}</span>
             <div class="min-w-0"><div class="fw-bold text-truncate">${esc(m.full_name || m.email.split("@")[0])}${self ? ' <span class="text-body-secondary fw-normal">(you)</span>' : ""}</div>
             <div class="small text-body-secondary text-truncate">${esc(m.email)}</div></div></div></td>
-          <td>${badge(ROLES[m.role].tone, ROLES[m.role].label, ROLES[m.role].icon)}</td>
+          <td>${badge(roleOf(m).tone, roleOf(m).label, roleOf(m).icon)}${m.role === "custom" ? `<div class="small text-body-secondary mt-1" style="max-width:22rem">${esc(permsOf(m).map((k) => PERMS.find((p) => p.key === k).short).join(", ") || "Look only")}</div>` : ""}</td>
           <td>${memberStatus(m)}</td>
           <td class="d-none d-md-table-cell small text-body-secondary text-nowrap">${m.signed_up ? fmtWhen(m.last_sign_in_at) : "—"}</td>
           <td class="text-end">
             <div class="dropdown">
               <button class="btn btn-sm btn-outline-secondary btn-icon" data-bs-toggle="dropdown" data-bs-popper-config='{"strategy":"fixed"}' aria-expanded="false" aria-label="Actions for ${esc(m.email)}">${ic("ellipsis")}</button>
               <ul class="dropdown-menu dropdown-menu-end shadow">
-                <li><button class="dropdown-item" data-action="edit-user" data-id="${m.id}">${ic("pencil")}Change name or role</button></li>
+                <li><button class="dropdown-item" data-action="edit-user" data-id="${m.id}">${ic("sliders-horizontal")}Change name or access</button></li>
                 ${!m.signed_up && m.active ? `<li><button class="dropdown-item" data-action="share-invite" data-id="${m.id}">${ic("message-circle")}Send invitation again</button></li>` : ""}
                 ${m.signed_up ? `<li><button class="dropdown-item" data-action="set-password" data-id="${m.id}">${ic("key-round")}Set a temporary password</button></li>` : ""}
                 ${self ? "" : `<li><hr class="dropdown-divider"></li>
@@ -1406,21 +1637,90 @@ function viewUsers() {
             </div>
           </td></tr>`;
       }).join("")}</tbody></table></div></div>
+    ${S.permUpgrade ? `<div class="alert alert-warning d-flex gap-2">${ic("triangle-alert")}<div>To choose exactly what each person can do (the <b>Custom</b> option), run <b>upgrade-permissions.sql</b> in Supabase first (see the README).</div></div>` : ""}
     <div class="row g-3">${Object.values(ROLES).map((r) => `
-      <div class="col-md-4"><div class="card h-100"><div class="card-body">
+      <div class="col-md-6 col-xl-3"><div class="card h-100"><div class="card-body">
         <div class="fw-bold d-flex align-items-center gap-2 mb-1 text-brand">${ic(r.icon)}${r.label}</div>
         <div class="small text-body-secondary">${r.text}</div></div></div></div>`).join("")}
     </div>`;
 }
-function roleChooser(current = "editor") {
-  return `<div class="row g-2">${Object.entries(ROLES).map(([k, r]) => `
-    <div class="col-sm-4 role-option">
-      <input type="radio" class="btn-check" name="role" id="role-${k}" value="${k}" ${k === current ? "checked" : ""}>
-      <label class="btn btn-outline-primary w-100 p-3" for="role-${k}"><strong>${ic(r.icon)}${r.label}</strong><span class="small mt-1">${r.text}</span></label>
-    </div>`).join("")}</div>`;
+function accessPicker(role = "editor", perms = null) {
+  const on = new Set(role === "custom" ? perms || [] : ROLE_PERMS[role] || []);
+  const roles = Object.entries(ROLES).filter(([k]) => k !== "custom" || !S.permUpgrade);
+  return `<div class="row g-2">${roles.map(([k, r]) => `
+    <div class="col-6 ${roles.length === 4 ? "col-xl-3" : "col-xl-4"} role-option">
+      <input type="radio" class="btn-check" name="role" id="role-${k}" value="${k}" ${k === role ? "checked" : ""}>
+      <label class="btn btn-outline-primary w-100 p-3" for="role-${k}"><strong>${ic(r.icon)}${r.label}</strong><span class="small mt-1 d-none d-sm-block">${r.text}</span></label>
+    </div>`).join("")}</div>
+    ${S.permUpgrade ? "" : `<div class="perm-box mt-3">
+      <div class="d-flex flex-wrap align-items-baseline justify-content-between gap-2 mb-2">
+        <span class="fw-bold">What they can do</span><span class="small text-body-secondary" id="perm-note"></span></div>
+      <div class="row g-2">${PERMS.map((p) => `
+        <div class="col-md-6"><label class="perm-item">
+          <input class="form-check-input" type="checkbox" name="perm" value="${p.key}" ${on.has(p.key) ? "checked" : ""}>
+          <span class="perm-ic">${ic(p.icon)}</span>
+          <span class="min-w-0"><span class="d-block fw-bold">${p.label}</span><span class="d-block small text-body-secondary">${p.hint}</span></span>
+        </label></div>`).join("")}</div>
+      <div class="small text-body-secondary mt-3 d-flex gap-2">${ic("info")}<span>Everyone can look up items, scan QR labels and get phone notifications. Only admins can manage users, church details and daily reminders.</span></div>
+    </div>`}`;
 }
+/* Keep the role and the ticked boxes in step: a preset ticks its boxes; changing a box makes it Custom
+   (or the matching preset again). Importing needs adding items. */
+function syncAccess(form, changed) {
+  const boxes = [...form.querySelectorAll('input[name="perm"]')]; if (!boxes.length) return;
+  const box = (k) => boxes.find((b) => b.value === k);
+  let role = form.elements.role.value;
+  if (changed?.name === "perm") {
+    if (changed.value === "import" && changed.checked) box("assets").checked = true;
+    if (changed.value === "assets" && !changed.checked) box("import").checked = false;
+    const set = boxes.filter((b) => b.checked).map((b) => b.value).join();
+    role = set === ROLE_PERMS.editor.join() ? "editor" : set === ROLE_PERMS.viewer.join() ? "viewer" : "custom";
+    form.querySelector(`#role-${role}`).checked = true;
+  } else if (role !== "custom") {
+    boxes.forEach((b) => (b.checked = ROLE_PERMS[role].includes(b.value)));
+  }
+  boxes.forEach((b) => (b.disabled = role === "admin"));
+  const n = boxes.filter((b) => b.checked).length;
+  $("#perm-note").textContent = role === "admin" ? "Admins can do everything." : role === "custom" ? `${n} of ${boxes.length} ticked` : "Tick or untick any box to make your own mix.";
+}
+const readAccess = (fd) => {
+  const role = fd.get("role");
+  return { role, ...(S.permUpgrade ? {} : { perms: role === "custom" ? fd.getAll("perm") : ROLE_PERMS[role] }) };
+};
 function inviteMessage(m) {
-  return `Hello${m.full_name ? " " + m.full_name.split(" ")[0] : ""},\n\nYou've been invited to the ${fullName()} Asset Manager as ${/^[aeiou]/i.test(ROLES[m.role].label) ? "an" : "a"} ${ROLES[m.role].label}.\n\n1. Open ${APP_URL}\n2. Tap "Create account" and use this email: ${m.email}\n3. Choose your own password.\n\nOn a phone, use "Add to Home Screen" to keep it like an app.`;
+  const first = m.full_name ? " " + m.full_name.split(" ")[0] : "";
+  const p = new Set(m.role === "admin" ? ALL_PERMS : permsOf(m));
+  const r = roleOf(m);
+  const as = m.role === "custom" ? "" : ` as ${/^[aeiou]/i.test(r.label) ? "an" : "a"} ${r.label}`;
+  const can = [
+    "look up any item, and scan its QR label with your phone camera to open it",
+    p.has("assets") && "add and update items, with photos and asset tags",
+    p.has("import") && "add many items at once from an Excel sheet",
+    p.has("loans") && "lend items out and record returns",
+    p.has("maintenance") && "log repairs and servicing, and set repeating maintenance reminders",
+    p.has("dispose") && "record items that are disposed of or lost",
+    p.has("delete") && "delete items",
+    p.has("labels") && "print QR code labels to stick on items",
+    p.has("lists") && "manage categories, locations and ministries",
+    p.has("reports") && "see and download reports (Excel or PDF)",
+    p.has("activity") && "see the change history (who changed what)",
+    m.role === "admin" && "invite people and manage church settings"
+  ].filter(Boolean);
+  return `Hello${first},
+
+You've been invited to the Asset Manager of ${fullName()}${as}.
+
+To get started:
+1. Open ${APP_URL}
+2. Tap "Create account" and use this email: ${m.email}
+3. Choose your own password.
+
+You'll be able to:
+${can.map((x) => `• ${x}`).join("\n")}
+
+Tips:
+• On your phone, add it to your Home Screen (Android: browser menu → Install app; iPhone: Safari → Share → Add to Home Screen). It then opens like an app and works without internet.
+• Turn on reminders for loans and maintenance in More → Settings → Notifications.`;
 }
 function shareBlock(text, email, subject) {
   return `<label class="form-label fw-bold" for="share-text">Message</label>
@@ -1440,11 +1740,12 @@ function inviteForm() {
           <div class="invalid-feedback">Enter a valid email address.</div></div>
         <div class="col-md-6"><label class="form-label fw-bold" for="i_name">Full name</label>
           <input class="form-control" id="i_name" name="full_name" placeholder="e.g. Ama Owusu"></div>
-        <div class="col-12"><span class="form-label fw-bold d-block">Role</span>${roleChooser("editor")}</div>
+        <div class="col-12"><span class="form-label fw-bold d-block">Access</span>${accessPicker("editor")}</div>
       </div>
       <div class="alert alert-info small mt-3 mb-0 d-flex gap-2">${ic("info")}<div>The app doesn't send emails itself. After you invite someone, you'll get a message to send them on WhatsApp or by email, with the link and steps to create their account.</div></div>
       ${formFoot("Invite")}
     </form>`);
+  syncAccess(document.querySelector('#modal form[data-form="invite"]'));
 }
 function shareInvite(m) {
   openModal(`${ic("message-circle")}Send the invitation`, `
@@ -1459,11 +1760,12 @@ function editUserForm(m) {
         <div class="col-md-6"><label class="form-label fw-bold">Email address</label><input class="form-control" value="${esc(m.email)}" disabled></div>
         <div class="col-md-6"><label class="form-label fw-bold" for="e_name">Full name</label>
           <input class="form-control" id="e_name" name="full_name" value="${esc(m.full_name)}"></div>
-        <div class="col-12"><span class="form-label fw-bold d-block">Role</span>${roleChooser(m.role)}
-          ${self ? `<div class="form-text">If you change your own role away from Admin, you'll lose access to this page.</div>` : ""}</div>
+        <div class="col-12"><span class="form-label fw-bold d-block">Access</span>${accessPicker(m.role, m.perms)}
+          ${self ? `<div class="form-text">If you change your own access away from Admin, you'll lose access to this page.</div>` : ""}</div>
       </div>
       ${formFoot("Save changes")}
     </form>`);
+  syncAccess(document.querySelector('#modal form[data-form="edit-user"]'));
 }
 function randomPassword() {
   const abc = "abcdefghjkmnpqrstuvwxyz23456789", a = new Uint32Array(12); crypto.getRandomValues(a);
@@ -1510,7 +1812,11 @@ function viewSettings() {
             <div class="col-md-6"><label class="form-label fw-bold" for="s_name">Your name</label>
               <input class="form-control" id="s_name" name="full_name" value="${esc(S.me.full_name)}" placeholder="e.g. Ama Owusu"></div>
             <div class="col-md-6"><label class="form-label fw-bold">Email and role</label>
-              <div class="form-control bg-body-tertiary d-flex align-items-center gap-2 flex-wrap"><span class="text-truncate">${esc(S.me.email)}</span>${badge(ROLES[S.me.role].tone, ROLES[S.me.role].label, ROLES[S.me.role].icon)}</div></div>
+              <div class="form-control bg-body-tertiary d-flex align-items-center gap-2 flex-wrap"><span class="text-truncate">${esc(S.me.email)}</span>${badge(roleOf(S.me).tone, roleOf(S.me).label, roleOf(S.me).icon)}</div></div>
+            <div class="col-12"><span class="form-label fw-bold d-block">What you can do</span>
+              <div class="perm-chips">${isAdmin() ? badge("primary", "Everything, including users and church settings", "shield-check")
+                : permsOf(S.me).map((k) => { const p = PERMS.find((x) => x.key === k); return badge("primary", p.short, p.icon); }).join("") || `<span class="text-body-secondary small">Look up items and scan labels.</span>`}</div>
+              <div class="form-text">Need to do more? Ask an admin.</div></div>
             <div class="col-12"><button class="btn btn-primary" type="submit">Save name</button></div>
           </form>
           <hr class="my-4">
@@ -1594,6 +1900,7 @@ const FIELDS = {
   service_date: ["Date", fmtDate], description: "Work done", performed_by: "Done by", next_due: ["Next due", fmtDate],
   task: "Task", every: "Every", unit: "Unit", active: ["Active", yesNo],
   email: "Email", full_name: "Full name", role: ["Role", (v) => ROLES[v]?.label || v],
+  perms: ["Can do", (v) => (Array.isArray(v) && v.length ? PERMS.filter((p) => v.includes(p.key)).map((p) => p.short).join(", ") : "look only")],
   church_name: "Church name", branch_name: "Assembly", currency: "Currency", reminder_days: "Reminder days"
 };
 const ACT_SHOW_ON_ADD = {
@@ -1938,7 +2245,7 @@ function loanCard(b) {
     <div class="small text-body-secondary">${fmtDate(b.borrowed_on)} → ${b.returned_on ? `returned ${fmtDate(b.returned_on)}` : b.due_on ? `due ${fmtDate(b.due_on)}` : "no due date"}
       ${short ? `<span class="text-danger"> · ${loanQty(b) - b.returned_quantity} not returned</span>` : ""}</div>
     ${b.returned_on ? "" : `<div class="d-flex flex-wrap gap-2 mt-2">
-      <button class="btn btn-sm btn-primary needs-edit" data-action="return-loan" data-id="${b.id}">${ic("check")}Mark returned</button>
+      <button class="btn btn-sm btn-primary needs-loans" data-action="return-loan" data-id="${b.id}">${ic("check")}Mark returned</button>
       ${b.borrower_phone ? `<a class="btn btn-sm btn-outline-primary" href="tel:${esc(b.borrower_phone)}">${ic("phone")}Call</a>${waLink(b, "btn btn-sm btn-outline-success")}` : ""}
     </div>`}
   </div>`;
@@ -1964,7 +2271,7 @@ function mobileDue(due) {
       <div class="min-w-0 flex-grow-1"><a href="#" class="fw-bold text-decoration-none" data-action="open-asset" data-id="${a.id}">${esc(a.name)}</a>${qtyBadge(a)}
         <div class="small">${task ? `${ic("repeat")} ${esc(task)}` : "Servicing"}</div>
         <div class="small text-body-secondary">${fmtDate(when)} ${b}</div></div>
-      <button class="btn btn-outline-primary btn-icon btn-tap needs-edit" data-action="log-service" data-id="${a.id}" ${plan ? `data-plan="${plan.id}"` : ""}
+      <button class="btn btn-outline-primary btn-icon btn-tap needs-maint" data-action="log-service" data-id="${a.id}" ${plan ? `data-plan="${plan.id}"` : ""}
         aria-label="Log ${esc(task || "service")} done for ${esc(a.name)}" title="Log it as done">${ic("check")}</button></div>`;
   }).join("")}</div>`;
 }
@@ -1974,7 +2281,7 @@ function mobilePlans(plans) {
       <div class="fw-bold">${esc(p.task)}</div>
       <div class="small"><a href="#" class="text-decoration-none" data-action="open-asset" data-id="${p.asset_id}">${esc(assetName(p.asset_id))}</a> · ${everyText(p)}</div>
       <div class="small text-body-secondary">${p.active ? `Next due ${fmtDate(p.next_due)}` : badge("secondary", "Paused", "pause")}</div></div>
-      <div class="d-flex gap-1 flex-none needs-edit">${iconBtn("edit-plan", p.id, "pencil", "Edit schedule")}${iconBtn("toggle-plan", p.id, p.active ? "pause" : "play", p.active ? "Pause schedule" : "Resume schedule")}${iconBtn("delete-plan", p.id, "trash-2", "Delete schedule", "danger")}</div>
+      <div class="d-flex gap-1 flex-none needs-maint">${iconBtn("edit-plan", p.id, "pencil", "Edit schedule")}${iconBtn("toggle-plan", p.id, p.active ? "pause" : "play", p.active ? "Pause schedule" : "Resume schedule")}${iconBtn("delete-plan", p.id, "trash-2", "Delete schedule", "danger")}</div>
     </div></div>`).join("")}</div>`;
 }
 function mobileHistory(list) {
@@ -1982,7 +2289,7 @@ function mobileHistory(list) {
     <div class="d-flex justify-content-between gap-2 align-items-start">
       <a href="#" class="fw-bold text-decoration-none" data-action="open-asset" data-id="${m.asset_id}">${esc(assetName(m.asset_id))}</a>
       <span class="d-flex gap-2 align-items-center flex-none"><span class="fw-bold text-nowrap">${money(m.cost)}</span>
-        <span class="needs-edit">${iconBtn("delete-service", m.id, "trash-2", "Delete record", "danger")}</span></span></div>
+        <span class="needs-maint">${iconBtn("delete-service", m.id, "trash-2", "Delete record", "danger")}</span></span></div>
     <div class="small">${esc(m.description)}${m.plan_id ? ` <span class="text-body-secondary">${ic("repeat")}</span>` : ""}</div>
     <div class="small text-body-secondary">${fmtDate(m.service_date)}${m.performed_by ? ` · ${esc(m.performed_by)}` : ""}</div></div>`).join("")}</div>`;
 }
@@ -2017,7 +2324,9 @@ async function shrinkPhoto(file, max = 1600, quality = 0.82) {
 /* ----- QR labels and scanning ----- */
 const LIBS = {
   qr: "https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js",
-  jsqr: "https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"
+  jsqr: "https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js",
+  jspdf: "https://cdn.jsdelivr.net/npm/jspdf@4.2.1/dist/jspdf.umd.min.js",
+  autotable: "https://cdn.jsdelivr.net/npm/jspdf-autotable@5.0.7/dist/jspdf.plugin.autotable.min.js"
 };
 const scriptLoads = {};
 function loadScript(src) {
@@ -2127,7 +2436,7 @@ async function updateLabels(withList) {
   $("#lbl-untagged").innerHTML = untagged.length ? `<div class="alert alert-warning small mb-0 d-flex flex-wrap gap-2 align-items-center">${ic("tag")}
     <span class="me-auto">${plural(untagged.length, "chosen item")} ${untagged.length === 1 ? "has" : "have"} no asset tag. The QR code still works,
     but a printed number helps when no phone is handy.</span>
-    <button type="button" class="btn btn-sm btn-warning needs-edit" data-action="lbl-tags">${ic("tag")}Give ${untagged.length === 1 ? "it a tag" : "them tags"}</button></div>` : "";
+    <button type="button" class="btn btn-sm btn-warning needs-assets" data-action="lbl-tags">${ic("tag")}Give ${untagged.length === 1 ? "it a tag" : "them tags"}</button></div>` : "";
   clearTimeout(previewTimer);
   previewTimer = setTimeout(async () => {
     const wrap = $("#lbl-preview"); if (!wrap) return;
@@ -2284,7 +2593,7 @@ function assetDetail(id) {
   openModal(`${esc(a.name)}${qty(a) > 1 ? ` <span class="badge rounded-pill bg-white text-dark">×${qty(a)}</span>` : ""}`, `
     ${current.map((loan) => `<div class="alert alert-warning d-flex flex-wrap gap-2 align-items-center py-2">${ic("arrow-left-right")}
       <span><b>${qty(a) > 1 ? `${loanQty(loan)} on loan` : "On loan"} to ${esc(loan.borrower_name)}</b>${loan.due_on ? `, due back ${fmtDate(loan.due_on)}` : ""}.</span>
-      <button class="btn btn-sm btn-warning ms-auto needs-edit" data-action="return-loan" data-id="${loan.id}">${ic("check")}Mark returned</button></div>`).join("")}
+      <button class="btn btn-sm btn-warning ms-auto needs-loans" data-action="return-loan" data-id="${loan.id}">${ic("check")}Mark returned</button></div>`).join("")}
     <div class="row g-4 mb-3">
       <div class="col-sm-4">${url ? `<img class="detail-photo" src="${url}" alt="Photo of ${esc(a.name)}">` : `<div class="detail-photo empty">${ic("image")}</div>`}</div>
       <div class="col-sm-8"><dl class="row facts mb-0">
@@ -2303,15 +2612,15 @@ function assetDetail(id) {
     </div>
     ${disposalSummary(a)}
     ${a.notes ? `<p class="bg-body-tertiary rounded p-3" style="white-space:pre-wrap">${esc(a.notes)}</p>` : ""}
-    <div class="d-flex flex-wrap gap-2 mb-4 needs-edit detail-actions">
-      <button class="btn btn-primary" data-action="edit-asset" data-id="${a.id}">${ic("pencil")}Edit</button>
-      ${avail ? `<button class="btn btn-outline-primary" data-action="lend" data-id="${a.id}">${ic("external-link")}Lend out</button>` : ""}
-      ${qty(a) > 1 ? `<button class="btn btn-outline-primary" data-action="split-asset" data-id="${a.id}">${ic("split")}Split group</button>` : ""}
-      <button class="btn btn-outline-primary" data-action="log-service" data-id="${a.id}">${ic("wrench")}Log maintenance</button>
-      <button class="btn btn-outline-primary" data-action="add-plan" data-id="${a.id}">${ic("repeat")}Schedule</button>
-      ${a.id > 0 ? `<button class="btn btn-outline-primary" data-action="print-labels" data-id="${a.id}">${ic("qr-code")}Print label</button>` : ""}
-      <button class="btn btn-outline-danger ms-sm-auto" data-action="delete-asset" data-id="${a.id}">${ic("trash-2")}Delete</button>
-    </div>
+    ${[
+      (can("assets") || can("dispose")) && `<button class="btn btn-primary" data-action="edit-asset" data-id="${a.id}">${ic("pencil")}${can("assets") ? "Edit" : "Change status"}</button>`,
+      avail && can("loans") && `<button class="btn btn-outline-primary" data-action="lend" data-id="${a.id}">${ic("external-link")}Lend out</button>`,
+      qty(a) > 1 && can("assets") && `<button class="btn btn-outline-primary" data-action="split-asset" data-id="${a.id}">${ic("split")}Split group</button>`,
+      can("maintenance") && `<button class="btn btn-outline-primary" data-action="log-service" data-id="${a.id}">${ic("wrench")}Log maintenance</button>`,
+      can("maintenance") && `<button class="btn btn-outline-primary" data-action="add-plan" data-id="${a.id}">${ic("repeat")}Schedule</button>`,
+      a.id > 0 && can("labels") && `<button class="btn btn-outline-primary" data-action="print-labels" data-id="${a.id}">${ic("qr-code")}Print label</button>`,
+      can("delete") && `<button class="btn btn-outline-danger ms-sm-auto" data-action="delete-asset" data-id="${a.id}">${ic("trash-2")}Delete</button>`
+    ].filter(Boolean).join("").replace(/^(.+)$/s, '<div class="d-flex flex-wrap gap-2 mb-4 detail-actions">$1</div>')}
     <div class="accordion" id="history">
       <div class="accordion-item">
         <h3 class="accordion-header"><button class="accordion-button collapsed gap-2" type="button" data-bs-toggle="collapse" data-bs-target="#h-maint">
@@ -2327,11 +2636,11 @@ function assetDetail(id) {
           ${loans.length ? `<ul class="list-group list-group-flush">${loans.map((b) => `<li class="list-group-item d-flex flex-wrap justify-content-between gap-2"><span>${esc(b.borrower_name)}${loanQty(b) > 1 ? ` ×${loanQty(b)}` : ""}${b.purpose ? ` · ${esc(b.purpose)}` : ""}${b.returned_on && b.returned_quantity !== null && b.returned_quantity !== undefined && b.returned_quantity < loanQty(b) ? ` <span class="text-danger small">(${loanQty(b) - b.returned_quantity} not returned)</span>` : ""}</span><span class="text-body-secondary small">${fmtDate(b.borrowed_on)} → ${b.returned_on ? fmtDate(b.returned_on) : "still out"}</span></li>`).join("")}</ul>`
           : '<p class="text-body-secondary m-3">Never borrowed.</p>'}</div></div>
       </div>
-      <div class="accordion-item">
+      ${can("activity") ? `<div class="accordion-item">
         <h3 class="accordion-header"><button class="accordion-button collapsed gap-2" type="button" data-bs-toggle="collapse" data-bs-target="#h-changes">
           ${ic("activity")}Change history</button></h3>
         <div id="h-changes" class="accordion-collapse collapse" data-bs-parent="#history" data-asset="${a.id}"><div class="accordion-body p-0" id="h-changes-body"></div></div>
-      </div>
+      </div>` : ""}
     </div>`);
 }
 
@@ -2360,10 +2669,14 @@ function tagSeries(first, n) {
 }
 const tagTaken = (tag, exceptId) => S.assets.some((x) => x.id !== exceptId && (x.asset_tag || "").trim().toLowerCase() === tag.trim().toLowerCase());
 
+const GONE = ["Disposed", "Lost"];
+const statusChoices = (cur) => can("dispose") ? STATUSES : GONE.includes(cur) ? [cur] : STATUSES.filter((x) => !GONE.includes(x));
 function assetForm(a = {}) {
   const editing = !!a.id, out = editing ? onLoanQty(a.id) : 0, suggestion = editing ? "" : nextTagSuggestion();
-  openModal(editing ? `${ic("pencil")}Edit asset` : `${ic("plus")}Add asset`, `
+  const statusOnly = editing && !can("assets");
+  openModal(editing ? `${ic("pencil")}${statusOnly ? "Change status" : "Edit asset"}` : `${ic("plus")}Add asset`, `
     <form data-form="asset" data-id="${a.id || ""}" novalidate>
+      ${statusOnly ? `<div class="alert alert-info small d-flex gap-2">${ic("info")}<div>Your access lets you change the <b>status</b> (for example, dispose of it or write it off) and the disposal details. Other details are shown for reference.</div></div>` : ""}
       <div class="row g-3">
         <div class="col-md-8"><label class="form-label fw-bold" for="f_name">Name</label>
           <input class="form-control" id="f_name" name="name" required value="${esc(a.name)}" placeholder="e.g. Plastic chairs, or Yamaha MG16 mixer">
@@ -2393,7 +2706,7 @@ function assetForm(a = {}) {
         <div class="col-md-4"><label class="form-label fw-bold" for="f_min">Ministry responsible</label>
           <select class="form-select" id="f_min" name="ministry_id">${options(S.ministries, a.ministry_id ?? null)}</select></div>
         <div class="col-md-6"><label class="form-label fw-bold" for="f_status">Status</label>
-          <select class="form-select" id="f_status" name="status">${plainOptions(STATUSES, a.status || "In use")}</select></div>
+          <select class="form-select" id="f_status" name="status">${plainOptions(statusChoices(a.status), a.status || "In use")}</select></div>
         <div class="col-md-6"><label class="form-label fw-bold" for="f_cond">Condition</label>
           <select class="form-select" id="f_cond" name="condition">${plainOptions(CONDITIONS, a.condition || "Good")}</select></div>
         ${disposalFields(a, "d", editing ? qty(a) : 1)}
@@ -2409,6 +2722,11 @@ function assetForm(a = {}) {
       </div>
       ${formFoot(editing ? "Save changes" : "Add asset")}
     </form>`);
+  const form = document.querySelector('#modal form[data-form="asset"]');
+  form.querySelectorAll("input, select, textarea").forEach((el) => {
+    const disposal = el.name?.startsWith("disposal_");
+    if (el.name && ((statusOnly && el.name !== "status" && !disposal) || (disposal && !can("dispose")))) el.disabled = true;
+  });
   syncAssetForm();
 }
 function syncAssetForm() {
@@ -2533,7 +2851,7 @@ function splitForm(a) {
           <input type="number" class="form-control" id="s_qty" name="quantity" min="1" max="${max}" step="1" value="1" required>
           <div class="form-text">Up to ${max}${out ? ` (${out} are on loan)` : ""}</div><div class="invalid-feedback">Enter 1 to ${max}.</div></div>
         <div class="col-md-4"><label class="form-label fw-bold" for="s_status">Their status</label>
-          <select class="form-select" id="s_status" name="status">${plainOptions(STATUSES, a.status === "In use" ? "Under repair" : a.status)}</select></div>
+          <select class="form-select" id="s_status" name="status">${plainOptions(can("dispose") ? STATUSES : STATUSES.filter((x) => !GONE.includes(x)), a.status === "In use" || (GONE.includes(a.status) && !can("dispose")) ? "Under repair" : a.status)}</select></div>
         <div class="col-md-4"><label class="form-label fw-bold" for="s_cond">Their condition</label>
           <select class="form-select" id="s_cond" name="condition">${plainOptions(CONDITIONS, "Poor")}</select></div>
         <div class="col-md-6"><label class="form-label fw-bold" for="s_loc">Their location</label>
@@ -2571,9 +2889,9 @@ function serviceForm(assetId, planId) {
         <div class="col-md-6" id="m_next_auto" hidden><span class="form-label fw-bold d-block">Next due</span>
           <div class="form-control bg-body-tertiary d-flex align-items-center gap-2">${ic("repeat")}<span id="m_next_auto_text"></span></div>
           <div class="form-text">Set automatically from the schedule.</div></div>
-        <div class="col-12"><div class="form-check form-switch">
+        ${can("assets") ? `<div class="col-12"><div class="form-check form-switch">
           <input class="form-check-input" type="checkbox" role="switch" id="m_inuse" name="mark_in_use">
-          <label class="form-check-label" for="m_inuse">Item is working again: set status to “In use”</label></div></div>
+          <label class="form-check-label" for="m_inuse">Item is working again: set status to “In use”</label></div></div>` : ""}
       </div>
       ${formFoot("Save record")}
     </form>`);
@@ -2960,7 +3278,16 @@ const FORMS = {
       status: fd.get("status"), condition: fd.get("condition"), purchase_date: fd.get("purchase_date") || null,
       cost: numOrNull(fd.get("cost")), notes: textOrNull(fd.get("notes"))
     };
-    if (["Disposed", "Lost"].includes(rec.status)) Object.assign(rec, readDisposal(fd, rec.status));
+    if (id && !can("assets")) {
+      // Status and disposal details only
+      const only = { status: fd.get("status"), updated_at: new Date().toISOString() };
+      if (GONE.includes(only.status)) Object.assign(only, readDisposal(fd, only.status));
+      if (onLoanQty(id) && GONE.includes(only.status) && old.status !== only.status)
+        throw new Error(`${qty(old) > 1 ? `${onLoanQty(id)} of these are` : "This item is"} still on loan. The return needs to be recorded first.`);
+      const r = await save({ kind: "update", table: "assets", id, rec: only, label: `${old.name}: status ${only.status}` }, () => Object.assign(old, only));
+      return { msg: r.queued ? QUEUED_MSG : "Status saved", reopen: id };
+    }
+    if (GONE.includes(rec.status) && can("dispose")) Object.assign(rec, readDisposal(fd, rec.status));
     const each = !id && rec.quantity > 1 && fd.get("mode") === "each";
     const out = id ? onLoanQty(id) : 0;
 
@@ -3105,13 +3432,13 @@ const FORMS = {
   },
   async invite(form) {
     const fd = new FormData(form);
-    const rec = { email: String(fd.get("email")).trim().toLowerCase(), full_name: textOrNull(fd.get("full_name")), role: fd.get("role") };
+    const rec = { email: String(fd.get("email")).trim().toLowerCase(), full_name: textOrNull(fd.get("full_name")), ...readAccess(fd) };
     const { error } = await sb.from("members").insert(rec); if (error) throw error;
     return { msg: "Invitation created", after: () => shareInvite(rec) };
   },
   async "edit-user"(form) {
     const fd = new FormData(form), id = Number(form.dataset.id);
-    const rec = { full_name: textOrNull(fd.get("full_name")), role: fd.get("role") };
+    const rec = { full_name: textOrNull(fd.get("full_name")), ...readAccess(fd) };
     const { error } = await sb.from("members").update(rec).eq("id", id); if (error) throw error;
     const m = S.members.find((x) => x.id === id);
     if (m?.email === S.me.email) { Object.assign(S.me, rec); return { msg: "Changes saved", reload: true }; }
@@ -3184,6 +3511,7 @@ document.addEventListener("submit", async (e) => {
 /* ---------- Filters ---------- */
 document.addEventListener("input", (e) => {
   if (e.target.id === "f-q") { S.filters.q = e.target.value; renderAssetResults(); }
+  if (e.target.id === "rep-q") { S.repQ = e.target.value; renderReport(); }
   if (e.target.closest?.('form[data-form="asset"]')) syncAssetForm();
   if (e.target.id === "r_qty") syncReturnForm();
   if (e.target.id === "lbl-q") { S.lbl.q = e.target.value; renderLabelList(); }
@@ -3207,6 +3535,15 @@ document.addEventListener("change", (e) => {
   if (map[e.target.id]) { S.filters[map[e.target.id]] = e.target.value; renderAssetResults(); }
   if (e.target.name === "theme" && e.target.dataset.action === "set-theme") setTheme(e.target.value);
   if (e.target.id === "l_item") syncLoanForm();
+  if (e.target.dataset?.col !== undefined) {
+    const { cols } = reportData(), boxes = [...document.querySelectorAll("#col-panel-body [data-col]")];
+    if (!boxes.some((b) => b.checked)) { e.target.checked = true; toast("Keep at least one column."); return; }
+    const hidden = boxes.filter((b) => !b.checked).map((b) => b.dataset.col).filter((c) => cols.includes(c));
+    if (hidden.length) S.repHidden[S.report] = hidden; else delete S.repHidden[S.report];
+    saveHidden(); renderReport();
+  }
+  const af = e.target.closest?.('form[data-form="invite"], form[data-form="edit-user"]');
+  if (af && (e.target.name === "role" || e.target.name === "perm")) syncAccess(af, e.target);
   if (e.target.dataset?.lblId) { const n = Number(e.target.dataset.lblId); e.target.checked ? S.lbl.ids.add(n) : S.lbl.ids.delete(n); updateLabels(); }
   if (e.target.id === "lbl-sheet") { S.lbl.sheet = e.target.value; updateLabels(); }
   if (e.target.closest?.('form[data-form="service"]')) syncServiceForm();
@@ -3241,6 +3578,8 @@ document.addEventListener("click", async (e) => {
   const { action, id } = el.dataset;
   if (el.closest("#quick-sheet")) bootstrap.Offcanvas.getInstance($("#quick-sheet"))?.hide();
   if (isOffline() && ONLINE_ACTIONS.has(action)) { toast("You're offline. This needs an internet connection."); return; }
+  const need = ACTION_PERMS[action];
+  if (need && S.me && !need.some(can)) { toast(NO_ACCESS); return; }
   const member = () => S.members.find((m) => m.id === Number(id));
   try {
     switch (action) {
@@ -3303,16 +3642,15 @@ document.addEventListener("click", async (e) => {
       case "dl-template": downloadTemplate(!!el.dataset.with); break;
       case "run-import": await runImport(el); break;
       case "loan-tab": S.loanTab = el.dataset.tab; render(); break;
-      case "report": S.report = el.dataset.report; render(); break;
+      case "report": S.report = el.dataset.report; S.repQ = ""; render(); break;
       case "print": cleanupLabelPrint(); window.print(); break;
-      case "export-xlsx": {
-        const r = REPORTS[S.report], rows = r.rows();
-        if (!rows.length) { toast("This report has no rows to download."); break; }
-        const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(rows), r.title.slice(0, 31));
-        XLSX.writeFile(wb, `${r.title.toLowerCase().replace(/\s+/g, "-")}-${today()}.xlsx`);
-        break;
+      case "export-xlsx": exportXlsx(); break;
+      case "export-pdf": await exportPdf(el); break;
+      case "report-cols": {
+        S.colsOpen = !S.colsOpen; $("#col-panel").hidden = !S.colsOpen;
+        el.classList.toggle("active", S.colsOpen); el.setAttribute("aria-expanded", S.colsOpen); break;
       }
+      case "cols-all": case "cols-reset": delete S.repHidden[S.report]; saveHidden(); renderColPanel(); renderReport(); break;
       case "return-loan": {
         const b = S.borrowings.find((x) => x.id === Number(id));
         if (b) returnForm(b, modalOpen);
