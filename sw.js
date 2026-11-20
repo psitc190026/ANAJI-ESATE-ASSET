@@ -2,9 +2,9 @@
    The app's own files: network first (so updates arrive), saved copy when offline.
    Libraries and fonts: saved copy first. Item photos: saved after first view.
    Database requests are never cached here; the app keeps its own saved copy of the data. */
-const VERSION = "cam-v5";
+const VERSION = "cam-v6";
 const APP_FILES = ["./", "./index.html", "./config.js", "./logo.png", "./apple-touch-icon.png",
-  "./icon-192.png", "./icon-512.png", "./icon-maskable-512.png", "./manifest.webmanifest"];
+  "./icon-192.png", "./icon-512.png", "./icon-maskable-512.png", "./badge-96.png", "./manifest.webmanifest"];
 const LIBS = [
   "https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css",
   "https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js",
@@ -74,4 +74,34 @@ self.addEventListener("fetch", (event) => {
       return res;
     })());
   }
+});
+
+/* ---------- Notifications ---------- */
+self.addEventListener("push", (event) => {
+  let data = {};
+  try { data = event.data ? event.data.json() : {}; } catch { data = { body: event.data ? event.data.text() : "" }; }
+  event.waitUntil(self.registration.showNotification(data.title || "Church Asset Manager", {
+    body: data.body || "",
+    icon: "icon-192.png",
+    badge: "badge-96.png",
+    tag: data.tag || "reminders",
+    renotify: true,
+    data: { url: data.url || "./" }
+  }));
+});
+
+self.addEventListener("notificationclick", (event) => {
+  event.notification.close();
+  const url = new URL(event.notification.data?.url || "./", self.registration.scope);
+  const view = url.searchParams.get("view");
+  event.waitUntil((async () => {
+    const open = await self.clients.matchAll({ type: "window", includeUncontrolled: true });
+    const app = open.find((c) => c.url.startsWith(self.registration.scope));
+    if (app) {
+      await app.focus();
+      if (view) app.postMessage({ type: "open-view", view });
+      return;
+    }
+    await self.clients.openWindow(url.href);
+  })());
 });
