@@ -7,6 +7,7 @@
 <title>Church Asset Manager</title>
 <link rel="icon" type="image/png" href="logo.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
 <script>
   /* Apply the saved light/dark choice before the page paints */
   (function () {
@@ -225,6 +226,8 @@ dl.facts dd { margin-bottom: .45rem; }
 /* Role-based visibility (the database enforces the same rules) */
 body.role-viewer .needs-edit, body:not(.role-admin) .needs-admin { display: none !important; }
 
+.net-wrap { max-width: 1240px; padding: 1rem clamp(1rem, 3vw, 2.25rem) 0; }
+.net-wrap .alert .ic { margin-top: .15rem; }
 .print-head { display: none; }
 @media print {
   body { background: #fff; }
@@ -337,7 +340,7 @@ body.role-viewer .needs-edit, body:not(.role-admin) .needs-admin { display: none
         </div>
       </aside>
     </div>
-    <main><div class="page" id="view"></div></main>
+    <main><div id="net-banner" class="no-print" hidden></div><div class="page" id="view"></div></main>
   </div>
 </div>
 
@@ -383,7 +386,7 @@ body.role-viewer .needs-edit, body:not(.role-admin) .needs-admin { display: none
    Church Asset Manager
    Icons: Lucide (https://lucide.dev), ISC licence
    ===================================================== */
-const ICONS = {"layout-dashboard":"<rect width=\"7\" height=\"9\" x=\"3\" y=\"3\" rx=\"1\"/><rect width=\"7\" height=\"5\" x=\"14\" y=\"3\" rx=\"1\"/><rect width=\"7\" height=\"9\" x=\"14\" y=\"12\" rx=\"1\"/><rect width=\"7\" height=\"5\" x=\"3\" y=\"16\" rx=\"1\"/>","package":"<path d=\"M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z\"/><path d=\"M12 22V12\"/><polyline points=\"3.29 7 12 12 20.71 7\"/><path d=\"m7.5 4.27 9 5.15\"/>","arrow-left-right":"<path d=\"M8 3 4 7l4 4\"/><path d=\"M4 7h16\"/><path d=\"m16 21 4-4-4-4\"/><path d=\"M20 17H4\"/>","wrench":"<path d=\"M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.106-3.105c.32-.322.863-.22.983.218a6 6 0 0 1-8.259 7.057l-7.91 7.91a1 1 0 0 1-2.999-3l7.91-7.91a6 6 0 0 1 7.057-8.259c.438.12.54.662.219.984z\"/>","chart-column":"<path d=\"M3 3v16a2 2 0 0 0 2 2h16\"/><path d=\"M18 17V9\"/><path d=\"M13 17V5\"/><path d=\"M8 17v-3\"/>","list-checks":"<path d=\"M13 5h8\"/><path d=\"M13 12h8\"/><path d=\"M13 19h8\"/><path d=\"m3 17 2 2 4-4\"/><path d=\"m3 7 2 2 4-4\"/>","users":"<path d=\"M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2\"/><path d=\"M16 3.128a4 4 0 0 1 0 7.744\"/><path d=\"M22 21v-2a4 4 0 0 0-3-3.87\"/><circle cx=\"9\" cy=\"7\" r=\"4\"/>","settings":"<path d=\"M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915\"/><circle cx=\"12\" cy=\"12\" r=\"3\"/>","sun":"<circle cx=\"12\" cy=\"12\" r=\"4\"/><path d=\"M12 2v2\"/><path d=\"M12 20v2\"/><path d=\"m4.93 4.93 1.41 1.41\"/><path d=\"m17.66 17.66 1.41 1.41\"/><path d=\"M2 12h2\"/><path d=\"M20 12h2\"/><path d=\"m6.34 17.66-1.41 1.41\"/><path d=\"m19.07 4.93-1.41 1.41\"/>","moon":"<path d=\"M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401\"/>","monitor":"<rect width=\"20\" height=\"14\" x=\"2\" y=\"3\" rx=\"2\"/><line x1=\"8\" x2=\"16\" y1=\"21\" y2=\"21\"/><line x1=\"12\" x2=\"12\" y1=\"17\" y2=\"21\"/>","log-out":"<path d=\"m16 17 5-5-5-5\"/><path d=\"M21 12H9\"/><path d=\"M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4\"/>","menu":"<path d=\"M4 5h16\"/><path d=\"M4 12h16\"/><path d=\"M4 19h16\"/>","plus":"<path d=\"M5 12h14\"/><path d=\"M12 5v14\"/>","search":"<path d=\"m21 21-4.34-4.34\"/><circle cx=\"11\" cy=\"11\" r=\"8\"/>","image":"<rect width=\"18\" height=\"18\" x=\"3\" y=\"3\" rx=\"2\" ry=\"2\"/><circle cx=\"9\" cy=\"9\" r=\"2\"/><path d=\"m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21\"/>","pencil":"<path d=\"M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z\"/><path d=\"m15 5 4 4\"/>","trash-2":"<path d=\"M10 11v6\"/><path d=\"M14 11v6\"/><path d=\"M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6\"/><path d=\"M3 6h18\"/><path d=\"M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2\"/>","external-link":"<path d=\"M15 3h6v6\"/><path d=\"M10 14 21 3\"/><path d=\"M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6\"/>","history":"<path d=\"M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8\"/><path d=\"M3 3v5h5\"/><path d=\"M12 7v5l4 2\"/>","bell":"<path d=\"M10.268 21a2 2 0 0 0 3.464 0\"/><path d=\"M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326\"/>","circle-check":"<circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"m16 9-5.5 5.5L8 12\"/>","triangle-alert":"<path d=\"m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3\"/><path d=\"M12 9v4\"/><path d=\"M12 17h.01\"/>","calendar-check":"<path d=\"M8 2v3\"/><path d=\"M16 2v3\"/><rect x=\"3\" y=\"3\" width=\"18\" height=\"18\" rx=\"2\"/><path d=\"M3 9h18\"/><path d=\"m9 15 2 2 4-4\"/>","notebook-text":"<path d=\"M2 6h4\"/><path d=\"M2 10h4\"/><path d=\"M2 14h4\"/><path d=\"M2 18h4\"/><rect width=\"16\" height=\"20\" x=\"4\" y=\"2\" rx=\"2\"/><path d=\"M9.5 8h5\"/><path d=\"M9.5 12H16\"/><path d=\"M9.5 16H14\"/>","download":"<path d=\"M12 15V3\"/><path d=\"M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4\"/><path d=\"m7 10 5 5 5-5\"/>","file-up":"<path d=\"M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z\"/><path d=\"M14 2v5a1 1 0 0 0 1 1h5\"/><path d=\"M12 12v6\"/><path d=\"m15 15-3-3-3 3\"/>","file-spreadsheet":"<path d=\"M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z\"/><path d=\"M14 2v5a1 1 0 0 0 1 1h5\"/><path d=\"M8 13h2\"/><path d=\"M14 13h2\"/><path d=\"M8 17h2\"/><path d=\"M14 17h2\"/>","printer":"<path d=\"M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2\"/><path d=\"M6 9V3a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v6\"/><rect x=\"6\" y=\"14\" width=\"12\" height=\"8\" rx=\"1\"/>","phone":"<path d=\"M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 14 14 0 0 0 6.392 6.384\"/>","check":"<path d=\"M20 6 9 17l-5-5\"/>","circle-x":"<circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"m15 9-6 6\"/><path d=\"m9 9 6 6\"/>","lightbulb":"<path d=\"M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5\"/><path d=\"M9 18h6\"/><path d=\"M10 22h4\"/>","banknote":"<rect width=\"20\" height=\"12\" x=\"2\" y=\"6\" rx=\"2\"/><circle cx=\"12\" cy=\"12\" r=\"2\"/><path d=\"M6 12h.01M18 12h.01\"/>","tag":"<path d=\"M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z\"/><circle cx=\"7.5\" cy=\"7.5\" r=\".5\" fill=\"currentColor\"/>","map-pin":"<path d=\"M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0\"/><circle cx=\"12\" cy=\"10\" r=\"3\"/>","user-plus":"<path d=\"M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2\"/><circle cx=\"9\" cy=\"7\" r=\"4\"/><line x1=\"19\" x2=\"19\" y1=\"8\" y2=\"14\"/><line x1=\"22\" x2=\"16\" y1=\"11\" y2=\"11\"/>","key-round":"<path d=\"M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z\"/><circle cx=\"16.5\" cy=\"7.5\" r=\".5\" fill=\"currentColor\"/>","shield-check":"<path d=\"M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z\"/><path d=\"m9 12 2 2 4-4\"/>","eye":"<path d=\"M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0\"/><circle cx=\"12\" cy=\"12\" r=\"3\"/>","copy":"<rect width=\"14\" height=\"14\" x=\"8\" y=\"8\" rx=\"2\" ry=\"2\"/><path d=\"M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2\"/>","message-circle":"<path d=\"M2.992 16.342a2 2 0 0 1 .094 1.167l-1.065 3.29a1 1 0 0 0 1.236 1.168l3.413-.998a2 2 0 0 1 1.099.092 10 10 0 1 0-4.777-4.719\"/>","mail":"<path d=\"m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7\"/><rect x=\"2\" y=\"4\" width=\"20\" height=\"16\" rx=\"2\"/>","user-x":"<path d=\"M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2\"/><circle cx=\"9\" cy=\"7\" r=\"4\"/><line x1=\"17\" x2=\"22\" y1=\"8\" y2=\"13\"/><line x1=\"22\" x2=\"17\" y1=\"8\" y2=\"13\"/>","user-check":"<path d=\"m16 11 2 2 4-4\"/><path d=\"M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2\"/><circle cx=\"9\" cy=\"7\" r=\"4\"/>","ellipsis":"<circle cx=\"12\" cy=\"12\" r=\"1\"/><circle cx=\"19\" cy=\"12\" r=\"1\"/><circle cx=\"5\" cy=\"12\" r=\"1\"/>","lock":"<rect width=\"18\" height=\"11\" x=\"3\" y=\"11\" rx=\"2\" ry=\"2\"/><path d=\"M7 11V7a5 5 0 0 1 10 0v4\"/>","building-2":"<path d=\"M10 12h4\"/><path d=\"M10 8h4\"/><path d=\"M14 21v-3a2 2 0 0 0-4 0v3\"/><path d=\"M6 10H4a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-2\"/><path d=\"M6 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16\"/>","palette":"<path d=\"M12 22a1 1 0 0 1 0-20 10 9 0 0 1 10 9 5 5 0 0 1-5 5h-2.25a1.75 1.75 0 0 0-1.4 2.8l.3.4a1.75 1.75 0 0 1-1.4 2.8z\"/><circle cx=\"13.5\" cy=\"6.5\" r=\".5\" fill=\"currentColor\"/><circle cx=\"17.5\" cy=\"10.5\" r=\".5\" fill=\"currentColor\"/><circle cx=\"6.5\" cy=\"12.5\" r=\".5\" fill=\"currentColor\"/><circle cx=\"8.5\" cy=\"7.5\" r=\".5\" fill=\"currentColor\"/>","info":"<circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"M12 16v-4\"/><path d=\"M12 8h.01\"/>","x":"<path d=\"M18 6 6 18\"/><path d=\"m6 6 12 12\"/>","circle-user":"<circle cx=\"12\" cy=\"12\" r=\"10\"/><circle cx=\"12\" cy=\"10\" r=\"3\"/><path d=\"M7 20.662V19a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v1.662\"/>","refresh-cw":"<path d=\"M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8\"/><path d=\"M21 3v5h-5\"/><path d=\"M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16\"/><path d=\"M8 16H3v5\"/>","inbox":"<polyline points=\"22 12 16 12 14 15 10 15 8 12 2 12\"/><path d=\"M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z\"/>","funnel":"<path d=\"M10 20a1 1 0 0 0 .553.895l2 1A1 1 0 0 0 14 21v-7a2 2 0 0 1 .517-1.341L21.74 4.67A1 1 0 0 0 21 3H3a1 1 0 0 0-.742 1.67l7.225 7.989A2 2 0 0 1 10 14z\"/>","file-text":"<path d=\"M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z\"/><path d=\"M14 2v5a1 1 0 0 0 1 1h5\"/><path d=\"M10 9H8\"/><path d=\"M16 13H8\"/><path d=\"M16 17H8\"/>","package-open":"<path d=\"M12 22v-9\"/><path d=\"M15.17 2.21a1.67 1.67 0 0 1 1.63 0L21 4.57a1.93 1.93 0 0 1 0 3.36L8.82 14.79a1.655 1.655 0 0 1-1.64 0L3 12.43a1.93 1.93 0 0 1 0-3.36z\"/><path d=\"M20 13v3.87a2.06 2.06 0 0 1-1.11 1.83l-6 3.08a1.93 1.93 0 0 1-1.78 0l-6-3.08A2.06 2.06 0 0 1 4 16.87V13\"/><path d=\"M21 12.43a1.93 1.93 0 0 0 0-3.36L8.83 2.2a1.64 1.64 0 0 0-1.63 0L3 4.57a1.93 1.93 0 0 0 0 3.36l12.18 6.86a1.636 1.636 0 0 0 1.63 0z\"/>","undo-2":"<path d=\"M9 14 4 9l5-5\"/><path d=\"M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5a5.5 5.5 0 0 1-5.5 5.5H11\"/>","ban":"<circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"M4.929 4.929 19.07 19.071\"/>","circle-plus":"<circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"M8 12h8\"/><path d=\"M12 8v8\"/>","split":"<path d=\"M16 3h5v5\"/><path d=\"M8 3H3v5\"/><path d=\"M12 22v-8.3a4 4 0 0 0-1.172-2.872L3 3\"/><path d=\"m15 9 6-6\"/>","layers":"<path d=\"M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z\"/><path d=\"M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12\"/><path d=\"M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17\"/>"};
+const ICONS = {"layout-dashboard":"<rect width=\"7\" height=\"9\" x=\"3\" y=\"3\" rx=\"1\"/><rect width=\"7\" height=\"5\" x=\"14\" y=\"3\" rx=\"1\"/><rect width=\"7\" height=\"9\" x=\"14\" y=\"12\" rx=\"1\"/><rect width=\"7\" height=\"5\" x=\"3\" y=\"16\" rx=\"1\"/>","package":"<path d=\"M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z\"/><path d=\"M12 22V12\"/><polyline points=\"3.29 7 12 12 20.71 7\"/><path d=\"m7.5 4.27 9 5.15\"/>","arrow-left-right":"<path d=\"M8 3 4 7l4 4\"/><path d=\"M4 7h16\"/><path d=\"m16 21 4-4-4-4\"/><path d=\"M20 17H4\"/>","wrench":"<path d=\"M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.106-3.105c.32-.322.863-.22.983.218a6 6 0 0 1-8.259 7.057l-7.91 7.91a1 1 0 0 1-2.999-3l7.91-7.91a6 6 0 0 1 7.057-8.259c.438.12.54.662.219.984z\"/>","chart-column":"<path d=\"M3 3v16a2 2 0 0 0 2 2h16\"/><path d=\"M18 17V9\"/><path d=\"M13 17V5\"/><path d=\"M8 17v-3\"/>","list-checks":"<path d=\"M13 5h8\"/><path d=\"M13 12h8\"/><path d=\"M13 19h8\"/><path d=\"m3 17 2 2 4-4\"/><path d=\"m3 7 2 2 4-4\"/>","users":"<path d=\"M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2\"/><path d=\"M16 3.128a4 4 0 0 1 0 7.744\"/><path d=\"M22 21v-2a4 4 0 0 0-3-3.87\"/><circle cx=\"9\" cy=\"7\" r=\"4\"/>","settings":"<path d=\"M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915\"/><circle cx=\"12\" cy=\"12\" r=\"3\"/>","sun":"<circle cx=\"12\" cy=\"12\" r=\"4\"/><path d=\"M12 2v2\"/><path d=\"M12 20v2\"/><path d=\"m4.93 4.93 1.41 1.41\"/><path d=\"m17.66 17.66 1.41 1.41\"/><path d=\"M2 12h2\"/><path d=\"M20 12h2\"/><path d=\"m6.34 17.66-1.41 1.41\"/><path d=\"m19.07 4.93-1.41 1.41\"/>","moon":"<path d=\"M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401\"/>","monitor":"<rect width=\"20\" height=\"14\" x=\"2\" y=\"3\" rx=\"2\"/><line x1=\"8\" x2=\"16\" y1=\"21\" y2=\"21\"/><line x1=\"12\" x2=\"12\" y1=\"17\" y2=\"21\"/>","log-out":"<path d=\"m16 17 5-5-5-5\"/><path d=\"M21 12H9\"/><path d=\"M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4\"/>","menu":"<path d=\"M4 5h16\"/><path d=\"M4 12h16\"/><path d=\"M4 19h16\"/>","plus":"<path d=\"M5 12h14\"/><path d=\"M12 5v14\"/>","search":"<path d=\"m21 21-4.34-4.34\"/><circle cx=\"11\" cy=\"11\" r=\"8\"/>","image":"<rect width=\"18\" height=\"18\" x=\"3\" y=\"3\" rx=\"2\" ry=\"2\"/><circle cx=\"9\" cy=\"9\" r=\"2\"/><path d=\"m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21\"/>","pencil":"<path d=\"M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z\"/><path d=\"m15 5 4 4\"/>","trash-2":"<path d=\"M10 11v6\"/><path d=\"M14 11v6\"/><path d=\"M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6\"/><path d=\"M3 6h18\"/><path d=\"M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2\"/>","external-link":"<path d=\"M15 3h6v6\"/><path d=\"M10 14 21 3\"/><path d=\"M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6\"/>","history":"<path d=\"M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8\"/><path d=\"M3 3v5h5\"/><path d=\"M12 7v5l4 2\"/>","bell":"<path d=\"M10.268 21a2 2 0 0 0 3.464 0\"/><path d=\"M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326\"/>","circle-check":"<circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"m16 9-5.5 5.5L8 12\"/>","triangle-alert":"<path d=\"m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3\"/><path d=\"M12 9v4\"/><path d=\"M12 17h.01\"/>","calendar-check":"<path d=\"M8 2v3\"/><path d=\"M16 2v3\"/><rect x=\"3\" y=\"3\" width=\"18\" height=\"18\" rx=\"2\"/><path d=\"M3 9h18\"/><path d=\"m9 15 2 2 4-4\"/>","notebook-text":"<path d=\"M2 6h4\"/><path d=\"M2 10h4\"/><path d=\"M2 14h4\"/><path d=\"M2 18h4\"/><rect width=\"16\" height=\"20\" x=\"4\" y=\"2\" rx=\"2\"/><path d=\"M9.5 8h5\"/><path d=\"M9.5 12H16\"/><path d=\"M9.5 16H14\"/>","download":"<path d=\"M12 15V3\"/><path d=\"M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4\"/><path d=\"m7 10 5 5 5-5\"/>","file-up":"<path d=\"M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z\"/><path d=\"M14 2v5a1 1 0 0 0 1 1h5\"/><path d=\"M12 12v6\"/><path d=\"m15 15-3-3-3 3\"/>","file-spreadsheet":"<path d=\"M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z\"/><path d=\"M14 2v5a1 1 0 0 0 1 1h5\"/><path d=\"M8 13h2\"/><path d=\"M14 13h2\"/><path d=\"M8 17h2\"/><path d=\"M14 17h2\"/>","printer":"<path d=\"M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2\"/><path d=\"M6 9V3a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v6\"/><rect x=\"6\" y=\"14\" width=\"12\" height=\"8\" rx=\"1\"/>","phone":"<path d=\"M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 14 14 0 0 0 6.392 6.384\"/>","check":"<path d=\"M20 6 9 17l-5-5\"/>","circle-x":"<circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"m15 9-6 6\"/><path d=\"m9 9 6 6\"/>","lightbulb":"<path d=\"M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5\"/><path d=\"M9 18h6\"/><path d=\"M10 22h4\"/>","banknote":"<rect width=\"20\" height=\"12\" x=\"2\" y=\"6\" rx=\"2\"/><circle cx=\"12\" cy=\"12\" r=\"2\"/><path d=\"M6 12h.01M18 12h.01\"/>","tag":"<path d=\"M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z\"/><circle cx=\"7.5\" cy=\"7.5\" r=\".5\" fill=\"currentColor\"/>","map-pin":"<path d=\"M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0\"/><circle cx=\"12\" cy=\"10\" r=\"3\"/>","user-plus":"<path d=\"M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2\"/><circle cx=\"9\" cy=\"7\" r=\"4\"/><line x1=\"19\" x2=\"19\" y1=\"8\" y2=\"14\"/><line x1=\"22\" x2=\"16\" y1=\"11\" y2=\"11\"/>","key-round":"<path d=\"M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z\"/><circle cx=\"16.5\" cy=\"7.5\" r=\".5\" fill=\"currentColor\"/>","shield-check":"<path d=\"M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z\"/><path d=\"m9 12 2 2 4-4\"/>","eye":"<path d=\"M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0\"/><circle cx=\"12\" cy=\"12\" r=\"3\"/>","copy":"<rect width=\"14\" height=\"14\" x=\"8\" y=\"8\" rx=\"2\" ry=\"2\"/><path d=\"M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2\"/>","message-circle":"<path d=\"M2.992 16.342a2 2 0 0 1 .094 1.167l-1.065 3.29a1 1 0 0 0 1.236 1.168l3.413-.998a2 2 0 0 1 1.099.092 10 10 0 1 0-4.777-4.719\"/>","mail":"<path d=\"m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7\"/><rect x=\"2\" y=\"4\" width=\"20\" height=\"16\" rx=\"2\"/>","user-x":"<path d=\"M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2\"/><circle cx=\"9\" cy=\"7\" r=\"4\"/><line x1=\"17\" x2=\"22\" y1=\"8\" y2=\"13\"/><line x1=\"22\" x2=\"17\" y1=\"8\" y2=\"13\"/>","user-check":"<path d=\"m16 11 2 2 4-4\"/><path d=\"M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2\"/><circle cx=\"9\" cy=\"7\" r=\"4\"/>","ellipsis":"<circle cx=\"12\" cy=\"12\" r=\"1\"/><circle cx=\"19\" cy=\"12\" r=\"1\"/><circle cx=\"5\" cy=\"12\" r=\"1\"/>","lock":"<rect width=\"18\" height=\"11\" x=\"3\" y=\"11\" rx=\"2\" ry=\"2\"/><path d=\"M7 11V7a5 5 0 0 1 10 0v4\"/>","building-2":"<path d=\"M10 12h4\"/><path d=\"M10 8h4\"/><path d=\"M14 21v-3a2 2 0 0 0-4 0v3\"/><path d=\"M6 10H4a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-2\"/><path d=\"M6 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16\"/>","palette":"<path d=\"M12 22a1 1 0 0 1 0-20 10 9 0 0 1 10 9 5 5 0 0 1-5 5h-2.25a1.75 1.75 0 0 0-1.4 2.8l.3.4a1.75 1.75 0 0 1-1.4 2.8z\"/><circle cx=\"13.5\" cy=\"6.5\" r=\".5\" fill=\"currentColor\"/><circle cx=\"17.5\" cy=\"10.5\" r=\".5\" fill=\"currentColor\"/><circle cx=\"6.5\" cy=\"12.5\" r=\".5\" fill=\"currentColor\"/><circle cx=\"8.5\" cy=\"7.5\" r=\".5\" fill=\"currentColor\"/>","info":"<circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"M12 16v-4\"/><path d=\"M12 8h.01\"/>","x":"<path d=\"M18 6 6 18\"/><path d=\"m6 6 12 12\"/>","circle-user":"<circle cx=\"12\" cy=\"12\" r=\"10\"/><circle cx=\"12\" cy=\"10\" r=\"3\"/><path d=\"M7 20.662V19a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v1.662\"/>","refresh-cw":"<path d=\"M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8\"/><path d=\"M21 3v5h-5\"/><path d=\"M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16\"/><path d=\"M8 16H3v5\"/>","inbox":"<polyline points=\"22 12 16 12 14 15 10 15 8 12 2 12\"/><path d=\"M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z\"/>","funnel":"<path d=\"M10 20a1 1 0 0 0 .553.895l2 1A1 1 0 0 0 14 21v-7a2 2 0 0 1 .517-1.341L21.74 4.67A1 1 0 0 0 21 3H3a1 1 0 0 0-.742 1.67l7.225 7.989A2 2 0 0 1 10 14z\"/>","file-text":"<path d=\"M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z\"/><path d=\"M14 2v5a1 1 0 0 0 1 1h5\"/><path d=\"M10 9H8\"/><path d=\"M16 13H8\"/><path d=\"M16 17H8\"/>","package-open":"<path d=\"M12 22v-9\"/><path d=\"M15.17 2.21a1.67 1.67 0 0 1 1.63 0L21 4.57a1.93 1.93 0 0 1 0 3.36L8.82 14.79a1.655 1.655 0 0 1-1.64 0L3 12.43a1.93 1.93 0 0 1 0-3.36z\"/><path d=\"M20 13v3.87a2.06 2.06 0 0 1-1.11 1.83l-6 3.08a1.93 1.93 0 0 1-1.78 0l-6-3.08A2.06 2.06 0 0 1 4 16.87V13\"/><path d=\"M21 12.43a1.93 1.93 0 0 0 0-3.36L8.83 2.2a1.64 1.64 0 0 0-1.63 0L3 4.57a1.93 1.93 0 0 0 0 3.36l12.18 6.86a1.636 1.636 0 0 0 1.63 0z\"/>","undo-2":"<path d=\"M9 14 4 9l5-5\"/><path d=\"M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5a5.5 5.5 0 0 1-5.5 5.5H11\"/>","ban":"<circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"M4.929 4.929 19.07 19.071\"/>","circle-plus":"<circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"M8 12h8\"/><path d=\"M12 8v8\"/>","split":"<path d=\"M16 3h5v5\"/><path d=\"M8 3H3v5\"/><path d=\"M12 22v-8.3a4 4 0 0 0-1.172-2.872L3 3\"/><path d=\"m15 9 6-6\"/>","layers":"<path d=\"M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z\"/><path d=\"M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12\"/><path d=\"M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17\"/>","activity":"<path d=\"M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2\"/>","repeat":"<path d=\"m17 2 4 4-4 4\"/><path d=\"M3 11v-1a4 4 0 0 1 4-4h14\"/><path d=\"m7 22-4-4 4-4\"/><path d=\"M21 13v1a4 4 0 0 1-4 4H3\"/>","archive":"<rect width=\"20\" height=\"5\" x=\"2\" y=\"3\" rx=\"1\"/><path d=\"M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8\"/><path d=\"M10 12h4\"/>","wifi-off":"<path d=\"M12 20h.01\"/><path d=\"M8.5 16.429a5 5 0 0 1 7 0\"/><path d=\"M5 12.859a10 10 0 0 1 5.17-2.69\"/><path d=\"M19 12.859a10 10 0 0 0-2.007-1.523\"/><path d=\"M2 8.82a15 15 0 0 1 4.177-2.643\"/><path d=\"M22 8.82a15 15 0 0 0-11.288-3.764\"/><path d=\"m2 2 20 20\"/>","cloud-off":"<path d=\"M10.94 5.274A7 7 0 0 1 15.71 10h1.79a4.5 4.5 0 0 1 4.222 6.057\"/><path d=\"M18.796 18.81A4.5 4.5 0 0 1 17.5 19H9A7 7 0 0 1 5.79 5.78\"/><path d=\"m2 2 20 20\"/>","cloud-upload":"<path d=\"M12 13v8\"/><path d=\"M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242\"/><path d=\"m8 17 4-4 4 4\"/>","calendar":"<path d=\"M8 2v3\"/><path d=\"M16 2v3\"/><rect x=\"3\" y=\"3\" width=\"18\" height=\"18\" rx=\"2\"/><path d=\"M3 9h18\"/>","pause":"<rect x=\"14\" y=\"3\" width=\"5\" height=\"18\" rx=\"1\"/><rect x=\"5\" y=\"3\" width=\"5\" height=\"18\" rx=\"1\"/>","play":"<path d=\"M5 5a2 2 0 0 1 3.008-1.728l11.997 6.998a2 2 0 0 1 .003 3.458l-12 7A2 2 0 0 1 5 19z\"/>","send":"<path d=\"M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z\"/><path d=\"m21.854 2.147-10.94 10.939\"/>"};
 const ic = (name, cls = "") =>
   `<svg class="ic ${cls}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[name] || ""}</svg>`;
 document.querySelectorAll("[data-icon]").forEach((el) => {
@@ -413,8 +416,9 @@ const ROLES = {
 
 const S = {
   me: null, session: null, settings: {}, members: [],
-  assets: [], categories: [], locations: [], ministries: [], borrowings: [], maintenance: [],
-  photos: {}, view: "dashboard",
+  assets: [], categories: [], locations: [], ministries: [], borrowings: [], maintenance: [], plans: [],
+  photos: {}, view: "dashboard", offline: false, savedAt: null,
+  act: { rows: [], type: "", q: "", done: false, loading: false },
   filters: { q: "", category: "", location: "", ministry: "", status: "" },
   loanTab: "out", maintTab: "upcoming", report: "register", importPlan: null
 };
@@ -426,6 +430,7 @@ const NAV = [
   { id: "maintenance", label: "Maintenance", icon: "wrench" },
   { id: "reports", label: "Reports", icon: "chart-column" },
   { id: "lists", label: "Lists", icon: "list-checks" },
+  { id: "activity", label: "Activity", icon: "activity" },
   { divider: true },
   { id: "users", label: "Users", icon: "users", admin: true },
   { id: "settings", label: "Settings", icon: "settings" }
@@ -464,10 +469,29 @@ const totalValue = (a) => (a.cost === null || a.cost === undefined || a.cost ===
 const photoShared = (a) => S.assets.some((x) => x.id !== a.id && x.photo_path === a.photo_path);
 const qtyBadge = (a) => qty(a) > 1 ? ` <span class="badge rounded-pill text-bg-secondary">×${qty(a)}</span>` : "";
 const loanLabel = (b) => `${loanQty(b) > 1 ? `${loanQty(b)} × ` : ""}${assetName(b.asset_id)}`;
-const nextDue = (assetId) => {
-  const recs = S.maintenance.filter((m) => m.asset_id === assetId).sort((a, b) => b.service_date.localeCompare(a.service_date));
-  return recs[0]?.next_due || null;
-};
+/* Upcoming maintenance: active schedules, plus one-off "next due" dates from the latest unscheduled record */
+function dueList() {
+  const live = (a) => a && !["Disposed", "Lost"].includes(a.status);
+  const out = [];
+  S.plans.filter((p) => p.active).forEach((p) => { const a = assetById(p.asset_id); if (live(a)) out.push({ a, due: p.next_due, task: p.task, plan: p }); });
+  S.assets.filter(live).forEach((a) => {
+    const last = S.maintenance.filter((m) => m.asset_id === a.id && !m.plan_id).sort((x, y) => y.service_date.localeCompare(x.service_date))[0];
+    if (last?.next_due) out.push({ a, due: last.next_due, task: null, plan: null });
+  });
+  return out.sort((x, y) => x.due.localeCompare(y.due));
+}
+const nextDue = (assetId) => dueList().find((d) => d.a.id === assetId)?.due || null;
+const UNITS = { days: ["day", "days"], weeks: ["week", "weeks"], months: ["month", "months"], years: ["year", "years"] };
+const everyText = (p) => `every ${Number(p.every) === 1 ? UNITS[p.unit][0] : `${p.every} ${UNITS[p.unit][1]}`}`;
+const isoLocal = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+function addInterval(dateStr, every, unit) {
+  const d = new Date(dateStr + "T00:00"), n = Number(every);
+  if (unit === "days" || unit === "weeks") { d.setDate(d.getDate() + n * (unit === "weeks" ? 7 : 1)); return isoLocal(d); }
+  const day = d.getDate();
+  d.setDate(1); d.setMonth(d.getMonth() + (unit === "years" ? n * 12 : n));
+  d.setDate(Math.min(day, new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate()));
+  return isoLocal(d);
+}
 const numOrNull = (v) => (v === null || v === "" ? null : Number(v));
 const textOrNull = (v) => { const t = String(v ?? "").trim(); return t ? t : null; };
 const options = (list, selected, blank = "— None —") =>
@@ -557,45 +581,234 @@ async function loadAll() {
   const jobs = [
     q("assets", "name", true), q("categories", "name", true), q("locations", "name", true),
     q("ministries", "name", true), q("borrowings", "borrowed_on", false), q("maintenance", "service_date", false),
+    q("maintenance_plans", "next_due", true),
     sb.from("app_settings").select("*").eq("id", 1).maybeSingle()
   ];
   if (isAdmin()) jobs.push(sb.rpc("list_members"));
   const res = await Promise.all(jobs);
   const bad = res.find((r) => r.error);
   if (bad) throw bad.error;
-  [S.assets, S.categories, S.locations, S.ministries, S.borrowings, S.maintenance] = res.slice(0, 6).map((r) => r.data || []);
-  S.settings = res[6].data || {};
-  S.members = isAdmin() ? res[7].data || [] : [];
+  [S.assets, S.categories, S.locations, S.ministries, S.borrowings, S.maintenance, S.plans] = res.slice(0, 7).map((r) => r.data || []);
+  S.settings = res[7].data || {};
+  S.members = isAdmin() ? res[8].data || [] : [];
   applySettings();
-  S.photos = {};
   const paths = S.assets.map((a) => a.photo_path).filter(Boolean);
   if (paths.length) {
     const { data } = await sb.storage.from(BUCKET).createSignedUrls(paths, 60 * 60 * 6);
+    S.photos = {};
     (data || []).forEach((d) => { if (d.signedUrl) S.photos[d.path] = d.signedUrl; });
   }
+  S.savedAt = new Date().toISOString();
+  if (S.offline) setOnline();
+  saveSnapshot();
+  updateNetBanner();
 }
 async function refresh() {
+  if (isOffline()) { saveSnapshot(); render(); return; }
   try { await loadAll(); render(); }
-  catch (err) { toast(friendlyError(err)); }
+  catch (err) {
+    if (isNetErr(err)) { goOffline(); render(); toast("You're offline. Showing the data saved on this device."); }
+    else toast(friendlyError(err));
+  }
+}
+
+/* ---------- Offline: a saved copy of the data, and changes waiting to be sent ---------- */
+const KEYS = { snap: "cam-snapshot-v1", outbox: "cam-outbox-v1", failed: "cam-failed-v1", idmap: "cam-idmap-v1" };
+const store = {
+  get(k) { try { return JSON.parse(localStorage.getItem(k) || "null"); } catch { return null; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch { return false; } },
+  del(k) { try { localStorage.removeItem(k); } catch {} }
+};
+const DATA_KEYS = ["assets", "categories", "locations", "ministries", "borrowings", "maintenance", "plans", "members", "photos"];
+const isNetErr = (err) => /Failed to fetch|NetworkError|Load failed|fetch failed|network request|ERR_INTERNET|ERR_NAME_NOT_RESOLVED/i.test(err?.message || String(err || ""));
+const isOffline = () => S.offline || navigator.onLine === false;
+let tempSeq = 0;
+const tempId = () => -(Date.now() * 1000 + (tempSeq++ % 1000));
+S.idMap = store.get(KEYS.idmap) || {};
+
+function saveSnapshot() {
+  if (!S.me) return;
+  const snap = { savedAt: S.savedAt || new Date().toISOString(), userId: S.session?.user?.id || S.me.user_id || null, me: S.me, settings: S.settings };
+  DATA_KEYS.forEach((k) => (snap[k] = S[k]));
+  store.set(KEYS.snap, snap);
+}
+function loadSnapshot(userId) {
+  const snap = store.get(KEYS.snap);
+  if (!snap || !snap.me) return null;
+  if (userId && snap.userId && snap.userId !== userId) return null;
+  return snap;
+}
+const outbox = () => store.get(KEYS.outbox) || [];
+const failedOps = () => store.get(KEYS.failed) || [];
+function setOutbox(list) { store.set(KEYS.outbox, list); updateNetBanner(); }
+function setFailed(list) { store.set(KEYS.failed, list); updateNetBanner(); }
+function clearDeviceData() { Object.values(KEYS).forEach(store.del); S.idMap = {}; }
+
+function goOffline() {
+  if (!S.offline) { S.offline = true; document.body.classList.add("is-offline"); }
+  updateNetBanner();
+}
+function setOnline() {
+  S.offline = false; document.body.classList.remove("is-offline"); updateNetBanner();
+}
+// Run a change now, or keep it on this device when offline and send it later.
+async function runOp(op) {
+  const map = (v) => (typeof v === "number" && v < 0 ? (S.idMap[v] ?? v) : v);
+  const unresolved = (v) => typeof v === "number" && v < 0;
+  const dependsErr = () => new Error("APP: This depends on an earlier change that couldn't be saved.");
+  if (op.kind === "insert") {
+    const rows = op.rows.map(({ id, ...r }) => {
+      for (const k of ["asset_id", "plan_id"]) if (k in r) { r[k] = map(r[k]); if (unresolved(r[k])) throw dependsErr(); }
+      return r;
+    });
+    const { data, error } = await sb.from(op.table).insert(rows).select("id");
+    if (error) throw error;
+    op.rows.forEach((r, i) => { if (r.id < 0 && data?.[i]) S.idMap[r.id] = data[i].id; });
+    store.set(KEYS.idmap, S.idMap);
+    return data;
+  }
+  if (op.kind === "update") {
+    const id = map(op.id); if (unresolved(id)) throw dependsErr();
+    const { error } = await sb.from(op.table).update(op.rec).eq("id", id);
+    if (error) throw error;
+    return null;
+  }
+  if (op.kind === "rpc") {
+    const args = { ...op.args };
+    for (const k of ["p_loan_id", "p_asset_id"]) if (k in args) { args[k] = map(args[k]); if (unresolved(args[k])) throw dependsErr(); }
+    const { data, error } = await sb.rpc(op.fn, args);
+    if (error) throw error;
+    return data;
+  }
+}
+async function save(op, applyLocal) {
+  if (!isOffline()) {
+    try { return { data: await runOp(op), queued: false }; }
+    catch (err) {
+      if (!isNetErr(err)) throw err;
+      goOffline();
+      throw new Error("The connection dropped. Press the button again to keep this change on this device until you're back online.");
+    }
+  }
+  applyLocal?.();
+  setOutbox([...outbox(), { ...op, at: new Date().toISOString(), userId: S.session?.user?.id || S.me?.user_id || null }]);
+  saveSnapshot();
+  return { queued: true };
+}
+const QUEUED_MSG = "Saved on this device. It will be sent when you're back online.";
+const OFFLINE_FORMS = new Set(["asset", "loan", "return", "service"]);
+const ONLINE_ACTIONS = new Set(["split-asset", "delete-asset", "delete-service", "delete-item", "open-import", "run-import", "invite-user",
+  "share-invite", "edit-user", "set-password", "toggle-user", "remove-user", "add-plan", "edit-plan", "toggle-plan", "delete-plan", "export-activity", "more-activity"]);
+document.head.insertAdjacentHTML("beforeend", `<style>${[...ONLINE_ACTIONS].map((a) => `body.is-offline [data-action="${a}"]`).join(",")}{opacity:.45}</style>`);
+let syncing = false;
+async function syncOutbox() {
+  if (syncing || isOffline() || !outbox().length) return;
+  let session = null;
+  try { ({ data: { session } } = await sb.auth.getSession()); } catch {}
+  if (!session) { updateNetBanner(); return; }
+  syncing = true; updateNetBanner();
+  let sent = 0, failed = 0;
+  try {
+    for (const op of outbox()) {
+      if (op.userId && op.userId !== session.user.id) break;
+      try { await runOp(op); sent++; }
+      catch (err) {
+        if (isNetErr(err)) { goOffline(); break; }
+        setFailed([...failedOps(), { ...op, error: friendlyError(err) }]); failed++;
+      }
+      setOutbox(outbox().slice(1));
+    }
+  } finally { syncing = false; updateNetBanner(); }
+  if (sent || failed) {
+    await refresh();
+    toast(failed ? `${plural(sent, "change")} sent. ${failed} couldn't be saved: see the message at the top.` : `${plural(sent, "change")} saved on this device ${sent === 1 ? "was" : "were"} sent.`);
+  }
+}
+async function checkConnection() {
+  if (navigator.onLine === false) return false;
+  try {
+    const { error } = await sb.from("app_settings").select("id").limit(1);
+    return !(error && isNetErr(error));
+  } catch { return false; }
+}
+async function tryReconnect() {
+  if (!(await checkConnection())) { goOffline(); return; }
+  let session = null;
+  try { ({ data: { session } } = await sb.auth.getSession()); } catch {}
+  setOnline();
+  if (!session) {
+    const n = outbox().length;
+    showLogin(n ? `You're back online. Sign in again to send the <b>${plural(n, "change")}</b> saved on this device.` : null, true);
+    return;
+  }
+  if (!S.session) { startApp(session); return; }
+  await syncOutbox();
+  await refresh();
+}
+addEventListener("online", () => tryReconnect());
+addEventListener("offline", () => { goOffline(); });
+setInterval(() => { if (S.offline && S.me && navigator.onLine !== false) tryReconnect(); }, 30000);
+
+function updateNetBanner() {
+  const el = $("#net-banner"); if (!el) return;
+  const waiting = outbox().length, failed = failedOps().length;
+  const saved = S.savedAt ? new Date(S.savedAt) : null;
+  const savedText = saved ? (saved.toDateString() === new Date().toDateString()
+    ? `at ${saved.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" })} today` : `on ${fmtWhen(S.savedAt)}`) : "earlier on this device";
+  let html = "";
+  if (S.offline || navigator.onLine === false) {
+    html += `<div class="alert alert-warning d-flex gap-2 align-items-start mb-0">${ic("wifi-off")}<div>
+      <b>You're offline.</b> Showing the data saved ${savedText}. You can still add and edit items, lend, record returns and log maintenance;
+      ${waiting ? `<b>${plural(waiting, "change")}</b> ${waiting === 1 ? "is" : "are"} waiting and will be sent` : "changes are kept on this device and sent"} when you're back online.</div></div>`;
+  } else if (waiting) {
+    html += `<div class="alert alert-info d-flex flex-wrap gap-2 align-items-center mb-0">${ic("cloud-upload")}
+      <span class="me-auto"><b>${plural(waiting, "change")}</b> saved on this device ${waiting === 1 ? "is" : "are"} waiting to be sent.</span>
+      ${syncing ? `<span class="small"><span class="spinner-border spinner-border-sm me-1"></span>Sending…</span>`
+        : `<button class="btn btn-sm btn-primary" data-action="sync-now">${ic("send")}Send now</button>`}</div>`;
+  }
+  if (failed) {
+    html += `<div class="alert alert-danger d-flex flex-wrap gap-2 align-items-center mb-0 ${html ? "mt-2" : ""}">${ic("triangle-alert")}
+      <span class="me-auto"><b>${plural(failed, "change")}</b> made offline couldn't be saved.</span>
+      <button class="btn btn-sm btn-outline-danger" data-action="review-failed">Review</button></div>`;
+  }
+  el.innerHTML = html ? `<div class="net-wrap">${html}</div>` : "";
+  el.hidden = !html;
+}
+function reviewFailed() {
+  const list = failedOps();
+  if (!list.length) { closeModal(); return; }
+  openModal(`${ic("triangle-alert")}Changes that couldn't be saved`, `
+    <p class="text-body-secondary">These were made while offline. When they were sent, the database refused them, usually because something changed in the meantime
+      (for example, someone else lent the last of an item). Make the change again if it's still needed, then discard it here.</p>
+    <ul class="list-group mb-3">${list.map((op, i) => `<li class="list-group-item d-flex gap-3 align-items-start">
+      <div class="flex-grow-1 min-w-0"><div class="fw-bold">${esc(op.label || "Change")}</div>
+        <div class="small text-body-secondary">Made ${fmtWhen(op.at)}</div><div class="small text-danger mt-1">${esc(op.error)}</div></div>
+      <button class="btn btn-sm btn-outline-secondary" data-action="discard-failed" data-index="${i}">Discard</button></li>`).join("")}</ul>
+    <div class="d-flex justify-content-end"><button class="btn btn-outline-danger" data-action="discard-failed" data-index="all">Discard all</button></div>`);
 }
 
 /* ---------- Sign in, create account, access check ---------- */
 async function init() {
   applySettings();
   if (!configured) { $("#setup-notice").hidden = false; $("#auth-forms").hidden = true; showLogin(); return; }
-  const { data: { session } } = await sb.auth.getSession();
-  session ? startApp(session) : showLogin();
-  sb.auth.onAuthStateChange((event) => { if (event === "SIGNED_OUT") { S.me = null; showLogin(); } });
+  let session = null;
+  try { ({ data: { session } } = await sb.auth.getSession()); } catch {}
+  sb.auth.onAuthStateChange((event) => { if (event === "SIGNED_OUT") { S.me = null; S.session = null; showLogin(); } });
+  if (session) return startApp(session);
+  const snap = loadSnapshot();
+  if (snap && !(await checkConnection())) return startOffline(snap);
+  showLogin();
 }
-function showLogin(blockedMsg) {
+function showLogin(blockedMsg, keepForms) {
   $("#app").hidden = true; $("#login").hidden = false;
   $("#blocked-notice").hidden = !blockedMsg; $("#blocked-notice").innerHTML = blockedMsg || "";
-  $("#auth-forms").hidden = !!blockedMsg || !configured;
-  $("#blocked-signout").hidden = !blockedMsg;
+  $("#auth-forms").hidden = (!!blockedMsg && !keepForms) || !configured;
+  $("#blocked-signout").hidden = !blockedMsg || !!keepForms;
 }
 async function loadMe(session) {
   const { data, error } = await sb.from("members").select("*");
   if (error) {
+    if (isNetErr(error)) throw error;
     if (/members|schema cache|does not exist/i.test(error.message))
       return { blocked: "The database needs the users upgrade. An admin should run <b>upgrade-users.sql</b> in Supabase (see the README)." };
     throw error;
@@ -604,31 +817,50 @@ async function loadMe(session) {
   const me = (data || []).find((m) => m.user_id === session.user.id) || (data || []).find((m) => m.email === email);
   if (!me) return { blocked: `<b>${esc(email)}</b> has not been given access. Ask an admin to invite you.` };
   if (!me.active) return { blocked: "Your access has been turned off. Contact an admin if this is a mistake." };
-  const qc = await sb.from("borrowings").select("quantity").limit(1);
+  const [qc, pc] = await Promise.all([sb.from("borrowings").select("quantity").limit(1), sb.from("maintenance_plans").select("id").limit(1)]);
   if (qc.error && /quantity|schema cache|does not exist/i.test(qc.error.message))
     return { blocked: "The database needs the quantity upgrade. An admin should run <b>upgrade-quantity.sql</b> in Supabase (see the README)." };
+  if (pc.error && /maintenance_plans|schema cache|does not exist/i.test(pc.error.message))
+    return { blocked: "The database needs the latest upgrade. An admin should run <b>upgrade-audit.sql</b> in Supabase (see the README)." };
   return { me };
+}
+function enterApp() {
+  document.body.classList.remove("role-admin", "role-editor", "role-viewer");
+  document.body.classList.add(`role-${S.me.role}`);
+  if (S.view === "users" && !isAdmin()) S.view = "dashboard";
+  $("#login").hidden = true; $("#app").hidden = false;
+  updateMeBox(); applyTheme(); updateNetBanner();
+}
+function startOffline(snap) {
+  S.me = snap.me; S.session = null;
+  DATA_KEYS.forEach((k) => (S[k] = snap[k] || (k === "photos" ? {} : [])));
+  S.settings = snap.settings || {}; S.savedAt = snap.savedAt;
+  applySettings(); goOffline(); enterApp(); render();
 }
 async function startApp(session) {
   S.session = session;
   let res;
   try { res = await loadMe(session); }
-  catch (err) { showLogin(`Could not check your access: ${esc(friendlyError(err))}`); return; }
+  catch (err) {
+    const snap = isNetErr(err) && loadSnapshot(session.user.id);
+    if (snap) return startOffline(snap);
+    showLogin(`Could not check your access: ${esc(friendlyError(err))}`); return;
+  }
   if (res.blocked) { showLogin(res.blocked); return; }
+  const prev = loadSnapshot(session.user.id);
+  if (!prev || prev.userId !== session.user.id) { store.del(KEYS.snap); }
   S.me = res.me;
-  document.body.classList.remove("role-admin", "role-editor", "role-viewer");
-  document.body.classList.add(`role-${S.me.role}`);
-  if (S.view === "users" && !isAdmin()) S.view = "dashboard";
-  $("#login").hidden = true; $("#app").hidden = false;
-  updateMeBox();
-  applyTheme();
+  enterApp();
   $("#view").innerHTML = `<div class="d-flex align-items-center gap-2 text-body-secondary"><div class="spinner-border spinner-border-sm text-primary"></div> Loading assets…</div>`;
   try { await loadAll(); }
   catch (err) {
-    $("#view").innerHTML = `<div class="alert alert-danger"><b>Could not load data.</b> ${esc(friendlyError(err))}<br>Check that <b>setup.sql</b> and <b>upgrade-users.sql</b> were run in Supabase.</div>`;
+    const snap = isNetErr(err) && loadSnapshot(session.user.id);
+    if (snap) return startOffline(snap);
+    $("#view").innerHTML = `<div class="alert alert-danger"><b>Could not load data.</b> ${esc(friendlyError(err))}<br>Check that all the .sql files in the README were run in Supabase.</div>`;
     return;
   }
   render();
+  syncOutbox();
 }
 function updateMeBox() {
   $("#me-name").textContent = S.me.full_name || S.me.email;
@@ -677,11 +909,11 @@ function getAlerts() {
     if (d < 0) alerts.push({ urgent: true, icon: "arrow-left-right", when: d, asset: b.asset_id, text: `${loanLabel(b)} ${loanQty(b) > 1 ? "are" : "is"} overdue`, sub: `${b.borrower_name} was due to return it ${plural(-d, "day")} ago` });
     else if (d <= 2) alerts.push({ urgent: false, icon: "arrow-left-right", when: d, asset: b.asset_id, text: `${loanLabel(b)} ${loanQty(b) > 1 ? "are" : "is"} due back ${d === 0 ? "today" : d === 1 ? "tomorrow" : "in 2 days"}`, sub: `Borrowed by ${b.borrower_name}` });
   });
-  S.assets.filter((a) => a.status !== "Disposed" && a.status !== "Lost").forEach((a) => {
-    const n = nextDue(a.id); if (!n) return;
-    const d = daysUntil(n);
-    if (d < 0) alerts.push({ urgent: true, icon: "wrench", when: d, asset: a.id, text: `${a.name} is overdue for servicing`, sub: `Was due ${fmtDate(n)}` });
-    else if (d <= CFG.REMINDER_DAYS) alerts.push({ urgent: false, icon: "wrench", when: d, asset: a.id, text: `${a.name} needs servicing ${d === 0 ? "today" : `in ${plural(d, "day")}`}`, sub: `Due ${fmtDate(n)}` });
+  dueList().forEach(({ a, due, task, plan }) => {
+    const d = daysUntil(due), what = task ? `${a.name}: ${task}` : `${a.name} servicing`;
+    const sub = `${d < 0 ? "Was due" : "Due"} ${fmtDate(due)}${plan ? ` · repeats ${everyText(plan)}` : ""}`;
+    if (d < 0) alerts.push({ urgent: true, icon: "wrench", when: d, asset: a.id, text: `${what} is overdue`, sub });
+    else if (d <= CFG.REMINDER_DAYS) alerts.push({ urgent: false, icon: "wrench", when: d, asset: a.id, text: `${what} is due ${d === 0 ? "today" : `in ${plural(d, "day")}`}`, sub });
   });
   return alerts.sort((x, y) => x.when - y.when);
 }
@@ -695,10 +927,11 @@ function render() {
       ${n.id === "dashboard" && urgent ? `<span class="badge rounded-pill" aria-label="${urgent} urgent">${urgent}</span>` : ""}
     </button>`).join("");
   const mb = $("#menu-badge"); mb.hidden = !urgent; mb.textContent = urgent;
-  const views = { dashboard: viewDashboard, assets: viewAssets, loans: viewLoans, maintenance: viewMaintenance, reports: viewReports, lists: viewLists, users: viewUsers, settings: viewSettings };
+  const views = { dashboard: viewDashboard, assets: viewAssets, loans: viewLoans, maintenance: viewMaintenance, reports: viewReports, lists: viewLists, users: viewUsers, settings: viewSettings, activity: viewActivity };
   $("#view").innerHTML = (views[S.view] || viewDashboard)();
   if (S.view === "assets") renderAssetResults();
   if (S.view === "reports") renderReport();
+  if (S.view === "activity") loadActivity(true);
 }
 
 function pageHead(title, sub, actions = "") {
@@ -851,38 +1084,58 @@ function viewLoans() {
 
 /* ----- Maintenance ----- */
 function viewMaintenance() {
-  const upcoming = S.assets.filter((a) => !["Disposed", "Lost"].includes(a.status) && nextDue(a.id))
-    .map((a) => ({ a, due: nextDue(a.id) })).sort((x, y) => x.due.localeCompare(y.due));
-  const overdue = upcoming.filter((u) => daysUntil(u.due) < 0).length;
+  const due = dueList();
+  const overdue = due.filter((u) => daysUntil(u.due) < 0).length;
   const spent = S.maintenance.reduce((s, m) => s + Number(m.cost || 0), 0);
   const count = (id, n) => n ? `<span class="badge rounded-pill ${S.maintTab === id ? "bg-white text-dark" : "text-bg-primary"}">${n}</span>` : "";
   const tab = (id, icon, label, extra) => `<li class="nav-item" role="presentation"><button class="nav-link ${S.maintTab === id ? "active" : ""}"
       data-action="maint-tab" data-tab="${id}" role="tab" aria-selected="${S.maintTab === id}">${ic(icon)}${label} ${extra}</button></li>`;
   const logBtn = `<button class="btn btn-primary needs-edit" data-action="log-service">${ic("plus")}Log maintenance</button>`;
+  const planBtn = `<button class="btn btn-outline-primary needs-edit" data-action="add-plan">${ic("repeat")}New schedule</button>`;
+  const itemCell = (a) => `<a href="#" class="fw-bold text-decoration-none" data-action="open-asset" data-id="${a.id}">${esc(a.name)}</a>${qtyBadge(a)}
+      ${a.asset_tag ? `<div class="small text-body-secondary">${esc(a.asset_tag)}</div>` : ""}`;
 
-  const upcomingHtml = upcoming.length ? `<div class="table-responsive"><table class="table align-middle mb-0">
-      <thead><tr><th>Item</th><th>Due</th><th class="d-none d-md-table-cell">Last service</th><th class="needs-edit"></th></tr></thead>
-      <tbody>${upcoming.map(({ a, due }) => {
-        const d = daysUntil(due);
+  const upcomingHtml = due.length ? `<div class="table-responsive"><table class="table align-middle mb-0">
+      <thead><tr><th>Item</th><th>Due</th><th class="d-none d-md-table-cell">Last done</th><th class="needs-edit"></th></tr></thead>
+      <tbody>${due.map(({ a, due: when, task, plan }) => {
+        const d = daysUntil(when);
         const b = d < 0 ? badge("danger", "Overdue") : d <= CFG.REMINDER_DAYS ? badge("warning", "Due soon") : badge("success", "Scheduled");
-        const when = d < 0 ? `${plural(-d, "day")} overdue` : d === 0 ? "Today" : `In ${plural(d, "day")}`;
-        const last = S.maintenance.find((m) => m.asset_id === a.id);
+        const rel = d < 0 ? `${plural(-d, "day")} overdue` : d === 0 ? "Today" : `In ${plural(d, "day")}`;
+        const last = S.maintenance.find((m) => m.asset_id === a.id && (plan ? m.plan_id === plan.id : !m.plan_id));
         return `<tr>
-          <td><a href="#" class="fw-bold text-decoration-none" data-action="open-asset" data-id="${a.id}">${esc(a.name)}</a>${qtyBadge(a)}
-            ${a.asset_tag ? `<div class="small text-body-secondary">${esc(a.asset_tag)}</div>` : ""}</td>
-          <td><span class="text-nowrap">${fmtDate(due)}</span> ${b}<div class="small text-body-secondary">${when}</div></td>
+          <td>${itemCell(a)}${task ? `<div class="small">${ic("repeat")} ${esc(task)} <span class="text-body-secondary">· ${everyText(plan)}</span></div>` : ""}</td>
+          <td><span class="text-nowrap">${fmtDate(when)}</span> ${b}<div class="small text-body-secondary">${rel}</div></td>
           <td class="d-none d-md-table-cell small">${last ? `${fmtDate(last.service_date)}: ${esc(last.description)}${last.performed_by ? ` <span class="text-body-secondary">(${esc(last.performed_by)})</span>` : ""}` : "—"}</td>
-          <td class="text-end needs-edit"><button class="btn btn-sm btn-outline-primary" data-action="log-service" data-id="${a.id}" aria-label="Log service done for ${esc(a.name)}" title="Log service done">${ic("check")}<span class="d-none d-md-inline">Log done</span></button></td>
+          <td class="text-end needs-edit"><button class="btn btn-sm btn-outline-primary" data-action="log-service" data-id="${a.id}" ${plan ? `data-plan="${plan.id}"` : ""}
+            aria-label="Log ${esc(task || "service")} done for ${esc(a.name)}" title="Log it as done">${ic("check")}<span class="d-none d-md-inline">Log done</span></button></td>
         </tr>`;
       }).join("")}</tbody></table></div>`
-    : emptyState("calendar-check", "No services scheduled.<br>When you log maintenance, add a “next service due” date to get reminders here.", logBtn);
+    : emptyState("calendar-check", "Nothing is due.<br>Set up a repeating schedule, or add a “next service due” date when you log maintenance.", planBtn + logBtn);
+
+  const plans = [...S.plans].sort((x, y) => (x.active === y.active ? x.next_due.localeCompare(y.next_due) : x.active ? -1 : 1));
+  const plansHtml = plans.length ? `<div class="table-responsive"><table class="table align-middle mb-0">
+      <thead><tr><th>Item</th><th>Task</th><th>Repeats</th><th>Next due</th><th class="needs-edit"></th></tr></thead>
+      <tbody>${plans.map((p) => {
+        const a = assetById(p.asset_id);
+        return `<tr class="${p.active ? "" : "opacity-75"}">
+          <td>${a ? itemCell(a) : "—"}</td>
+          <td>${esc(p.task)}${p.notes ? `<div class="small text-body-secondary">${esc(p.notes)}</div>` : ""}</td>
+          <td class="text-nowrap">${everyText(p)}</td>
+          <td class="text-nowrap">${p.active ? fmtDate(p.next_due) : badge("secondary", "Paused", "pause")}</td>
+          <td class="text-end text-nowrap needs-edit">
+            <button class="btn btn-sm btn-outline-secondary btn-icon" data-action="edit-plan" data-id="${p.id}" aria-label="Edit schedule" title="Edit">${ic("pencil")}</button>
+            <button class="btn btn-sm btn-outline-secondary btn-icon" data-action="toggle-plan" data-id="${p.id}" aria-label="${p.active ? "Pause" : "Resume"} schedule" title="${p.active ? "Pause" : "Resume"}">${ic(p.active ? "pause" : "play")}</button>
+            <button class="btn btn-sm btn-outline-danger btn-icon" data-action="delete-plan" data-id="${p.id}" aria-label="Delete schedule" title="Delete">${ic("trash-2")}</button>
+          </td></tr>`;
+      }).join("")}</tbody></table></div>`
+    : emptyState("repeat", "No repeating schedules yet.<br>For example: generator oil change every 3 months, or fire extinguisher check every year.", planBtn);
 
   const historyHtml = S.maintenance.length ? `<div class="table-responsive"><table class="table align-middle mb-0">
       <thead><tr><th>Date</th><th>Item</th><th>Work done</th><th class="d-none d-md-table-cell">Done by</th><th class="text-end">Cost</th><th class="needs-edit"></th></tr></thead>
       <tbody>${S.maintenance.map((m) => `<tr>
         <td class="text-nowrap">${fmtDate(m.service_date)}</td>
         <td><a href="#" class="fw-bold text-decoration-none" data-action="open-asset" data-id="${m.asset_id}">${esc(assetName(m.asset_id))}</a></td>
-        <td>${esc(m.description)}${m.next_due ? `<div class="small text-body-secondary">Next due ${fmtDate(m.next_due)}</div>` : ""}</td>
+        <td>${esc(m.description)}${m.plan_id ? ` <span class="text-body-secondary" title="On a schedule">${ic("repeat")}</span>` : ""}${m.next_due ? `<div class="small text-body-secondary">Next due ${fmtDate(m.next_due)}</div>` : ""}</td>
         <td class="d-none d-md-table-cell">${esc(m.performed_by || "—")}</td>
         <td class="text-end text-nowrap">${money(m.cost)}</td>
         <td class="text-end needs-edit"><button class="btn btn-sm btn-outline-danger btn-icon" data-action="delete-service" data-id="${m.id}" aria-label="Delete record" title="Delete record">${ic("trash-2")}</button></td>
@@ -891,12 +1144,14 @@ function viewMaintenance() {
         <span class="text-body-secondary">${plural(S.maintenance.length, "record")}</span><span class="fw-bold">Total spent: ${money(spent)}</span></div>`
     : emptyState("notebook-text", "No maintenance logged yet.", logBtn);
 
-  return pageHead("Maintenance", "Servicing schedule and repair history", logBtn) + `
+  const body = { upcoming: upcomingHtml, plans: plansHtml, history: historyHtml }[S.maintTab] || upcomingHtml;
+  return pageHead("Maintenance", "Servicing schedule and repair history", (S.maintTab === "plans" ? planBtn : "") + logBtn) + `
     <ul class="nav nav-pills mb-3 gap-1" role="tablist">
-      ${tab("upcoming", "calendar-check", "Next services", count("upcoming", upcoming.length) + (overdue ? ` <span class="badge rounded-pill text-bg-danger">${overdue} overdue</span>` : ""))}
+      ${tab("upcoming", "calendar-check", "Next services", count("upcoming", due.length) + (overdue ? ` <span class="badge rounded-pill text-bg-danger">${overdue} overdue</span>` : ""))}
+      ${tab("plans", "repeat", "Schedules", count("plans", S.plans.filter((p) => p.active).length))}
       ${tab("history", "notebook-text", "History", count("history", S.maintenance.length))}
     </ul>
-    <div class="card">${S.maintTab === "history" ? historyHtml : upcomingHtml}</div>`;
+    <div class="card">${body}</div>`;
 }
 
 /* ----- Reports ----- */
@@ -914,6 +1169,12 @@ const REPORTS = {
     "Item": assetName(b.asset_id), "Quantity": loanQty(b), "Borrower": b.borrower_name, "Phone": b.borrower_phone || "",
     "Purpose": b.purpose || "", "Borrowed": b.borrowed_on, "Due back": b.due_on || "", "Returned": b.returned_on || "Not yet",
     "Came back": b.returned_on ? (b.returned_quantity ?? loanQty(b)) : ""
+  })) },
+  disposals: { title: "Disposals and write-offs", rows: () => S.assets.filter((a) => ["Disposed", "Lost"].includes(a.status))
+    .sort((x, y) => (y.disposal_date || "").localeCompare(x.disposal_date || "")).map((a) => ({
+    "Date": a.disposal_date || "", "Item": a.name, "Asset tag": a.asset_tag || "", "Quantity": qty(a), "Status": a.status,
+    "How": a.disposal_method || "", "Reason": a.disposal_reason || "", "Approved by": a.disposal_approved_by || "",
+    [`Amount received (${CFG.CURRENCY})`]: a.disposal_amount ?? "", [`Total value (${CFG.CURRENCY})`]: totalValue(a) ?? ""
   })) },
   maintenance: { title: "Maintenance costs", rows: () => S.maintenance.map((m) => ({
     "Date": m.service_date, "Item": assetName(m.asset_id), "Work done": m.description,
@@ -945,7 +1206,7 @@ function renderReport() {
   const el = $("#report-out");
   if (!rows.length) { el.innerHTML = `<div class="card">${emptyState("file-text", "No records for this report yet.")}</div>`; return; }
   const cols = Object.keys(rows[0]);
-  const isMoney = (c) => c.startsWith("Cost") || c.startsWith("Total value");
+  const isMoney = (c) => c.startsWith("Cost") || c.startsWith("Total value") || c.startsWith("Amount received");
   const isNum = (c) => isMoney(c) || ["Quantity", "Items", "Records", "Came back"].includes(c);
   const totalCol = cols.find((c) => c.startsWith("Total value")) || cols.find(isMoney);
   const total = totalCol ? rows.reduce((s, r) => s + (Number(r[totalCol]) || 0), 0) : null;
@@ -1162,6 +1423,181 @@ function viewSettings() {
     </div>`;
 }
 
+/* ----- Activity: the change history ----- */
+const ACT_TYPES = { "": "All changes", assets: "Items", borrowings: "Borrowing", maintenance: "Maintenance and schedules", lists: "Lists", app_settings: "Church details", members: "Users" };
+const ACT_TABLES = { assets: ["assets"], borrowings: ["borrowings"], maintenance: ["maintenance", "maintenance_plans"], lists: ["categories", "locations", "ministries"], app_settings: ["app_settings"], members: ["members"] };
+const ACT_INFO = {
+  assets: { icon: "package", insert: "added", update: "edited", delete: "deleted" },
+  borrowings: { icon: "arrow-left-right", insert: "lent", update: "updated the loan of", delete: "deleted the loan of" },
+  maintenance: { icon: "wrench", insert: "logged maintenance on", update: "edited maintenance on", delete: "deleted maintenance on" },
+  maintenance_plans: { icon: "repeat", insert: "set up a schedule for", update: "changed the schedule for", delete: "deleted the schedule for" },
+  categories: { icon: "tag", insert: "added the category", update: "renamed the category", delete: "removed the category" },
+  locations: { icon: "map-pin", insert: "added the location", update: "renamed the location", delete: "removed the location" },
+  ministries: { icon: "users", insert: "added the ministry", update: "renamed the ministry", delete: "removed the ministry" },
+  members: { icon: "shield-check", insert: "invited", update: "changed access for", delete: "removed" },
+  app_settings: { icon: "building-2", insert: "set up", update: "changed", delete: "removed" }
+};
+const yesNo = (v) => (v ? "Yes" : "No");
+const FIELDS = {
+  name: "Name", quantity: "Quantity", asset_tag: "Tag", serial_number: "Serial number", status: "Status", condition: "Condition",
+  category_id: ["Category", (v) => nameOf(S.categories, v)], location_id: ["Location", (v) => nameOf(S.locations, v)],
+  ministry_id: ["Ministry", (v) => nameOf(S.ministries, v)], cost: ["Cost per item", money], purchase_date: ["Purchase date", fmtDate],
+  notes: "Notes", photo_path: ["Photo", (v) => (v ? "added" : "removed")],
+  disposal_date: ["Disposal date", fmtDate], disposal_method: "How disposed", disposal_reason: "Reason",
+  disposal_approved_by: "Approved by", disposal_amount: ["Amount received", money],
+  borrower_name: "Borrower", borrower_phone: "Phone", purpose: "Purpose", borrowed_on: ["Borrowed", fmtDate],
+  due_on: ["Due back", fmtDate], returned_on: ["Returned", fmtDate], returned_quantity: "Came back",
+  service_date: ["Date", fmtDate], description: "Work done", performed_by: "Done by", next_due: ["Next due", fmtDate],
+  task: "Task", every: "Every", unit: "Unit", active: ["Active", yesNo],
+  email: "Email", full_name: "Full name", role: ["Role", (v) => ROLES[v]?.label || v],
+  church_name: "Church name", branch_name: "Assembly", currency: "Currency", reminder_days: "Reminder days"
+};
+const ACT_SHOW_ON_ADD = {
+  assets: ["quantity", "status", "location_id", "cost"], borrowings: ["quantity", "due_on", "purpose"],
+  maintenance: ["service_date", "cost", "performed_by"], maintenance_plans: ["every", "unit", "next_due"], members: ["role"]
+};
+function fmtField(key, v) {
+  if (v === null || v === undefined || v === "") return "—";
+  const f = FIELDS[key];
+  const out = Array.isArray(f) ? f[1](v) : String(v);
+  return out.length > 70 ? out.slice(0, 67) + "…" : out;
+}
+function actVerb(r) {
+  const info = ACT_INFO[r.table_name] || {};
+  const c = r.changes || {};
+  if (r.table_name === "borrowings" && r.action === "update") {
+    if (c.returned_on && !c.returned_on[0]) return "recorded the return of";
+    if (c.quantity && !c.returned_on) return "recorded a part return of";
+  }
+  if (r.table_name === "assets" && r.action === "update" && c.status && ["Disposed", "Lost"].includes(c.status[1]))
+    return c.status[1] === "Disposed" ? "disposed of" : "wrote off as lost";
+  if (r.table_name === "members" && r.action === "update" && c.active) return c.active[1] ? "turned access back on for" : "turned off access for";
+  return info[r.action] || r.action;
+}
+function actLabel(r) {
+  const [first, second] = String(r.label || "").split(" · ");
+  if (r.table_name === "borrowings" && second) return [first, ` to ${second}`];
+  if ((r.table_name === "maintenance" || r.table_name === "maintenance_plans") && second) return [first, `: ${second}`];
+  return [r.label || "", ""];
+}
+function actLines(r) {
+  const c = r.changes || {};
+  if (r.action === "update")
+    return Object.entries(c).filter(([k]) => FIELDS[k]).map(([k, [o, n]]) =>
+      `${Array.isArray(FIELDS[k]) ? FIELDS[k][0] : FIELDS[k]}: ${fmtField(k, o)} → ${fmtField(k, n)}`);
+  if (r.action === "insert")
+    return (ACT_SHOW_ON_ADD[r.table_name] || []).filter((k) => c[k] !== undefined && !(k === "quantity" && c[k] === 1))
+      .map((k) => `${Array.isArray(FIELDS[k]) ? FIELDS[k][0] : FIELDS[k]}: ${fmtField(k, c[k])}`);
+  return [];
+}
+const actWho = (r) => r.user_name || r.user_email || "Automatic";
+function dayLabel(ts) {
+  const d = new Date(ts), t = new Date(), y = new Date(); y.setDate(t.getDate() - 1);
+  if (d.toDateString() === t.toDateString()) return "Today";
+  if (d.toDateString() === y.toDateString()) return "Yesterday";
+  return d.toLocaleDateString(undefined, { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+}
+function activityItem(r, compact) {
+  const info = ACT_INFO[r.table_name] || { icon: "activity" };
+  const tone = r.action === "delete" ? "text-danger" : r.action === "insert" ? "text-success" : "text-brand";
+  const [main, rest] = actLabel(r);
+  const linkable = !compact && r.asset_id && assetById(r.asset_id);
+  const what = linkable ? `<a href="#" class="fw-bold text-decoration-none" data-action="open-asset" data-id="${r.asset_id}">${esc(main)}</a>${esc(rest)}` : `<b>${esc(main)}</b>${esc(rest)}`;
+  const lines = actLines(r);
+  const when = compact ? fmtWhen(r.at) : new Date(r.at).toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" });
+  return `<div class="list-group-item d-flex gap-3 py-3"><span class="${tone}">${ic(info.icon)}</span>
+    <div class="min-w-0 flex-grow-1"><div><b>${esc(actWho(r))}</b> ${actVerb(r)} ${what}</div>
+      ${lines.length ? `<ul class="small text-body-secondary mb-0 ps-3 mt-1">${lines.map((l) => `<li>${esc(l)}</li>`).join("")}</ul>` : ""}</div>
+    <span class="small text-body-secondary text-nowrap">${when}</span></div>`;
+}
+function viewActivity() {
+  return pageHead("Activity", "Every change, who made it and when. Entries can't be edited or deleted.",
+      `<button class="btn btn-outline-primary" data-action="export-activity">${ic("file-spreadsheet")}Download Excel</button>`) + `
+    <div class="card mb-3"><div class="card-body"><div class="row g-2">
+      <div class="col-12 col-md-8"><div class="input-group"><span class="input-group-text">${ic("search")}</span>
+        <input type="search" class="form-control" id="act-q" placeholder="Search by item, borrower or person" value="${esc(S.act.q)}" aria-label="Search the activity"></div></div>
+      <div class="col-12 col-md-4"><select class="form-select" id="act-type" aria-label="Type of change">${Object.entries(ACT_TYPES)
+        .filter(([k]) => k !== "members" || isAdmin()).map(([k, v]) => `<option value="${k}" ${S.act.type === k ? "selected" : ""}>${v}</option>`).join("")}</select></div>
+    </div></div></div>
+    <div id="act-out"></div>`;
+}
+function activityQuery(from, n) {
+  let q = sb.from("activity_log").select("*").order("at", { ascending: false }).range(from, from + n - 1);
+  if (S.act.type) q = q.in("table_name", ACT_TABLES[S.act.type]);
+  const term = S.act.q.replace(/[,()%*"\\:]/g, " ").trim();
+  if (term) q = q.or(`label.ilike.*${term}*,user_name.ilike.*${term}*,user_email.ilike.*${term}*`);
+  return q;
+}
+async function loadActivity(reset) {
+  const el = $("#act-out"); if (!el) return;
+  if (isOffline()) { el.innerHTML = `<div class="card">${emptyState("cloud-off", "The change history needs an internet connection.")}</div>`; return; }
+  if (reset) { S.act.rows = []; S.act.done = false; S.act.loading = false; S.act.gen = (S.act.gen || 0) + 1; }
+  if (S.act.loading || S.act.done) return;
+  const gen = S.act.gen;
+  S.act.loading = true; renderActivity();
+  const { data, error } = await activityQuery(S.act.rows.length, 100);
+  if (gen !== S.act.gen) return;
+  S.act.loading = false;
+  if (error) {
+    if (isNetErr(error)) { goOffline(); return loadActivity(true); }
+    el.innerHTML = `<div class="alert alert-danger">${esc(friendlyError(error))}</div>`; return;
+  }
+  S.act.rows.push(...(data || []));
+  if ((data || []).length < 100) S.act.done = true;
+  renderActivity();
+}
+function renderActivity() {
+  const el = $("#act-out"); if (!el) return;
+  const rows = S.act.rows;
+  const spin = `<div class="d-flex align-items-center gap-2 text-body-secondary p-3"><div class="spinner-border spinner-border-sm text-primary"></div>Loading…</div>`;
+  if (!rows.length) {
+    el.innerHTML = S.act.loading ? spin : `<div class="card">${emptyState("activity", S.act.q || S.act.type ? "No changes match." : "No changes recorded yet. From now on, every change is listed here.")}</div>`;
+    return;
+  }
+  let html = "", day = "";
+  for (const r of rows) {
+    const d = dayLabel(r.at);
+    if (d !== day) { html += `${day ? "</div></div>" : ""}<div class="card mb-3"><div class="card-header">${ic("calendar")}${d}</div><div class="list-group list-group-flush">`; day = d; }
+    html += activityItem(r);
+  }
+  html += "</div></div>";
+  html += S.act.done ? `<p class="text-center small text-body-secondary">That's the full history.</p>`
+    : `<div class="text-center"><button class="btn btn-outline-primary" data-action="more-activity" ${S.act.loading ? "disabled" : ""}>
+        ${S.act.loading ? `<span class="spinner-border spinner-border-sm"></span>` : ic("history")}Show older changes</button></div>`;
+  el.innerHTML = html;
+}
+async function exportActivity(btn) {
+  btn.disabled = true;
+  const all = [];
+  try {
+    for (let from = 0; from < 10000; from += 1000) {
+      const { data, error } = await activityQuery(from, 1000);
+      if (error) throw error;
+      all.push(...data);
+      if (data.length < 1000) break;
+    }
+  } finally { btn.disabled = false; }
+  if (!all.length) { toast("Nothing to download."); return; }
+  const rows = all.map((r) => {
+    const [main, rest] = actLabel(r);
+    return { "When": new Date(r.at).toLocaleString(), "Who": actWho(r), "Did": actVerb(r), "What": main + rest, "Details": actLines(r).join("; ") };
+  });
+  const wb = XLSX.utils.book_new(), ws = XLSX.utils.json_to_sheet(rows);
+  ws["!cols"] = [22, 24, 26, 40, 80].map((w) => ({ wch: w }));
+  XLSX.utils.book_append_sheet(wb, ws, "Activity");
+  XLSX.writeFile(wb, `activity-${today()}.xlsx`);
+}
+async function loadAssetHistory(assetId) {
+  const el = $("#h-changes-body"); if (!el) return;
+  if (isOffline()) { el.innerHTML = `<p class="text-body-secondary m-3">The change history needs an internet connection.</p>`; return; }
+  el.innerHTML = `<div class="d-flex align-items-center gap-2 text-body-secondary m-3"><div class="spinner-border spinner-border-sm text-primary"></div>Loading…</div>`;
+  const { data, error } = await sb.from("activity_log").select("*").eq("asset_id", Number(assetId)).order("at", { ascending: false }).limit(50);
+  if (!$("#h-changes-body")) return;
+  if (error) { el.innerHTML = `<p class="text-danger m-3">${esc(friendlyError(error))}</p>`; return; }
+  el.innerHTML = data.length ? `<div class="list-group list-group-flush">${data.map((r) => activityItem(r, true)).join("")}</div>`
+    : `<p class="text-body-secondary m-3">No changes recorded yet. Changes are recorded from the day the history upgrade was installed.</p>`;
+}
+
 /* ---------- Dialogs ---------- */
 function openModal(title, body) {
   $("#modal-title").innerHTML = title;
@@ -1182,6 +1618,7 @@ function assetDetail(id) {
   const services = S.maintenance.filter((m) => m.asset_id === a.id);
   const due = nextDue(a.id);
   const avail = availableQty(a);
+  const plansFor = S.plans.filter((p) => p.asset_id === a.id);
   const url = a.photo_path && S.photos[a.photo_path];
   openModal(`${esc(a.name)}${qty(a) > 1 ? ` <span class="badge rounded-pill bg-white text-dark">×${qty(a)}</span>` : ""}`, `
     ${current.map((loan) => `<div class="alert alert-warning d-flex flex-wrap gap-2 align-items-center py-2">${ic("arrow-left-right")}
@@ -1200,15 +1637,17 @@ function assetDetail(id) {
         <dt class="col-5">Serial no.</dt><dd class="col-7">${esc(a.serial_number || "—")}</dd>
         <dt class="col-5">Purchased</dt><dd class="col-7">${fmtDate(a.purchase_date)}</dd>
         <dt class="col-5">Cost</dt><dd class="col-7">${money(a.cost)}${qty(a) > 1 && totalValue(a) !== null ? `<span class="text-body-secondary small"> each · ${money(totalValue(a))} total</span>` : ""}</dd>
-        <dt class="col-5">Next service</dt><dd class="col-7">${fmtDate(due)}</dd>
+        <dt class="col-5">Next service</dt><dd class="col-7">${fmtDate(due)}${plansFor.map((p) => `<div class="small text-body-secondary">${ic("repeat")} ${esc(p.task)}, ${everyText(p)}${p.active ? "" : " (paused)"}</div>`).join("")}</dd>
       </dl></div>
     </div>
+    ${disposalSummary(a)}
     ${a.notes ? `<p class="bg-body-tertiary rounded p-3" style="white-space:pre-wrap">${esc(a.notes)}</p>` : ""}
     <div class="d-flex flex-wrap gap-2 mb-4 needs-edit">
       <button class="btn btn-primary" data-action="edit-asset" data-id="${a.id}">${ic("pencil")}Edit</button>
       ${avail ? `<button class="btn btn-outline-primary" data-action="lend" data-id="${a.id}">${ic("external-link")}Lend out</button>` : ""}
       ${qty(a) > 1 ? `<button class="btn btn-outline-primary" data-action="split-asset" data-id="${a.id}">${ic("split")}Split group</button>` : ""}
       <button class="btn btn-outline-primary" data-action="log-service" data-id="${a.id}">${ic("wrench")}Log maintenance</button>
+      <button class="btn btn-outline-primary" data-action="add-plan" data-id="${a.id}">${ic("repeat")}Schedule</button>
       <button class="btn btn-outline-danger ms-sm-auto" data-action="delete-asset" data-id="${a.id}">${ic("trash-2")}Delete</button>
     </div>
     <div class="accordion" id="history">
@@ -1225,6 +1664,11 @@ function assetDetail(id) {
         <div id="h-loans" class="accordion-collapse collapse" data-bs-parent="#history"><div class="accordion-body p-0">
           ${loans.length ? `<ul class="list-group list-group-flush">${loans.map((b) => `<li class="list-group-item d-flex flex-wrap justify-content-between gap-2"><span>${esc(b.borrower_name)}${loanQty(b) > 1 ? ` ×${loanQty(b)}` : ""}${b.purpose ? ` · ${esc(b.purpose)}` : ""}${b.returned_on && b.returned_quantity !== null && b.returned_quantity !== undefined && b.returned_quantity < loanQty(b) ? ` <span class="text-danger small">(${loanQty(b) - b.returned_quantity} not returned)</span>` : ""}</span><span class="text-body-secondary small">${fmtDate(b.borrowed_on)} → ${b.returned_on ? fmtDate(b.returned_on) : "still out"}</span></li>`).join("")}</ul>`
           : '<p class="text-body-secondary m-3">Never borrowed.</p>'}</div></div>
+      </div>
+      <div class="accordion-item">
+        <h3 class="accordion-header"><button class="accordion-button collapsed gap-2" type="button" data-bs-toggle="collapse" data-bs-target="#h-changes">
+          ${ic("activity")}Change history</button></h3>
+        <div id="h-changes" class="accordion-collapse collapse" data-bs-parent="#history" data-asset="${a.id}"><div class="accordion-body p-0" id="h-changes-body"></div></div>
       </div>
     </div>`);
 }
@@ -1290,13 +1734,14 @@ function assetForm(a = {}) {
           <select class="form-select" id="f_status" name="status">${plainOptions(STATUSES, a.status || "In use")}</select></div>
         <div class="col-md-6"><label class="form-label fw-bold" for="f_cond">Condition</label>
           <select class="form-select" id="f_cond" name="condition">${plainOptions(CONDITIONS, a.condition || "Good")}</select></div>
+        ${disposalFields(a, "d", editing ? qty(a) : 1)}
         <div class="col-md-6"><label class="form-label fw-bold" for="f_pdate">Purchase date</label>
           <input type="date" class="form-control" id="f_pdate" name="purchase_date" value="${esc(a.purchase_date)}"></div>
         <div class="col-md-6"><label class="form-label fw-bold" for="f_cost" id="f_cost_label">Cost</label>${moneyInput("cost", a.cost)}
           <div class="form-text" id="f_cost_help"></div></div>
         <div class="col-12"><label class="form-label fw-bold" for="f_photo">Photo</label>
-          <input type="file" class="form-control" id="f_photo" name="photo" accept="image/*">
-          <div class="form-text">${a.photo_path ? "Choose a file to replace the current photo." : "Optional, up to 5 MB. On a phone you can take a picture directly."}</div></div>
+          <input type="file" class="form-control" id="f_photo" name="photo" accept="image/*" ${isOffline() ? "disabled" : ""}>
+          <div class="form-text">${isOffline() ? "Photos can be added when you're back online." : a.photo_path ? "Choose a file to replace the current photo." : "Optional, up to 5 MB. On a phone you can take a picture directly."}</div></div>
         <div class="col-12"><label class="form-label fw-bold" for="f_notes">Notes</label>
           <textarea class="form-control" id="f_notes" name="notes" rows="3" placeholder="Donor, warranty details, accessories included…">${esc(a.notes)}</textarea></div>
       </div>
@@ -1306,6 +1751,7 @@ function assetForm(a = {}) {
 }
 function syncAssetForm() {
   const form = document.querySelector('#modal form[data-form="asset"]'); if (!form) return;
+  syncDisposal(form, form.elements.status.value);
   const n = Math.max(1, parseInt(form.elements.quantity.value, 10) || 1);
   const each = !form.dataset.id && n > 1 && form.elements.mode?.value === "each";
   const wrap = $("#f_mode_wrap"); if (wrap) wrap.hidden = n < 2;
@@ -1430,37 +1876,168 @@ function splitForm(a) {
           <select class="form-select" id="s_cond" name="condition">${plainOptions(CONDITIONS, "Poor")}</select></div>
         <div class="col-md-6"><label class="form-label fw-bold" for="s_loc">Their location</label>
           <select class="form-select" id="s_loc" name="location_id">${options(S.locations, null, "Same as now")}</select></div>
-        <div class="col-md-6"><label class="form-label fw-bold" for="s_note">Reason</label>
+        <div class="col-md-6"><label class="form-label fw-bold" for="s_note">Note</label>
           <input class="form-control" id="s_note" name="note" placeholder="e.g. legs broken after harvest"></div>
+        ${disposalFields({}, "sd", 1)}
       </div>
       ${formFoot("Split off")}
     </form>`);
+  syncDisposal(document.querySelector('#modal form[data-form="split"]'), $("#s_status").value, "sd");
 }
 
-function serviceForm(assetId) {
+function serviceForm(assetId, planId) {
   if (!S.assets.length) { toast("Add an asset first."); return; }
   openModal(`${ic("wrench")}Log maintenance`, `
-    <form data-form="service" novalidate>
+    <form data-form="service" novalidate data-plan="${planId || ""}">
       <div class="row g-3">
         <div class="col-12"><label class="form-label fw-bold" for="m_item">Item</label>
           <select class="form-select" id="m_item" name="asset_id" required>${options(S.assets, Number(assetId) || null, "Choose an item")}</select>
           <div class="invalid-feedback">Choose the item that was serviced.</div></div>
+        <div class="col-12" id="m_plan_wrap" hidden><label class="form-label fw-bold" for="m_plan">Which scheduled task is this?</label>
+          <select class="form-select" id="m_plan" name="plan_id"></select></div>
         <div class="col-md-6"><label class="form-label fw-bold" for="m_date">Date done</label>
-          <input type="date" class="form-control" id="m_date" name="service_date" required value="${today()}"></div>
+          <input type="date" class="form-control" id="m_date" name="service_date" required max="${today()}" value="${today()}">
+          <div class="invalid-feedback">Enter the date the work was done (not in the future).</div></div>
         <div class="col-md-6"><label class="form-label fw-bold" for="f_cost">Cost</label>${moneyInput("cost")}</div>
         <div class="col-12"><label class="form-label fw-bold" for="m_desc">Work done</label>
           <input class="form-control" id="m_desc" name="description" required placeholder="e.g. Oil change and filter replacement">
           <div class="invalid-feedback">Describe the work done.</div></div>
         <div class="col-md-6"><label class="form-label fw-bold" for="m_by">Done by</label>
           <input class="form-control" id="m_by" name="performed_by" placeholder="Technician or company"></div>
-        <div class="col-md-6"><label class="form-label fw-bold" for="m_next">Next service due</label>
-          <input type="date" class="form-control" id="m_next" name="next_due"><div class="form-text">Set this to get reminders</div></div>
+        <div class="col-md-6" id="m_next_wrap"><label class="form-label fw-bold" for="m_next">Next service due</label>
+          <input type="date" class="form-control" id="m_next" name="next_due"><div class="form-text">Set this to get a reminder</div></div>
+        <div class="col-md-6" id="m_next_auto" hidden><span class="form-label fw-bold d-block">Next due</span>
+          <div class="form-control bg-body-tertiary d-flex align-items-center gap-2">${ic("repeat")}<span id="m_next_auto_text"></span></div>
+          <div class="form-text">Set automatically from the schedule.</div></div>
         <div class="col-12"><div class="form-check form-switch">
           <input class="form-check-input" type="checkbox" role="switch" id="m_inuse" name="mark_in_use">
           <label class="form-check-label" for="m_inuse">Item is working again: set status to “In use”</label></div></div>
       </div>
       ${formFoot("Save record")}
     </form>`);
+  syncServiceForm(true);
+}
+function syncServiceForm(first) {
+  const form = document.querySelector('#modal form[data-form="service"]'); if (!form) return;
+  const a = assetById(form.elements.asset_id.value);
+  const plans = a ? S.plans.filter((p) => p.asset_id === a.id && p.active) : [];
+  const sel = $("#m_plan");
+  if (first || sel.dataset.asset !== String(a?.id || "")) {
+    const want = first ? Number(form.dataset.plan) || null : null;
+    sel.innerHTML = `<option value="">Not on a schedule (one-off)</option>` + plans.map((p) =>
+      `<option value="${p.id}" ${p.id === want ? "selected" : ""}>${esc(p.task)} (${everyText(p)})</option>`).join("");
+    sel.dataset.asset = String(a?.id || "");
+  }
+  $("#m_plan_wrap").hidden = !plans.length;
+  const plan = S.plans.find((p) => p.id === Number(sel.value));
+  const desc = $("#m_desc");
+  if (plan && (!desc.value || desc.value === desc.dataset.auto)) { desc.value = plan.task; desc.dataset.auto = plan.task; }
+  if (!plan && desc.value && desc.value === desc.dataset.auto) { desc.value = ""; desc.dataset.auto = ""; }
+  $("#m_next_wrap").hidden = !!plan; $("#m_next_auto").hidden = !plan;
+  if (plan) {
+    const done = form.elements.service_date.value || today();
+    const latest = S.maintenance.filter((m) => m.plan_id === plan.id).map((m) => m.service_date).concat(done).sort().pop();
+    $("#m_next_auto_text").textContent = `${fmtDate(addInterval(latest, plan.every, plan.unit))} (${everyText(plan)})`;
+  }
+}
+
+function planForm(p = {}, assetId) {
+  const assets = S.assets.filter((a) => !["Disposed", "Lost"].includes(a.status) || a.id === p.asset_id);
+  openModal(p.id ? `${ic("pencil")}Edit schedule` : `${ic("repeat")}New repeating schedule`, `
+    <form data-form="plan" data-id="${p.id || ""}" novalidate>
+      <div class="row g-3">
+        <div class="col-12"><label class="form-label fw-bold" for="pl_item">Item</label>
+          <select class="form-select" id="pl_item" name="asset_id" required ${p.id ? "disabled" : ""}>${options(assets, p.asset_id ?? (Number(assetId) || null), "Choose an item")}</select>
+          <div class="invalid-feedback">Choose the item.</div></div>
+        <div class="col-12"><label class="form-label fw-bold" for="pl_task">Task</label>
+          <input class="form-control" id="pl_task" name="task" required value="${esc(p.task)}" placeholder="e.g. Oil and filter change">
+          <div class="invalid-feedback">Say what needs doing.</div></div>
+        <div class="col-md-6"><label class="form-label fw-bold" for="pl_every">Repeat every</label>
+          <div class="input-group has-validation">
+            <input type="number" class="form-control" id="pl_every" name="every" min="1" max="1000" step="1" required value="${p.every || 3}">
+            <select class="form-select" id="pl_unit" name="unit" aria-label="Unit">${Object.keys(UNITS).map((u) => `<option value="${u}" ${(p.unit || "months") === u ? "selected" : ""}>${UNITS[u][1]}</option>`).join("")}</select>
+            <div class="invalid-feedback">Enter 1 or more.</div></div></div>
+        <div class="col-md-6"><label class="form-label fw-bold" for="pl_next">${p.id ? "Next due" : "First due"}</label>
+          <input type="date" class="form-control" id="pl_next" name="next_due" required value="${p.next_due || addInterval(today(), 3, "months")}">
+          <div class="form-text">After that, the next date is set each time the work is logged.</div></div>
+        <div class="col-12"><label class="form-label fw-bold" for="pl_notes">Notes</label>
+          <input class="form-control" id="pl_notes" name="notes" value="${esc(p.notes)}" placeholder="e.g. Use 15W-40 oil; Power Tech: 024 555 0199"></div>
+      </div>
+      ${formFoot(p.id ? "Save schedule" : "Create schedule")}
+    </form>`);
+}
+
+/* ---------- Disposal and write-off details ---------- */
+const DISPOSAL_METHODS = ["Sold", "Donated", "Scrapped", "Stolen", "Lost", "Returned to supplier", "Other"];
+function disposalFields(a = {}, px = "d", groupOf = 1) {
+  return `<div class="col-12" id="${px}_box" hidden data-group="${groupOf}">
+    <div class="border rounded p-3 bg-body-tertiary">
+      <div class="fw-bold mb-1 d-flex align-items-center gap-2">${ic("archive")}<span id="${px}_title">Disposal details</span></div>
+      <p class="small text-body-secondary mb-3" id="${px}_hint"></p>
+      <div class="row g-3">
+        <div class="col-md-4"><label class="form-label fw-bold" for="${px}_date">Date</label>
+          <input type="date" class="form-control" id="${px}_date" name="disposal_date" max="${today()}" value="${esc(a.disposal_date || today())}">
+          <div class="invalid-feedback">Not in the future.</div></div>
+        <div class="col-md-4"><label class="form-label fw-bold" for="${px}_method">How</label>
+          <select class="form-select" id="${px}_method" name="disposal_method"><option value="">Choose…</option>${DISPOSAL_METHODS.map((m) =>
+            `<option ${a.disposal_method === m ? "selected" : ""}>${m}</option>`).join("")}</select>
+          <div class="invalid-feedback">Choose how.</div></div>
+        <div class="col-md-4" id="${px}_amount_wrap" hidden><label class="form-label fw-bold" for="${px}_amount">Amount received</label>
+          <div class="input-group"><span class="input-group-text">${esc(CFG.CURRENCY)}</span>
+          <input type="number" class="form-control" id="${px}_amount" name="disposal_amount" min="0" step="0.01" value="${a.disposal_amount ?? ""}"></div></div>
+        <div class="col-md-6"><label class="form-label fw-bold" for="${px}_reason">Reason</label>
+          <input class="form-control" id="${px}_reason" name="disposal_reason" value="${esc(a.disposal_reason)}" placeholder="e.g. Beyond economic repair">
+          <div class="invalid-feedback">Give a reason.</div></div>
+        <div class="col-md-6"><label class="form-label fw-bold" for="${px}_by">Approved by</label>
+          <input class="form-control" id="${px}_by" name="disposal_approved_by" value="${esc(a.disposal_approved_by)}" placeholder="e.g. Presiding Elder; council minute 4/2026">
+          <div class="invalid-feedback">Say who approved it.</div></div>
+      </div></div></div>`;
+}
+function syncDisposal(form, status, px = "d") {
+  const box = form.querySelector(`#${px}_box`); if (!box) return;
+  const on = status === "Disposed" || status === "Lost", disposed = status === "Disposed";
+  const wasHidden = box.hidden;
+  box.hidden = !on;
+  const method = form.querySelector(`#${px}_method`);
+  if (on && wasHidden && !method.value) method.value = disposed ? "" : "Lost";
+  const n = Number(box.dataset.group);
+  form.querySelector(`#${px}_title`).textContent = disposed ? "Disposal details" : "Write-off details";
+  form.querySelector(`#${px}_hint`).textContent = (disposed
+    ? "Auditors need to know how, why and who approved it, so all three are required."
+    : "Optional, but auditors will want the reason and who approved the write-off.")
+    + (n > 1 ? ` This applies to all ${n}. To dispose of only some, cancel and use Split group instead.` : "");
+  for (const f of ["method", "reason", "by"]) form.querySelector(`#${px}_${f}`).required = disposed;
+  form.querySelector(`#${px}_amount_wrap`).hidden = method.value !== "Sold";
+}
+function readDisposal(fd, status) {
+  const method = fd.get("disposal_method") || (status === "Lost" ? "Lost" : null);
+  const date = fd.get("disposal_date") || today();
+  if (date > today()) throw new Error("The disposal date can't be in the future.");
+  return { disposal_date: date, disposal_method: method, disposal_reason: textOrNull(fd.get("disposal_reason")),
+    disposal_approved_by: textOrNull(fd.get("disposal_approved_by")), disposal_amount: method === "Sold" ? numOrNull(fd.get("disposal_amount")) : null };
+}
+function disposalSummary(a) {
+  if (!["Disposed", "Lost"].includes(a.status)) return "";
+  const head = a.status === "Lost" ? "Written off as lost" : `Disposed${a.disposal_method && a.disposal_method !== "Other" ? `: ${a.disposal_method.toLowerCase()}` : ""}`;
+  return `<div class="alert alert-secondary d-flex gap-2 small">${ic("archive")}<div>
+    <b>${head}${a.disposal_date ? ` on ${fmtDate(a.disposal_date)}` : ""}</b>${a.disposal_amount != null ? ` for ${money(a.disposal_amount)}` : ""}
+    ${a.disposal_reason ? `<br>Reason: ${esc(a.disposal_reason)}` : ""}${a.disposal_approved_by ? `<br>Approved by: ${esc(a.disposal_approved_by)}` : ""}
+    ${!a.disposal_reason && !a.disposal_approved_by ? `<br><span class="text-body-secondary">No reason or approval recorded. Edit the item to add them.</span>` : ""}</div></div>`;
+}
+/* Mirror of the database's return_loan, used when a return is recorded offline */
+function applyReturnLocal(b, returned, mode, damaged) {
+  if (!b) return;
+  const n = loanQty(b), missing = n - returned, a = assetById(b.asset_id), day = today();
+  if (missing > 0 && mode === "keep") {
+    S.borrowings.push({ ...b, id: tempId(), quantity: returned, returned_quantity: returned, returned_on: day });
+    b.quantity = missing; return;
+  }
+  b.returned_on = day; b.returned_quantity = returned;
+  if (!a) return;
+  if (missing > 0) {
+    if (qty(a) - missing >= 1) a.quantity = qty(a) - missing;
+    else { a.status = "Lost"; a.disposal_method = "Lost"; a.disposal_date = day; }
+  } else if (damaged) a.status = "Under repair";
 }
 
 /* ---------- Excel import ---------- */
@@ -1721,11 +2298,12 @@ const FORMS = {
       status: fd.get("status"), condition: fd.get("condition"), purchase_date: fd.get("purchase_date") || null,
       cost: numOrNull(fd.get("cost")), notes: textOrNull(fd.get("notes"))
     };
+    if (["Disposed", "Lost"].includes(rec.status)) Object.assign(rec, readDisposal(fd, rec.status));
     const each = !id && rec.quantity > 1 && fd.get("mode") === "each";
     const out = id ? onLoanQty(id) : 0;
 
     // Check everything before uploading a photo, so a failed save doesn't leave a stray file
-    if (id && out && ["Lost", "Disposed"].includes(rec.status))
+    if (id && out && ["Lost", "Disposed"].includes(rec.status) && old.status !== rec.status)
       throw new Error(`${qty(old) > 1 ? `${out} of these are` : "This item is"} still on loan. Use “Mark returned” on the loan first (you can record any that didn't come back), then change the status.`);
     if (id && rec.quantity < out) throw new Error(`${out} are on loan, so the quantity can't be lower than ${out}.`);
     let tags = [];
@@ -1740,6 +2318,7 @@ const FORMS = {
 
     const file = fd.get("photo");
     if (file && file.size) {
+      if (isOffline()) throw new Error("Photos can only be added while you're online. Remove the photo to save now, and add it later.");
       if (file.size > 5 * 1024 * 1024) throw new Error("The photo is larger than 5 MB. Choose a smaller photo.");
       const ext = (file.name.split(".").pop() || "jpg").toLowerCase().replace(/[^a-z0-9]/g, "");
       const path = `${crypto.randomUUID()}.${ext}`;
@@ -1748,20 +2327,22 @@ const FORMS = {
       rec.photo_path = path;
       if (old?.photo_path && !photoShared(old)) await sb.storage.from(BUCKET).remove([old.photo_path]);
     }
+    const now = new Date().toISOString();
     if (id) {
-      rec.updated_at = new Date().toISOString();
-      const { error } = await sb.from("assets").update(rec).eq("id", id); if (error) throw error;
-      return { msg: "Changes saved", reopen: id };
+      rec.updated_at = now;
+      const r = await save({ kind: "update", table: "assets", id, rec, label: `Edit ${rec.name}` }, () => Object.assign(old, rec));
+      return { msg: r.queued ? QUEUED_MSG : "Changes saved", reopen: id };
     }
+    const rows = each
+      ? Array.from({ length: rec.quantity }, (_, i) => ({ ...rec, id: tempId(), quantity: 1, serial_number: null, asset_tag: tags[i] || null, name: `${rec.name} ${i + 1}` }))
+      : [{ ...rec, id: tempId() }];
+    const r = await save({ kind: "insert", table: "assets", rows, label: each ? `Add ${rows.length} × ${rec.name}` : `Add ${rec.name}${rec.quantity > 1 ? ` (×${rec.quantity})` : ""}` },
+      () => rows.forEach((x) => S.assets.push({ ...x, created_at: now })));
     if (each) {
-      const rows = Array.from({ length: rec.quantity }, (_, i) =>
-        ({ ...rec, quantity: 1, serial_number: null, asset_tag: tags[i] || null, name: `${rec.name} ${i + 1}` }));
-      const { error } = await sb.from("assets").insert(rows); if (error) throw error;
       S.view = "assets"; S.filters = { q: rec.name, category: "", location: "", ministry: "", status: "" };
-      return { msg: `${rows.length} separate records added. Add each serial number by opening the item.` };
+      return { msg: r.queued ? QUEUED_MSG : `${rows.length} separate records added. Add each serial number by opening the item.` };
     }
-    const { data, error } = await sb.from("assets").insert(rec).select().single(); if (error) throw error;
-    return { msg: "Asset added", reopen: data.id };
+    return { msg: r.queued ? QUEUED_MSG : "Asset added", reopen: r.queued ? rows[0].id : r.data?.[0]?.id };
   },
   async loan(form) {
     const fd = new FormData(form);
@@ -1770,12 +2351,11 @@ const FORMS = {
     const a = assetById(fd.get("asset_id")), n = Math.max(1, parseInt(fd.get("quantity"), 10) || 1);
     if (!a) throw new Error("Choose the item being lent.");
     if (n > availableQty(a)) throw new Error(`Only ${availableQty(a)} of ${a.name} are available to lend.`);
-    const { error } = await sb.from("borrowings").insert({
-      asset_id: a.id, quantity: n, borrower_name: textOrNull(fd.get("borrower_name")), borrower_phone: textOrNull(fd.get("borrower_phone")),
-      purpose: textOrNull(fd.get("purpose")), borrowed_on: borrowed, due_on: due, notes: textOrNull(fd.get("notes"))
-    });
-    if (error) throw error;
-    return { msg: n > 1 ? `${n} lent to ${textOrNull(fd.get("borrower_name"))}` : "Loan recorded" };
+    const row = { id: tempId(), asset_id: a.id, quantity: n, borrower_name: textOrNull(fd.get("borrower_name")), borrower_phone: textOrNull(fd.get("borrower_phone")),
+      purpose: textOrNull(fd.get("purpose")), borrowed_on: borrowed, due_on: due, notes: textOrNull(fd.get("notes")) };
+    const r = await save({ kind: "insert", table: "borrowings", rows: [row], label: `Lend ${n > 1 ? `${n} × ` : ""}${a.name} to ${row.borrower_name}` },
+      () => S.borrowings.unshift({ ...row, returned_on: null }));
+    return { msg: r.queued ? QUEUED_MSG : n > 1 ? `${n} lent to ${row.borrower_name}` : "Loan recorded" };
   },
   async return(form) {
     const fd = new FormData(form), id = Number(form.dataset.id), n = Number(form.dataset.qty);
@@ -1791,34 +2371,56 @@ const FORMS = {
       if (o === "lost") { returned = 0; mode = "lost"; }
       damaged = o === "damaged";
     }
-    const { error } = await sb.rpc("return_loan", { p_loan_id: id, p_returned: returned, p_mode: mode, p_note: textOrNull(fd.get("note")), p_damaged: damaged });
-    if (error) throw error;
-    const msg = returned === n ? (damaged ? "Returned and set to Under repair" : "Marked as returned")
+    const note = textOrNull(fd.get("note"));
+    const r = await save({ kind: "rpc", fn: "return_loan", args: { p_loan_id: id, p_returned: returned, p_mode: mode, p_note: note, p_damaged: damaged },
+      label: `Return ${returned}${n > 1 ? ` of ${n}` : ""} × ${assetName(b?.asset_id)} from ${b?.borrower_name}` }, () => applyReturnLocal(b, returned, mode, damaged));
+    const msg = r.queued ? QUEUED_MSG : returned === n ? (damaged ? "Returned and set to Under repair" : "Marked as returned")
       : mode === "keep" ? `${returned} returned, ${n - returned} still on loan`
       : returned ? `${returned} returned, ${n - returned} recorded as lost` : "Recorded as lost";
     return { msg, reopen: form.dataset.from === "detail" ? b?.asset_id : null };
   },
   async split(form) {
-    const fd = new FormData(form), a = assetById(form.dataset.id), n = parseInt(fd.get("quantity"), 10);
+    const fd = new FormData(form), a = assetById(form.dataset.id), n = parseInt(fd.get("quantity"), 10), status = fd.get("status");
+    const disp = ["Disposed", "Lost"].includes(status) ? readDisposal(fd, status) : null;
     const { data, error } = await sb.rpc("split_asset", {
-      p_asset_id: a.id, p_qty: n, p_status: fd.get("status"), p_condition: fd.get("condition"),
-      p_location_id: numOrNull(fd.get("location_id")), p_note: textOrNull(fd.get("note"))
+      p_asset_id: a.id, p_qty: n, p_status: status, p_condition: fd.get("condition"),
+      p_location_id: numOrNull(fd.get("location_id")), p_note: textOrNull(fd.get("note")),
+      p_disposal: disp && { date: disp.disposal_date, method: disp.disposal_method, reason: disp.disposal_reason, approved_by: disp.disposal_approved_by, amount: disp.disposal_amount }
     });
     if (error) throw error;
     return { msg: `${n} split off into their own record`, reopen: data };
   },
   async service(form) {
-    const fd = new FormData(form), assetId = Number(fd.get("asset_id"));
-    const { error } = await sb.from("maintenance").insert({
-      asset_id: assetId, service_date: fd.get("service_date"), description: textOrNull(fd.get("description")),
-      cost: numOrNull(fd.get("cost")), performed_by: textOrNull(fd.get("performed_by")), next_due: fd.get("next_due") || null
+    const fd = new FormData(form), a = assetById(fd.get("asset_id"));
+    if (!a) throw new Error("Choose the item that was serviced.");
+    const plan = S.plans.find((p) => p.id === numOrNull(fd.get("plan_id"))) || null;
+    const row = { id: tempId(), asset_id: a.id, plan_id: plan?.id ?? null, service_date: fd.get("service_date"), description: textOrNull(fd.get("description")),
+      cost: numOrNull(fd.get("cost")), performed_by: textOrNull(fd.get("performed_by")), next_due: plan ? null : fd.get("next_due") || null };
+    if (row.service_date > today()) throw new Error("The date done can't be in the future.");
+    if (row.next_due && row.next_due <= row.service_date) throw new Error("The next due date must be after the date the work was done.");
+    const r = await save({ kind: "insert", table: "maintenance", rows: [row], label: `Maintenance on ${a.name}: ${row.description}` }, () => {
+      S.maintenance.push({ ...row, created_at: new Date().toISOString() });
+      S.maintenance.sort((x, y) => y.service_date.localeCompare(x.service_date));
+      if (plan) {
+        const latest = S.maintenance.filter((m) => m.plan_id === plan.id).map((m) => m.service_date).sort().pop();
+        plan.next_due = addInterval(latest, plan.every, plan.unit);
+      }
     });
-    if (error) throw error;
-    if (fd.get("mark_in_use")) {
-      const { error: e2 } = await sb.from("assets").update({ status: "In use", updated_at: new Date().toISOString() }).eq("id", assetId);
-      if (e2) throw e2;
+    if (fd.get("mark_in_use") && a.status !== "In use")
+      await save({ kind: "update", table: "assets", id: a.id, rec: { status: "In use", updated_at: new Date().toISOString() }, label: `Set ${a.name} to In use` }, () => { a.status = "In use"; });
+    return { msg: r.queued ? QUEUED_MSG : "Maintenance saved" };
+  },
+  async plan(form) {
+    const fd = new FormData(form), id = Number(form.dataset.id) || null;
+    const rec = { task: textOrNull(fd.get("task")), every: parseInt(fd.get("every"), 10), unit: fd.get("unit"), next_due: fd.get("next_due"), notes: textOrNull(fd.get("notes")) };
+    if (id) {
+      const { error } = await sb.from("maintenance_plans").update(rec).eq("id", id); if (error) throw error;
+      return { msg: "Schedule saved" };
     }
-    return { msg: "Maintenance saved" };
+    rec.asset_id = Number(fd.get("asset_id"));
+    const { error } = await sb.from("maintenance_plans").insert(rec); if (error) throw error;
+    S.maintTab = "plans";
+    return { msg: `Schedule created: ${rec.task}, ${everyText(rec)}` };
   },
   async list(form) {
     const name = textOrNull(new FormData(form).get("name")); if (!name) return {};
@@ -1878,6 +2480,11 @@ document.addEventListener("submit", async (e) => {
     return;
   }
   const btn = form.querySelector("button[type=submit]"), errBox = form.querySelector(".js-error");
+  if (isOffline() && !OFFLINE_FORMS.has(form.dataset.form)) {
+    const m = "You're offline. This needs an internet connection, so try again when you're back online.";
+    if (errBox) { errBox.textContent = m; errBox.hidden = false; } else toast(m);
+    return;
+  }
   const label = btn.innerHTML;
   btn.disabled = true; btn.innerHTML = `<span class="spinner-border spinner-border-sm me-2"></span>Saving`;
   if (errBox) errBox.hidden = true;
@@ -1902,12 +2509,20 @@ document.addEventListener("input", (e) => {
   if (e.target.id === "f-q") { S.filters.q = e.target.value; renderAssetResults(); }
   if (e.target.closest?.('form[data-form="asset"]')) syncAssetForm();
   if (e.target.id === "r_qty") syncReturnForm();
+  if (e.target.id === "act-q") {
+    clearTimeout(S.act.timer);
+    S.act.timer = setTimeout(() => { S.act.q = e.target.value; loadActivity(true); }, 350);
+  }
 });
+document.addEventListener("show.bs.collapse", (e) => { if (e.target.id === "h-changes") loadAssetHistory(e.target.dataset.asset); });
 document.addEventListener("change", (e) => {
   const map = { "f-category": "category", "f-location": "location", "f-ministry": "ministry", "f-status": "status" };
   if (map[e.target.id]) { S.filters[map[e.target.id]] = e.target.value; renderAssetResults(); }
   if (e.target.name === "theme" && e.target.dataset.action === "set-theme") setTheme(e.target.value);
   if (e.target.id === "l_item") syncLoanForm();
+  if (e.target.closest?.('form[data-form="service"]')) syncServiceForm();
+  const sf = e.target.closest?.('form[data-form="split"]'); if (sf) syncDisposal(sf, sf.elements.status.value, "sd");
+  if (e.target.id === "act-type") { S.act.type = e.target.value; loadActivity(true); }
   if (e.target.closest?.('form[data-form="asset"]')) syncAssetForm();
   if (e.target.id === "r_qty") syncReturnForm();
   if (e.target.id === "import-file" && e.target.files[0]) {
@@ -1927,6 +2542,7 @@ document.addEventListener("click", async (e) => {
   const el = e.target.closest("[data-action]"); if (!el) return;
   if (el.tagName === "A") e.preventDefault();
   const { action, id } = el.dataset;
+  if (isOffline() && ONLINE_ACTIONS.has(action)) { toast("You're offline. This needs an internet connection."); return; }
   const member = () => S.members.find((m) => m.id === Number(id));
   try {
     switch (action) {
@@ -1943,7 +2559,28 @@ document.addEventListener("click", async (e) => {
       case "open-asset": assetDetail(id); break;
       case "edit-asset": assetForm(assetById(id)); break;
       case "lend": loanForm(id); break;
-      case "log-service": serviceForm(id); break;
+      case "log-service": serviceForm(id, el.dataset.plan); break;
+      case "add-plan": planForm({}, id); break;
+      case "edit-plan": planForm(S.plans.find((p) => p.id === Number(id))); break;
+      case "toggle-plan": {
+        const p = S.plans.find((x) => x.id === Number(id));
+        const { error } = await sb.from("maintenance_plans").update({ active: !p.active }).eq("id", p.id); if (error) throw error;
+        await refresh(); toast(p.active ? "Schedule paused. No reminders until you resume it." : "Schedule resumed"); break;
+      }
+      case "delete-plan": {
+        const p = S.plans.find((x) => x.id === Number(id));
+        if (!(await confirmDialog(`Delete the schedule “${p.task}”?`, "<p class='mb-0'>Maintenance already logged stays in the history. To stop reminders for a while instead, pause it.</p>"))) break;
+        const { error } = await sb.from("maintenance_plans").delete().eq("id", p.id); if (error) throw error;
+        await refresh(); toast("Schedule deleted"); break;
+      }
+      case "more-activity": loadActivity(); break;
+      case "export-activity": await exportActivity(el); break;
+      case "sync-now": await syncOutbox(); break;
+      case "review-failed": reviewFailed(); break;
+      case "discard-failed": {
+        setFailed(el.dataset.index === "all" ? [] : failedOps().filter((_, i) => i !== Number(el.dataset.index)));
+        reviewFailed(); break;
+      }
       case "clear-filters": S.filters = { q: "", category: "", location: "", ministry: "", status: "" }; render(); break;
       case "open-import": importDialog(); break;
       case "dl-template": downloadTemplate(!!el.dataset.with); break;
@@ -2016,12 +2653,24 @@ document.addEventListener("click", async (e) => {
         const { error } = await sb.from("members").delete().eq("id", m.id); if (error) throw error;
         await refresh(); toast("User removed"); break;
       }
-      case "logout": closeMenu(); await sb.auth.signOut(); break;
+      case "logout": {
+        const waiting = outbox().length;
+        if (waiting && !(await confirmDialog(`Sign out with ${plural(waiting, "unsent change")}?`,
+          `<p class="mb-0">${plural(waiting, "change")} made offline ${waiting === 1 ? "hasn't" : "haven't"} been sent yet. If you sign out now, ${waiting === 1 ? "it" : "they"} will be lost. Connect to the internet first to send ${waiting === 1 ? "it" : "them"}.</p>`, "Sign out anyway"))) break;
+        closeMenu(); clearDeviceData();
+        try { await sb.auth.signOut({ scope: "local" }); } catch {}
+        S.me = null; S.session = null; setOnline(); showLogin(); break;
+      }
     }
   } catch (err) { toast(friendlyError(err)); }
 });
 
 init();
+
+/* Works offline: cache the app on this device (needs https, e.g. GitHub Pages) */
+if ("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost")) {
+  addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));
+}
 </script>
 </body>
 </html>
